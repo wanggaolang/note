@@ -1,4 +1,4 @@
-##1. git添加/删除远程仓库及github相关：
+## 1. git添加/删除远程仓库及github相关：
 
 ``` shell
 git remote rm origin
@@ -24,11 +24,11 @@ git push -u origin master
 
 
 
-##3. sqrt是开平方，pow(x,n)是N次方
+## sqrt是开平方，pow(x,n)是N次方
 
 
 
-##4. 重载<<运算符示例
+## 重载<<运算符示例
 
  ```c++
    ostream & operator<<( ostream & os,const Vector2D & c) //二维向量
@@ -476,3 +476,166 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
 选中-->段落-->中文版式-->允许西文在单词中换行
 ```
 
+## excel技巧 
+
+excel中打回车 alet + 回车
+
+ ## 命名空间
+
+  ：：a表示全局变量a，用于区分局部变量a
+
+
+
+## 函数相关
+
+access函数
+
+测试文件是否存在以及文件权限
+
+  
+
+
+
+
+
+## 对于map
+
+find函数通过查找key返回迭代器，没有查找value返回迭代器的函数，因为可能有多个key对应一个value。
+
+
+
+## bind和function
+
+bind里面的\_1、\_2、等\_n指的是合成的新函数的第一、第二、第n个参数放入原函数中的位置
+
+```C++
+auto g = bind(f, a, b, _2, c, _1);//意味着新函数的第一个参数放最右边上，第二个参数放_2那儿
+g(X, Y);	//等价于f(a, b, Y, c, X);
+```
+
+//TODO function
+
+## git
+
+所有的版本控制系统，只能跟踪文本文件的改动
+
+首先用git init 来在当前文件夹创建git的数据库，记录版本相关的东西
+
+在git里有三个区
+
+- 工作区：也就是我们直接改东西的地方，我们能看见的文件等
+
+- 暂存区：记录了一些工作区改变后的文件，如
+
+  git add将工作区改变/新增的文件加入暂存区，git add .会将工作区所有改变记入暂存区中
+
+  git rm将工作区文件删掉，并记录入暂存区
+
+  可理解为提交的文件修改通通放到暂存区，然后，一次性提交暂存区的所有修改
+
+- git仓库（分支）:也就是打游戏的各个存档
+
+  这三个区可以理解为三个同样的仓库，最终的存档需要先改到暂存区（git add XXX），再改到git仓库(git commit)
+
+
+
+git status查看状态
+
+git diff可以查看某个文件改变的内容 git diff HEAD -- readme.txt 可以查看工作区和版本库里面最新版本的区别 //QE TODO
+
+git log将显示git仓库中各个版本，就像查看游戏中的所有存档，HEAD指向当前版本
+
+git reset --hard XXX 便能回到XXX版本，XXX可以是sha值（不用写全），
+
+也可以是『HEAD~X』，X是一个数字，表示回到相对当前版本之前第X版本
+
+在回退后再查看git log发现退回来后的已看不到先进版本，
+
+好比从21世纪坐时光机来到了19世纪，想再回去已经回不去了
+
+git relog能够解决这个问题，显示所有的版本
+
+git checkout -- XXX 也就是让工作区该文件回到改变之前，也就是让暂存区版本倒灌进工作区（前提是上一个状态有备案，无论是git commit或git add）
+
+git reset HEAD XXX可以将暂存区回退到和分支一样。举例，有一个bug版本已经在本地写好并提交到暂存区，就可以需要用将暂存区覆盖，再用git checkout -- XXX
+
+git rm XXX 删掉暂存区中的文件，如果本地（工作区）文件未删除也会一并被删掉
+
+- 一些显示提示
+
+『Changes to be committed』change需要提交的，也就是改变记录存在暂存区中的
+
+『Changes not staged for commit』更改没有步入（staged）提交（准备）的，也就是改变记录存在工作区的
+
+stage形容了从工作区步入暂存区
+
+
+
+```shell
+git remote add origin git@github.com:wanggaolang/test_for_git.git
+添加后，远程库的名字就是origin，这是Git默认的叫法，也可以改成别的，但是origin这个名字一看就知道是远程库
+git push -u origin master
+把本地库的内容推送到远程，用git push命令，实际上是把当前分支master推送到远程。
+
+由于远程库是空的，我们第一次推送master分支时，加上了-u参数，Git不但会把本地的master分支内容推送的远程新的master分支，还会把本地的master分支和远程的master分支关联起来，在以后的推送或者拉取时就可以简化命令。
+
+---
+小结
+要关联一个远程库，使用命令git remote add origin git@server-name:path/repo-name.git；
+
+关联后，使用命令git push -u origin master第一次推送master分支的所有内容；
+
+此后，每次本地提交后，只要有必要，就可以使用命令git push origin master推送最新修改；
+```
+
+git clone git@server-name:path/repo-name.git克隆到本地，会将所有文件保存在仓库名文件夹中，也就是不用自己创建一个文件夹在clone，在主目录clone就行了
+
+
+
+- 分支相关
+
+  创建分支`` git branch ``XXX 会将HEAD指向分支（也就是master分支）复制到XXX分支
+
+  删除分支XXX``git branch -d XXX``
+
+  查看分支``git branch``
+
+  切换分支 ``git switch XXX``切换到XXX分支了(或者是``git checkout XXX``)
+
+  可以用``git switch -c XXX``创建并切入新分支
+
+  ``git checkout -b XXX origin/XXX``
+
+  合并当前分支与XXX分支 ``git merge XXX`` 前提当前版本是XXX版本的子集或者相等
+
+  
+
+  如果在XXX分支中进行了改变，切回主分支，不做任何改动就merge，虽然两者内容冲突，但时间线上XXX更新，所以会将XXX的改变改过来，也就是master指针指向XXX
+
+  如果在XXX改了后切到master分支又改东西，即使两者都是添加新东西，在merge时，也会产生冲突，因为产生了两个时间线
+
+  可以用``git log --graph``看到分支合并图
+
+- 百度代码提交审核
+
+  git push origin HEAD:refs/for/master
+
+
+
+## 终端shell快捷键
+
+ctrl + y 粘贴”命令行剪切板“
+
+ctrl + u 剪切一行命令，放入”命令行剪切板“
+
+
+
+## ssh rsa key
+
+通过``ssh -keygen -t rsa``生成rsa密钥对
+
+在Linux体系存储位置为``~/.ssh``
+
+
+
+## markdown(md)一些用法
