@@ -1,4 +1,4 @@
-## 1. git添加/删除远程仓库及github相关：
+##  git添加/删除远程仓库及github相关：
 
 ``` shell
 git remote rm origin
@@ -19,7 +19,8 @@ git push -u origin master
 
 
 
-##2.内存操作的小技巧 
+## 内存操作的小技巧 
+
 *(int *)ptr的意思是从ptr这个地址开始向上（因为是小端存储）取四个字节出来看成int，注意编译器优化会使两个相邻变量上下字节间发生变化，可以加上```volatile```。大部分机器都是小端存储，变量的首地址是最低的一个字节的地址，取变量时向上取，存储时向低地址存（因为是栈）。
 
 
@@ -40,7 +41,8 @@ git push -u origin master
 
 
 
-##5. new和malloc的区别
+## new和malloc的区别
+
    1. new可以自动计算所需要大小；malloc则必须要由我们计算字节数。
 
    2. new操作符内存分配成功时，返回的是对象类型的指针；malloc内存分配成功则是返回void * ，需要通过强制类型转换将void*指针转换成我们需要的类型。
@@ -93,7 +95,7 @@ git push -u origin master
 
 
 
-##7.红黑树和AVL树
+## 红黑树和AVL树
 
 红黑树不追求"完全平衡"，即不像AVL那样要求节点的 `|balFact| <= 1`，它只要求部分达到平衡，但是提出了为节点增加颜色，红黑是用非严格的平衡来换取增删节点时候旋转次数的降低，任何不平衡都会在三次旋转之内解决，而AVL是严格平衡树，因此在增加或者删除节点的时候，根据不同情况，旋转的次数比红黑树要多。
 
@@ -102,7 +104,7 @@ git push -u origin master
 
 
 
-##8.同步异步套接字
+## 同步异步套接字
 
 
 
@@ -118,13 +120,13 @@ git push -u origin master
 
 
 
-##  9.GMP库
+##  GMP库
 
 用于大数运算的c/c++库，在linux下完美支持，windows需要用mingw和msys进行编译，或者用gmp的windows版本mpir，原生支持vs上编译
 
 
 
-## 10.clion快捷键设置
+## clion快捷键设置
 
 Setting	--	Keymap
 
@@ -132,9 +134,13 @@ Setting	--	Keymap
 
 光标到下一个光标：搜索forward	
 
+## vscode快捷键
+
+查找文件名：command + p
 
 
-## 11.进程，线程，协程
+
+## 进程，线程，协程
 
 进程：计算机程序运行的实体。每个进程都有自己的独立内存空间，上下文切换开销比较大（栈，寄存器，虚拟内存，文件句柄等），相对稳定安全
 
@@ -144,13 +150,13 @@ Setting	--	Keymap
 
 
 
-## 12.volatile
+## volatile
 
 volatile关键词影响编译器编译的结果，用volatile声明的变量表示该变量随时可能发生变化，与该变量有关的运算，不再编译优化，以免出错。
 
 
 
-## 13.小知识（一）
+## 小知识（一）
 
 1. ***ptr--**  会先减再运行*
 2. 类外定义成员函数不能加上默认参数，如：``Test fun(int a = 1)``会报错，同样static声明的成员在外部定义时候，必须省去static。同时，static成员变量只有跟了const才可以在类里面的初始化列表中进行初始化，其余的都要在类的外部初始化。
@@ -158,7 +164,7 @@ volatile关键词影响编译器编译的结果，用volatile声明的变量表�
 
 
 
-## 14. c++ string的实习
+## c++ string的实习
 
 ```c++
 #include <cstddef>
@@ -291,17 +297,17 @@ int main()
 }
 ```
 
-## 15.面向对象三大特性：封装、继承和多态
+## 面向对象三大特性：封装、继承和多态
 
 
 
-## 16.socket
+## socket
 
 假如b进程是异常终止的，发送FIN包是OS代劳的，b进程已经不复存在，**当机器再次收到该socket的消息时，会回应RST（因为拥有该socket的进程已经终止）**。a进程对收到RST的socket调用write时，操作系统会给a进程发送SIGPIPE，默认处理动作是终止进程。即：
 
 > It is okay to write to a socket that has received a FIN, but it is an error to write to a socket that has received an RST
 
-## 17.浮点数大小	//EQ
+## 浮点数大小	//EQ
 
 float：32位	1位符号位，8位指数位，23位尾数
 
@@ -309,7 +315,7 @@ double：64位	1位符号位，11位指数位，52位尾数
 
 
 
-## 18.TCP长连接
+## TCP长连接
 
 长连接：client向server发起连接，server接受client连接，双方建立连接。Client与server完成一次读写之后，它们之间的连接并不会主动关闭，后续的读写操作会继续使用这个连接。
 
@@ -360,9 +366,9 @@ a=12; //合法，相当于修改m=12
 
 a=n;//合法，相当于修改m=13
 
-**3****、****C/C++****程序的内存分区**
+**3、C/C++程序的内存分区**
 
-答：**其实****C****和****C++****的内存分区还是有一定区别的，但此处不作区分：**
+答：其实C和C++的内存分区还是有一定区别的，但此处不作区分：
 
 1）、栈区（stack）— 由编译器自动分配释放 ，存放函数的参数值，局部变量的值等。其 
  操作方式类似于数据结构中的栈。 
@@ -513,7 +519,21 @@ auto g = bind(f, a, b, _2, c, _1);//意味着新函数的第一个参数放最�
 g(X, Y);	//等价于f(a, b, Y, c, X);
 ```
 
-//TODO function
+function在没有auto时可以声明一种类型，或者是一个模板类型
+
+```c++
+#include<functional>
+function <T> f;  //T是一个可调用对象，可以是函数指针，函数对象或者lambda
+
+作用
+在auto不在时，可以和bind联合使用：
+int add_3_num(int a, int b, int c){return a + b + c;}
+function<int(int, int> add_2_num = bind(add_3_num, _1, _2, 0);
+             
+也可以做一些有意思的东西，如下面这个TODO c++ primer p512
+```
+
+
 
 ## git
 
@@ -639,3 +659,6 @@ ctrl + u 剪切一行命令，放入”命令行剪切板“
 
 
 ## markdown(md)一些用法
+
+\`\`将正常的代码放这四个符号间会被凸显\`\`
+
