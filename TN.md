@@ -15,7 +15,52 @@ git push -u origin master
 当github与本地master不一致（如github上多了个readme）时，
 若让本地与远程相同：git pull
 若让远程与本地相同：git push -f
+
+
 ```
+
+
+
+一、pull操作
+1、将远程指定分支 拉取到 本地指定分支上：
+
+git pull origin <远程分支名>:<本地分支名>
+1
+2、将远程指定分支 拉取到 本地当前分支上：
+
+git pull origin <远程分支名>
+1
+3、将与本地当前分支同名的远程分支 拉取到 本地当前分支上(需先关联远程分支，方法见文章末尾)
+
+git pull
+1
+在克隆远程项目的时候，本地分支会自动与远程仓库建立追踪关系，可以使用默认的origin来替代远程仓库名，
+所以，我常用的命令就是 git pull origin <远程仓库名>，操作简单，安全可控。
+
+二、push操作
+1、将本地当前分支 推送到 远程指定分支上（注意：pull是远程在前本地在后，push相反）：
+
+git push origin <本地分支名>:<远程分支名>
+1
+2、将本地当前分支 推送到 与本地当前分支同名的远程分支上（注意：pull是远程在前本地在后，push相反）：
+
+git push origin <本地分支名>
+1
+3、将本地当前分支 推送到 与本地当前分支同名的远程分支上(需先关联远程分支，方法见文章末尾)
+
+git push
+1
+同样的，推荐使用第2种方式，git push origin <远程同名分支名>
+
+附：
+// 将本地分支与远程同名分支相关联
+
+git push --set-upstream origin <本地分支名>
+
+简写方式：git push -u origin <本地分支名>
+``cat .git/config``能看到本地与远程分支的关联关系
+
+
 
 
 
@@ -134,9 +179,27 @@ Setting	--	Keymap
 
 光标到下一个光标：搜索forward	
 
-## vscode快捷键
+## vscode
+
+**快捷键**
 
 查找文件名：command + p
+
+在打开的文件夹中查找一个函数：左侧那个放大镜
+
+回到上一个光标：command + -
+
+
+
+**三个配置文件**
+
+//TODO
+
+
+
+编译：mac快捷键 command + shift + b
+
+
 
 
 
@@ -158,7 +221,7 @@ volatile关键词影响编译器编译的结果，用volatile声明的变量表�
 
 ## 小知识（一）
 
-1. ***ptr--**  会先减再运行*
+1. **ptr--**  会先减再运行
 2. 类外定义成员函数不能加上默认参数，如：``Test fun(int a = 1)``会报错，同样static声明的成员在外部定义时候，必须省去static。同时，static成员变量只有跟了const才可以在类里面的初始化列表中进行初始化，其余的都要在类的外部初始化。
 3. string.find()和map.find()以及set.find()如果找不到目标，则结果为x.end()
 
@@ -517,6 +580,25 @@ bind里面的\_1、\_2、等\_n指的是合成的新函数的第一、第二、�
 ```C++
 auto g = bind(f, a, b, _2, c, _1);//意味着新函数的第一个参数放最右边上，第二个参数放_2那儿
 g(X, Y);	//等价于f(a, b, Y, c, X);
+
+
+std::bind绑定一个成员函数
+struct Foo {
+    void print_sum(int n1, int n2)
+    {
+        std::cout << n1+n2 << '\n';
+    }
+    int data = 10;
+};
+int main() 
+{
+    Foo foo;
+    auto f = std::bind(&Foo::print_sum, &foo, 95, std::placeholders::_1);
+    f(5); // 100
+}
+bind绑定类成员函数时，第一个参数表示对象的成员函数的指针，第二个参数表示对象的地址。
+必须显示的指定&Foo::print_sum，因为编译器不会将对象的成员函数隐式转换成函数指针，所以必须在Foo::print_sum前添加&；
+使用对象成员函数的指针时，必须要知道该指针属于哪个对象，因此第二个参数为对象的地址 &foo；
 ```
 
 function在没有auto时可以声明一种类型，或者是一个模板类型
@@ -579,6 +661,8 @@ git checkout -- XXX 也就是让工作区该文件回到改变之前，也就是
 
 git reset HEAD XXX可以将暂存区回退到和分支一样。举例，有一个bug版本已经在本地写好并提交到暂存区，就可以需要用将暂存区覆盖，再用git checkout -- XXX
 
+让本地分支被远程分支XXX覆盖``git reset --hard origin/XXX``
+
 git rm XXX 删掉暂存区中的文件，如果本地（工作区）文件未删除也会一并被删掉
 
 - 一些显示提示
@@ -614,17 +698,19 @@ git clone git@server-name:path/repo-name.git克隆到本地，会将所有文件
 
 - 分支相关
 
-  创建分支`` git branch ``XXX 会将HEAD指向分支（也就是master分支）复制到XXX分支
+  创建分支`` git branch ``XXX 会将HEAD指向的分支（一般也就是master分支）复制到XXX分支
 
   删除分支XXX``git branch -d XXX``
 
-  查看分支``git branch``
+  查看所有分支（包括远程的）``git branch -a``，如果不加``- a``就是显示本地的分支，并标明自己在哪
 
-  切换分支 ``git switch XXX``切换到XXX分支了(或者是``git checkout XXX``)
+  将远程分支AAA与本地已有分支BBB与关联起来``git branch -u AAA BBB``
 
-  可以用``git switch -c XXX``创建并切入新分支
+  切换分支 ``git switch XXX``切换到XXX分支(或者是``git checkout XXX``)
 
-  ``git checkout -b XXX origin/XXX``
+  可以用``git switch -c XXX``或者``git checkout -b XXX``创建并切入新分支
+
+  在本地创建分支XXX并与远程分支关联``git checkout -b XXX origin/XXX``
 
   合并当前分支与XXX分支 ``git merge XXX`` 前提当前版本是XXX版本的子集或者相等
 
@@ -652,7 +738,7 @@ ctrl + u 剪切一行命令，放入”命令行剪切板“
 
 ## ssh rsa key
 
-通过``ssh -keygen -t rsa``生成rsa密钥对
+通过``ssh-keygen -t rsa``生成rsa密钥对
 
 在Linux体系存储位置为``~/.ssh``
 
@@ -660,5 +746,28 @@ ctrl + u 剪切一行命令，放入”命令行剪切板“
 
 ## markdown(md)一些用法
 
-\`\`将正常的代码放这四个符号间会被凸显\`\`
+\`\`将正常的代码放这四个符号间会被凸显，以代码形式显示\`\`
 
+\*\*在这中间的字会加粗\*\*
+
+
+
+## 锁
+
+boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
+
+
+
+## docker
+
+- 查看ov相关的的容器
+
+  docker ps -a | grep ov
+
+- 启动某个容器
+
+  doeker start {containerID}
+
+- 进入某个容器中
+
+  docker exec -it {containerID} /bin/bash
