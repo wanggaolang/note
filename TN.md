@@ -661,7 +661,7 @@ git checkout -- XXX 也就是让工作区该文件回到改变之前，也就是
 
 git reset HEAD XXX可以将暂存区回退到和分支一样。举例，有一个bug版本已经在本地写好并提交到暂存区，就可以需要用将暂存区覆盖，再用git checkout -- XXX
 
-让本地分支被远程分支XXX覆盖``git reset --hard origin/XXX``
+让本地分支被远程分支XXX覆盖git fetch    ``git reset --hard origin/XXX``
 
 git rm XXX 删掉暂存区中的文件，如果本地（工作区）文件未删除也会一并被删掉
 
@@ -742,6 +742,8 @@ ctrl + u 剪切一行命令，放入”命令行剪切板“
 
 在Linux体系存储位置为``~/.ssh``
 
+windows 一般在 /c/Users/{用户名}/.ssh
+
 
 
 ## markdown(md)一些用法
@@ -771,3 +773,11 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
 - 进入某个容器中
 
   docker exec -it {containerID} /bin/bash
+
+
+
+
+
+## photoshop
+
+- ctrl+alt复制图片时总是卡住，结局办法：控制面板-键盘-速度-调到最低
