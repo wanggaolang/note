@@ -1,21 +1,47 @@
-##  git添加/删除远程仓库及github相关：
+## 笔记规范
+
+- 要求易懂且简洁
+- 标题：一级用##，二级用黑点，三级用数字+中文顿号，四级用
+- 可选参数用英文中括号（[]）括起来，必要参数用大括号括起来
+- 在一个大的点或者一个一级标题结束后有个回车
+- 同一行内容间隔4空格
+- 
+
+
+
+## 常用规范
+
+- 在linux体系机器，如果是自己主机，临时文件放/test_for_all，提示文件放/readme
+
+  如果是公共主机，/变为~
+
+  
+
+##  git及github相关
+
+将整个git分为4个仓库，在数据同步后可以理解为四个相同的文件夹：
+
+- 工作区：主机上看见的文件夹
+
+- 暂存区：提交一个版本是个严肃的事，先放暂存区，确认了再提交到
+
+- git本地仓库：也就是打游戏的各个存档
+- git远程仓库：远程版``git本地仓库``，为了方便联网和多人操作
+
+而多一个分支，表明多了一份``大仓库``，也就是四个上方所述仓库。
+
+
+
+一些初始操作：
 
 ``` shell
-git remote rm origin
-git remote add orinin https://github.com/wanggaolang/Blog
+git init    //在当前文件夹建设git数据库，之后对当前文件夹及其子文件夹提交到比工作区更上层的仓库后，再变化工作区相关文件，就能够知道其变化
+git remote add orinin https://github.com/wanggaolang/test.git		//https方式添加远程仓库
+git remote add orinin git@{server_name,如“github.com”}:wanggaolang/test.git  //ssh方式添加远程仓库
+git remote rm origin    //删掉远程仓库
 
-echo "# note" >> README.md
-git init
-git add README.md
-git commit -m "first commit"
-git remote add origin git@github.com:wanggaolang/note.git
-git push -u origin master
----
-
-当github与本地master不一致（如github上多了个readme）时，
-若让本地与远程相同：git pull
-若让远程与本地相同：git push -f
-
+git push -u origin master    //在远程仓库创建master分支，并将当前分支git本地仓库上传上去
+git push -f    //强制让远程关联分支的git远程仓库被本地覆盖
 
 ```
 
@@ -52,13 +78,132 @@ git push
 1
 同样的，推荐使用第2种方式，git push origin <远程同名分支名>
 
-附：
-// 将本地分支与远程同名分支相关联
-
-git push --set-upstream origin <本地分支名>
-
-简写方式：git push -u origin <本地分支名>
 ``cat .git/config``能看到本地与远程分支的关联关系
+
+---
+
+所有的版本控制系统，只能跟踪文本文件的改动
+
+首先用git init 来在当前文件夹创建git的数据库，记录版本相关的东西
+
+在git里有三个区
+
+- 工作区：也就是我们直接改东西的地方，我们能看见的文件等
+
+- 暂存区：记录了一些工作区改变后的文件，如
+
+  git add将工作区改变/新增的文件加入暂存区，git add .会将工作区所有改变记入暂存区中
+
+  git rm将工作区文件删掉，并记录入暂存区
+
+  可理解为提交的文件修改通通放到暂存区，然后，一次性提交暂存区的所有修改
+
+- git仓库（分支）:也就是打游戏的各个存档
+
+  这三个区可以理解为三个同样的仓库，最终的存档需要先改到暂存区（git add XXX），再改到git仓库(git commit)
+
+
+
+git status查看状态
+
+git diff可以查看某个文件改变的内容 git diff HEAD -- readme.txt 可以查看工作区和版本库里面最新版本的区别 //QE TODO
+
+git log将显示git仓库中各个版本，就像查看游戏中的所有存档，HEAD指向当前版本
+
+git reset --hard XXX 便能回到XXX版本，XXX可以是sha值（不用写全），
+
+也可以是『HEAD~X』，X是一个数字，表示回到相对当前版本之前第X版本
+
+？git reset HEAD {文件名}
+
+在回退后再查看git log发现退回来后的已看不到先进版本，
+
+好比从21世纪坐时光机来到了19世纪，想再回去已经回不去了
+
+git relog能够解决这个问题，显示所有的版本
+
+git checkout -- XXX 也就是让暂存区版本倒灌进工作区
+
+git reset HEAD XXX可以将暂存区回退到和git仓库当前版本一样。举例，有一个bug版本已经在本地写好并提交到暂存区，就可以需要用将暂存区覆盖，再用git checkout -- XXX
+
+让本地分支被远程分支XXX覆盖git fetch    ``git reset --hard origin/XXX``
+
+git rm XXX 删掉暂存区中的文件，如果本地（工作区）文件未删除也会一并被删掉
+
+- 一些显示提示
+
+『Changes to be committed』change需要提交的，也就是改变记录存在暂存区中的
+
+『Changes not staged for commit』更改没有步入（staged）提交（准备）的，也就是改变记录存在工作区的
+
+stage形容了从工作区步入暂存区
+
+  
+
+```shell
+git remote add origin git@github.com:wanggaolang/test_for_git.git
+添加后，远程库的名字就是origin，这是Git默认的叫法，也可以改成别的，但是origin这个名字一看就知道是远程库
+git push -u origin master
+把本地库的内容推送到远程，用git push命令，实际上是把当前分支master推送到远程。
+
+由于远程库是空的，我们第一次推送master分支时，加上了-u参数，Git不但会把本地的master分支内容推送的远程新的master分支，还会把本地的master分支和远程的master分支关联起来，在以后的推送或者拉取时就可以简化命令。
+
+---
+小结
+要关联一个远程库，使用命令git remote add origin git@server-name:path/repo-name.git；
+
+关联后，使用命令git push -u origin master第一次推送master分支的所有内容；
+
+此后，每次本地提交后，只要有必要，就可以使用命令git push origin master推送最新修改；
+```
+
+git clone git@server-name:path/repo-name.git克隆到本地，会将所有文件保存在仓库名文件夹中，也就是不用自己创建一个文件夹在clone，在主目录clone就行了
+
+
+
+- 分支相关
+
+  1、创建分支``git branch {新分支名}``    新分支复刻当前分支，并且HEAD指针，也就是当前工作区的分支导向不变
+
+  2、切换分支``git checkout {分支名}``
+
+  3、创建并切入新分支``git checkout -b {分支名}``
+
+  4、创建分支并与远程分支关联``git checkout -b {新建分支} origin/{远程分支}``    这时新建分支内容就是关联分支内容
+
+  5、删除分支``git branch -d {要删分支}``
+
+  6、查看所以分支``git branch -a``    不加``- a``为显示本地分支
+
+  ？将远程分支与本地已有分支BBB与关联起来``git branch -u AAA BBB``
+
+  8、添加远程分支：git push origin {本地分支}:{远程分支}
+
+  9、删除远程分支：git push origin {空格}:{远程分支}		or		 git push origin --delete {远程分支}
+
+  
+
+  合并当前分支与XXX分支 ``git merge XXX`` 前提当前版本是XXX版本的子集或者相等
+
+  
+
+  如果在XXX分支中进行了改变，切回主分支，不做任何改动就merge，虽然两者内容冲突，但时间线上XXX更新，所以会将XXX的改变改过来，也就是master指针指向XXX
+
+  如果在XXX改了后切到master分支又改东西，即使两者都是添加新东西，在merge时，也会产生冲突，因为产生了两个时间线
+  
+  可以用``git log --graph``看到分支合并图
+
+
+
+​	
+
+
+
+
+
+- 百度代码提交审核
+
+  git push origin HEAD:refs/for/master
 
 
 
@@ -189,7 +334,9 @@ Setting	--	Keymap
 
 回到上一个光标：command + -
 
+批量向左、向右缩进：``ctrl + [``   、 ``ctrl + ]``
 
+当前文档打开终端``control + ~``    或者 查看-终端
 
 **三个配置文件**
 
@@ -221,7 +368,7 @@ volatile关键词影响编译器编译的结果，用volatile声明的变量表�
 
 ## 小知识（一）
 
-1. **ptr--**  会先减再运行
+1. chrome快捷键：历史记录    ``ctrl + y``
 2. 类外定义成员函数不能加上默认参数，如：``Test fun(int a = 1)``会报错，同样static声明的成员在外部定义时候，必须省去static。同时，static成员变量只有跟了const才可以在类里面的初始化列表中进行初始化，其余的都要在类的外部初始化。
 3. string.find()和map.find()以及set.find()如果找不到目标，则结果为x.end()
 
@@ -532,11 +679,70 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
 
 
 
-## Linux快捷键
+## Linux相关/终端terminal相关
 
-新建终端		在当前窗口为终端情况下：ctrl + shift + n 
+- 配置终端
 
-回到桌面		ctrl + win + d
+  Iterm2 + oh-my-zsh，注意需要配置Meslo 字体，否则会乱码
+
+  Iterm2的配色可以好好看一下，目前用的**Solarized Dark Higher Contrast**配色
+  
+  Iterm2快捷键：
+  
+  ```bash
+  command + enter 进入与返回全屏模式
+  command + t 新建标签
+  command + w 关闭标签
+  command + 数字 command + 左右方向键    切换标签
+  command + enter 切换全屏
+  command + f 查找
+  command + d 水平分屏
+  command + shift + d 垂直分屏
+  command + option + 方向键 command + [ 或 command + ]    切换屏幕
+  command + ; 查看历史命令
+  command + shift + h 查看剪贴板历史
+  ctrl + u    清除当前行
+  ctrl + l    清屏
+  ctrl + a    到行首
+  ctrl + e    到行尾
+  ctrl + f/b  前进后退
+  ctrl + p    上一条命令
+  ctrl + r    搜索命令历史
+  ```
+  
+  
+  
+  
+  
+- 快捷键
+
+  新建终端		在当前窗口为终端情况下：ctrl + shift + n 
+
+  回到桌面		ctrl + win + d
+  
+  
+  
+- 命令
+
+  创建多级目录/文件夹    ``mkdir -p {路径}``
+  
+  查找文件``find / -name {文件名，可配合通配符} 2>/dev/null``
+  
+  
+  
+- mac相关
+  
+  **Homebrew**：是Mac OS 不可或缺的套件管理器。可以通过它安装软件，比如wget
+  
+  在当前窗口是终端时新建一个终端``command + t``
+  
+  在finder根目录中`command + shift + .`显示隐藏文件
+  
+  录屏：QuickTime player
+  
+  
+
+
 
 ## word技巧
 
@@ -617,122 +823,11 @@ function<int(int, int> add_2_num = bind(add_3_num, _1, _2, 0);
 
 
 
-## git
-
-所有的版本控制系统，只能跟踪文本文件的改动
-
-首先用git init 来在当前文件夹创建git的数据库，记录版本相关的东西
-
-在git里有三个区
-
-- 工作区：也就是我们直接改东西的地方，我们能看见的文件等
-
-- 暂存区：记录了一些工作区改变后的文件，如
-
-  git add将工作区改变/新增的文件加入暂存区，git add .会将工作区所有改变记入暂存区中
-
-  git rm将工作区文件删掉，并记录入暂存区
-
-  可理解为提交的文件修改通通放到暂存区，然后，一次性提交暂存区的所有修改
-
-- git仓库（分支）:也就是打游戏的各个存档
-
-  这三个区可以理解为三个同样的仓库，最终的存档需要先改到暂存区（git add XXX），再改到git仓库(git commit)
-
-
-
-git status查看状态
-
-git diff可以查看某个文件改变的内容 git diff HEAD -- readme.txt 可以查看工作区和版本库里面最新版本的区别 //QE TODO
-
-git log将显示git仓库中各个版本，就像查看游戏中的所有存档，HEAD指向当前版本
-
-git reset --hard XXX 便能回到XXX版本，XXX可以是sha值（不用写全），
-
-也可以是『HEAD~X』，X是一个数字，表示回到相对当前版本之前第X版本
-
-在回退后再查看git log发现退回来后的已看不到先进版本，
-
-好比从21世纪坐时光机来到了19世纪，想再回去已经回不去了
-
-git relog能够解决这个问题，显示所有的版本
-
-git checkout -- XXX 也就是让工作区该文件回到改变之前，也就是让暂存区版本倒灌进工作区（前提是上一个状态有备案，无论是git commit或git add）
-
-git reset HEAD XXX可以将暂存区回退到和分支一样。举例，有一个bug版本已经在本地写好并提交到暂存区，就可以需要用将暂存区覆盖，再用git checkout -- XXX
-
-让本地分支被远程分支XXX覆盖git fetch    ``git reset --hard origin/XXX``
-
-git rm XXX 删掉暂存区中的文件，如果本地（工作区）文件未删除也会一并被删掉
-
-- 一些显示提示
-
-『Changes to be committed』change需要提交的，也就是改变记录存在暂存区中的
-
-『Changes not staged for commit』更改没有步入（staged）提交（准备）的，也就是改变记录存在工作区的
-
-stage形容了从工作区步入暂存区
-
-
-
-```shell
-git remote add origin git@github.com:wanggaolang/test_for_git.git
-添加后，远程库的名字就是origin，这是Git默认的叫法，也可以改成别的，但是origin这个名字一看就知道是远程库
-git push -u origin master
-把本地库的内容推送到远程，用git push命令，实际上是把当前分支master推送到远程。
-
-由于远程库是空的，我们第一次推送master分支时，加上了-u参数，Git不但会把本地的master分支内容推送的远程新的master分支，还会把本地的master分支和远程的master分支关联起来，在以后的推送或者拉取时就可以简化命令。
-
----
-小结
-要关联一个远程库，使用命令git remote add origin git@server-name:path/repo-name.git；
-
-关联后，使用命令git push -u origin master第一次推送master分支的所有内容；
-
-此后，每次本地提交后，只要有必要，就可以使用命令git push origin master推送最新修改；
-```
-
-git clone git@server-name:path/repo-name.git克隆到本地，会将所有文件保存在仓库名文件夹中，也就是不用自己创建一个文件夹在clone，在主目录clone就行了
-
-
-
-- 分支相关
-
-  创建分支`` git branch ``XXX 会将HEAD指向的分支（一般也就是master分支）复制到XXX分支
-
-  删除分支XXX``git branch -d XXX``
-
-  查看所有分支（包括远程的）``git branch -a``，如果不加``- a``就是显示本地的分支，并标明自己在哪
-
-  将远程分支AAA与本地已有分支BBB与关联起来``git branch -u AAA BBB``
-
-  切换分支 ``git switch XXX``切换到XXX分支(或者是``git checkout XXX``)
-
-  可以用``git switch -c XXX``或者``git checkout -b XXX``创建并切入新分支
-
-  在本地创建分支XXX并与远程分支关联``git checkout -b XXX origin/XXX``
-
-  合并当前分支与XXX分支 ``git merge XXX`` 前提当前版本是XXX版本的子集或者相等
-
-  
-
-  如果在XXX分支中进行了改变，切回主分支，不做任何改动就merge，虽然两者内容冲突，但时间线上XXX更新，所以会将XXX的改变改过来，也就是master指针指向XXX
-
-  如果在XXX改了后切到master分支又改东西，即使两者都是添加新东西，在merge时，也会产生冲突，因为产生了两个时间线
-
-  可以用``git log --graph``看到分支合并图
-
-- 百度代码提交审核
-
-  git push origin HEAD:refs/for/master
-
-
-
 ## 终端shell快捷键
 
-ctrl + y 粘贴”命令行剪切板“
-
 ctrl + u 剪切一行命令，放入”命令行剪切板“
+
+ctrl + y 粘贴”命令行剪切板“
 
 
 
@@ -762,6 +857,15 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
 
 ## docker
 
+ **docker相关概念**
+
+镜像就是模板类；容器是对应模板的具象化（对象）
+
+
+
+
+
+
 - 查看ov相关的的容器
 
   docker ps -a | grep ov
@@ -778,6 +882,110 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
 
 
 
+
+
+
+
 ## photoshop
 
-- ctrl+alt复制图片时总是卡住，结局办法：控制面板-键盘-速度-调到最低
+- ctrl+alt复制图片时总是卡住，解决办法：
+
+  方法1：控制面板-键盘-速度-调到最低（不打管用）
+
+  方法2：任务管理器--关闭ps进程下的一些怀疑对象，卡住画面恢复
+
+
+
+
+
+
+
+
+
+## protobuf
+
+1、限定修饰符包含 required\optional\repeated 
+
+Required: 表示是一个必须字段，必须相对于发送方，在发送消息之前必须设置该字段的值，对于接收方，必须能够识别该字段的意思。发送之前没有设置required字段或者无法识别required字段都会引发编解码异常，导致消息被丢弃。
+
+Optional：表示是一个可选字段，可选对于发送方，在发送消息时，可以有选择性的设置或者不设置该字段的值。对于接收方，如果能够识别可选字段就进行相应的处理，如果无法识别，则忽略该字段，消息中的其它字段正常处理。---因为optional字段的特性，很多接口在升级版本中都把后来添加的字段都统一的设置为optional字段，这样老的版本无需升级程序也可以正常的与新的软件进行通信，只不过新的字段无法识别而已，因为并不是每个节点都需要新的功能，因此可以做到按需升级和平滑过渡。
+
+Repeated：表示该字段可以包含0~N个元素。其特性和optional一样，但是每一次可以包含多个值。可以看作是在传递一个数组的值。N 表示打包的字节并不是固定。而是根据数据的大小或者长度。
+
+2、可以将message理解为一个结构体，每个结构体有一定的 required\optional\repeated，对于某结构体的可选字段（Optional），会生成``{结构体对象名}.has_{可选字段名}``，函数返回bool；对于结构体的repeated字段，会生成``{结构体对象名}.{repeated对象名}_size()``，函数返回int
+
+
+
+## 压缩/解压文件
+
+```shell
+tar
+-c: 建立压缩档案
+-x：解压
+-t：查看内容
+-r：向压缩归档文件末尾追加文件
+-u：更新原压缩包中的文件
+
+这五个是独立的命令，压缩解压都要用到其中一个，可以和别的命令连用但只能用其中一个。下面的参数是根据需要在压缩或解压档案时可选的。
+
+-z：有gzip属性的
+-j：有bz2属性的
+-Z：有compress属性的
+-v：显示所有过程
+-O：将文件解开到标准输出
+
+下面的参数-f是必须的
+
+-f: 使用档案名字，切记，这个参数是最后一个参数，后面只能接档案名。
+
+# tar -cf all.tar *.jpg
+这条命令是将所有.jpg的文件打成一个名为all.tar的包。-c是表示产生新的包，-f指定包的文件名。
+
+# tar -rf all.tar *.gif
+这条命令是将所有.gif的文件增加到all.tar的包里面去。-r是表示增加文件的意思。
+
+# tar -uf all.tar logo.gif
+这条命令是更新原来tar包all.tar中logo.gif文件，-u是表示更新文件的意思。
+
+# tar -tf all.tar
+这条命令是列出all.tar包中所有文件，-t是列出文件的意思
+
+# tar -xf all.tar
+这条命令是解出all.tar包中所有文件，-x是解开的意思
+
+压缩
+tar –cvf jpg.tar *.jpg //将目录里所有jpg文件打包成tar.jpg
+tar –czf jpg.tar.gz *.jpg   //将目录里所有jpg文件打包成jpg.tar后，并且将其用gzip压缩，生成一个gzip压缩过的包，命名为jpg.tar.gz
+tar –cjf jpg.tar.bz2 *.jpg //将目录里所有jpg文件打包成jpg.tar后，并且将其用bzip2压缩，生成一个bzip2压缩过的包，命名为jpg.tar.bz2
+tar –cZf jpg.tar.Z *.jpg   //将目录里所有jpg文件打包成jpg.tar后，并且将其用compress压缩，生成一个umcompress压缩过的包，命名为jpg.tar.Z
+rar a jpg.rar *.jpg //rar格式的压缩，需要先下载rar for linux
+zip jpg.zip *.jpg //zip格式的压缩，需要先下载zip for linux
+
+解压
+tar –xvf file.tar //解压 tar包
+tar -xzvf file.tar.gz -C ~/test_for_all //将tar.gz或者tar.tgz解压到指定目录
+tar -xjvf file.tar.bz2   //解压 tar.bz2
+tar –xZvf file.tar.Z   //解压tar.Z
+unrar e file.rar //解压rar
+unzip file.zip //解压zip
+
+总结
+1、*.tar 用 tar –xvf 解压
+2、*.gz 用 gzip -d或者gunzip 解压
+3、*.tar.gz和*.tgz 用 tar –xzf 解压
+4、*.bz2 用 bzip2 -d或者用bunzip2 解压
+5、*.tar.bz2用tar –xjf 解压
+6、*.Z 用 uncompress 解压
+7、*.tar.Z 用tar –xZf 解压
+8、*.rar 用 unrar e解压
+9、*.zip 用 unzip 解压
+```
+
+
+
+## python相关
+
+- 一句话起http服务    ``python2 -m SimpleHTTPServer [端口，默认8000]``    or
+
+  ``python3 -m http.server [端口，默认8000]``
+

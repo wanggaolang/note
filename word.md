@@ -38,8 +38,14 @@ parse		解析
 
 merge		合并
 
-obsstacle		障碍物
+obstacle		障碍物
 
 lane		车道
 
+segment		分段
+
 pattern		模式
+
+fetch		取
+
+sequence		序列
