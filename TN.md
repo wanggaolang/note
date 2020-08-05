@@ -1,29 +1,56 @@
 ## 笔记规范
 
 - 要求易懂且简洁
-- 标题：一级用##，二级用黑点，三级用数字+中文顿号，四级用
-- 可选参数用英文中括号（[]）括起来，必要参数用大括号括起来
+- 标题：一级用##，二级用黑点，三级用数字+英文点（用空格后在typora上会自动向下拼加），四级用
+- 可选参数用英文中括号（[]）括起来，必要参数用大括号（{}）括起来
 - 在一个大的点或者一个一级标题结束后有个回车
 - 同一行内容间隔4空格
+- 有疑问的地方用QE标记，如果紧急在前面加三个@
 - 
 
 
 
 ## 常用规范
 
-- 在linux体系机器，如果是自己主机，临时文件放/test_for_all，提示文件放/readme
+- 在linux体系机器，临时文件放/test_for_all，提示文件放~/readme
 
-  如果是公共主机，/变为~
+  
 
   
 
 ##  git及github相关
 
+
+
+**概念**
+
+所有的版本控制系统，只能跟踪文本文件的改动
+
+首先用git init 来在当前文件夹创建git的数据库，记录版本相关的东西
+
+在git里有三个区
+
+- 工作区：也就是我们直接改东西的地方，我们能看见的文件等
+
+- 暂存区：记录了一些工作区改变后的文件，如
+
+  git add将工作区改变/新增的文件加入暂存区，git add .会将工作区所有改变记入暂存区中
+
+  git rm将工作区文件删掉，并记录入暂存区
+
+  可理解为提交的文件修改通通放到暂存区，然后，一次性提交暂存区的所有修改
+
+- git仓库（分支）:也就是打游戏的各个存档
+
+  这三个区可以理解为三个同样的仓库，最终的存档需要先改到暂存区（git add XXX），再改到git仓库(git commit)
+
+  
+
 将整个git分为4个仓库，在数据同步后可以理解为四个相同的文件夹：
 
 - 工作区：主机上看见的文件夹
 
-- 暂存区：提交一个版本是个严肃的事，先放暂存区，确认了再提交到
+- 暂存区：提交一个版本是个严肃的事，先放暂存区，确认了再提交到更上层
 
 - git本地仓库：也就是打游戏的各个存档
 - git远程仓库：远程版``git本地仓库``，为了方便联网和多人操作
@@ -38,6 +65,7 @@
 git init    //在当前文件夹建设git数据库，之后对当前文件夹及其子文件夹提交到比工作区更上层的仓库后，再变化工作区相关文件，就能够知道其变化
 git remote add orinin https://github.com/wanggaolang/test.git		//https方式添加远程仓库
 git remote add orinin git@{server_name,如“github.com”}:wanggaolang/test.git  //ssh方式添加远程仓库
+git remote set-url orinin {以上两种方式的远程仓库}    //以覆盖的放式添加远程仓库orinin，也就是说若orinin有则被覆盖
 git remote rm origin    //删掉远程仓库
 
 git push -u origin master    //在远程仓库创建master分支，并将当前分支git本地仓库上传上去
@@ -64,43 +92,17 @@ git pull
 所以，我常用的命令就是 git pull origin <远程仓库名>，操作简单，安全可控。
 
 二、push操作
-1、将本地当前分支 推送到 远程指定分支上（注意：pull是远程在前本地在后，push相反）：
+1、将指定分支推送到远程指定分支    ``git push origin {本地分支名}:{远程分支名}``
 
-git push origin <本地分支名>:<远程分支名>
-1
-2、将本地当前分支 推送到 与本地当前分支同名的远程分支上（注意：pull是远程在前本地在后，push相反）：
+2、将指定本地分支推送到同名远程分支    ``git push origin {本地分支名}``
 
-git push origin <本地分支名>
-1
-3、将本地当前分支 推送到 与本地当前分支同名的远程分支上(需先关联远程分支，方法见文章末尾)
+3、将本地当前分支 推送到 与远程同名分支上(需先关联远程分支，方法见文章末尾)    ``git push``
 
-git push
-1
 同样的，推荐使用第2种方式，git push origin <远程同名分支名>
 
-``cat .git/config``能看到本地与远程分支的关联关系
+``cat .git/config``看到本地与远程分支的关联关系
 
 ---
-
-所有的版本控制系统，只能跟踪文本文件的改动
-
-首先用git init 来在当前文件夹创建git的数据库，记录版本相关的东西
-
-在git里有三个区
-
-- 工作区：也就是我们直接改东西的地方，我们能看见的文件等
-
-- 暂存区：记录了一些工作区改变后的文件，如
-
-  git add将工作区改变/新增的文件加入暂存区，git add .会将工作区所有改变记入暂存区中
-
-  git rm将工作区文件删掉，并记录入暂存区
-
-  可理解为提交的文件修改通通放到暂存区，然后，一次性提交暂存区的所有修改
-
-- git仓库（分支）:也就是打游戏的各个存档
-
-  这三个区可以理解为三个同样的仓库，最终的存档需要先改到暂存区（git add XXX），再改到git仓库(git commit)
 
 
 
@@ -201,9 +203,7 @@ git clone git@server-name:path/repo-name.git克隆到本地，会将所有文件
 
 
 
-- 百度代码提交审核
 
-  git push origin HEAD:refs/for/master
 
 
 
@@ -215,7 +215,7 @@ git clone git@server-name:path/repo-name.git克隆到本地，会将所有文件
 
 
 
-## sqrt是开平方，pow(x,n)是N次方
+
 
 
 
@@ -360,17 +360,33 @@ Setting	--	Keymap
 
 
 
-## volatile
 
-volatile关键词影响编译器编译的结果，用volatile声明的变量表示该变量随时可能发生变化，与该变量有关的运算，不再编译优化，以免出错。
 
 
 
 ## 小知识（一）
 
 1. chrome快捷键：历史记录    ``ctrl + y``
-2. 类外定义成员函数不能加上默认参数，如：``Test fun(int a = 1)``会报错，同样static声明的成员在外部定义时候，必须省去static。同时，static成员变量只有跟了const才可以在类里面的初始化列表中进行初始化，其余的都要在类的外部初始化。
+
+2. 类外定义成员函数不能加上默认参数，如：``Test fun(int a = 1)``会报错，同样static声明的成员在外部定义时候，必须省去static。同时，static成员变量只有跟了const才可以在类里面的初始化列表中进行初始化，其余的都要在类的外部初始化
+
 3. string.find()和map.find()以及set.find()如果找不到目标，则结果为x.end()
+
+4. volatile关键词影响编译器编译的结果，用volatile声明的变量表示该变量随时可能发生变化，与该变量有关的运算，不再编译优化，以免出错
+
+5. 在linux中，默认c++的include位置为`/usr/include`
+
+6. `LD_LIBRARY_PATH`是Linux环境变量名，该环境变量主要用于指定查找共享库（动态链接库）时除了默认路径之外的其他路径
+
+   一般的用法为`export LD_LIBRARY_PATH={新添加地址}:$LD_LIBRARY_PATH`，放冒号左边表示先搜索
+   
+   动态链接库默认导入路径在linux中查看配置`/etc/ld.so.conf`
+   
+7. scp 从本地复制到远程    `scp [-r] {本地文件/夹} {remote_username@remote_ip:文件/夹} `
+
+   
+
+   
 
 
 
@@ -517,7 +533,7 @@ int main()
 
 > It is okay to write to a socket that has received a FIN, but it is an error to write to a socket that has received an RST
 
-## 浮点数大小	//EQ
+## 浮点数大小	//QE
 
 float：32位	1位符号位，8位指数位，23位尾数
 
@@ -690,6 +706,7 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
   Iterm2快捷键：
   
   ```bash
+  command + ，设置
   command + enter 进入与返回全屏模式
   command + t 新建标签
   command + w 关闭标签
@@ -730,15 +747,43 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
   
   
   
+- 权限
+  
+  chmod只是改变文件的读写、执行权限，更底层的属性控制是由chattr来改变的QE lsattr
+  
+  让文件不可删除`chattr +i {file/folder}`  
+  
+  
+  
+  
+  
 - mac相关
   
-  **Homebrew**：是Mac OS 不可或缺的套件管理器。可以通过它安装软件，比如wget
+  1. **Homebrew**：是Mac OS 不可或缺的套件管理器。可以通过它安装软件，比如wget
   
-  在当前窗口是终端时新建一个终端``command + t``
+     进入其目录    `cd "$(brew --repo)"`
   
-  在finder根目录中`command + shift + .`显示隐藏文件
+     换源:
   
-  录屏：QuickTime player
+     ```shell
+     //设置homebrew本身源：
+     cd "$(brew --repo)" && git remote set-url origin git://mirrors.ustc.edu.cn/brew.git
+     
+     //设置并更新formula源
+     cd "$(brew --repo)/Library/Taps/homebrew/homebrew-core" && git remote set-url origin git://mirrors.ustc.edu.cn/homebrew-core.git
+     
+     //使用中科大的bottles源：
+     echo 'export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.ustc.edu.cn/homebrew-bottles' >> ~/.bash_profile
+     
+     ```
+  
+     homebrew会将下载的软件统一安装在/usr/local/Cellar目录中
+  
+  2. 在当前窗口是终端时新建一个终端``command + t``
+  
+  3. 在finder根目录中`command + shift + .`显示隐藏文件
+  
+  4. 录屏：QuickTime player
   
   
 
@@ -843,9 +888,10 @@ windows 一般在 /c/Users/{用户名}/.ssh
 
 ## markdown(md)一些用法
 
-\`\`将正常的代码放这四个符号间会被凸显，以代码形式显示\`\`
-
-\*\*在这中间的字会加粗\*\*
+1. \`将正常的代码放这四个符号间会被凸显，以代码形式显示\`，左右两个这种引号也行
+2. *\*在这中间的字会加粗\*\*
+3. 在typora中数字+英文点+空格会让后续自动增加序号，如果要将两段序号（如123、12）合为一个（12345），进入typora编辑模式，将中间的空格之类的清除就行
+4. []右边放()会产生隐藏链接，点击中括号内容便转到链接
 
 
 
@@ -866,18 +912,15 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
 
 
 
-- 查看ov相关的的容器
+- 查看镜像    ``docker image ls``
+- 查看ov相关的的容器    ``docker ps -a | grep ov``
+- 启动某个容器    ``doeker start {containerID}``
 
-  docker ps -a | grep ov
+- 进入某个容器中    ``docker exec -it {containerID} /bin/bash``
 
-- 启动某个容器
+- 主机拷贝文件到容器    `docker cp {主机路径} {容器hash，如96f7f14e99ab}:{容器路径，末尾有/}`
 
-  doeker start {containerID}
-
-- 进入某个容器中
-
-  docker exec -it {containerID} /bin/bash
-
+  可以将前后路径对换，将容器文件拷贝到主机，如:    `docker cp 96f7f14e99ab:/www /tmp/`
 
 
 
@@ -912,7 +955,9 @@ Optional：表示是一个可选字段，可选对于发送方，在发送消息
 
 Repeated：表示该字段可以包含0~N个元素。其特性和optional一样，但是每一次可以包含多个值。可以看作是在传递一个数组的值。N 表示打包的字节并不是固定。而是根据数据的大小或者长度。
 
-2、可以将message理解为一个结构体，每个结构体有一定的 required\optional\repeated，对于某结构体的可选字段（Optional），会生成``{结构体对象名}.has_{可选字段名}``，函数返回bool；对于结构体的repeated字段，会生成``{结构体对象名}.{repeated对象名}_size()``，函数返回int
+2、可以将message理解为一个结构体，每个结构体有一定的 required\optional\repeated，对于某结构体的可选字段（Optional），会生成``{结构体对象名}.has_{可选字段名}``，函数返回bool；对于结构体的repeated字段，
+
+会生成``{结构体对象名}.{repeated对象名}_size()``，函数返回int
 
 
 
@@ -985,7 +1030,36 @@ unzip file.zip //解压zip
 
 ## python相关
 
-- 一句话起http服务    ``python2 -m SimpleHTTPServer [端口，默认8000]``    or
+教程看的[简明python教程](https://bop.mol.uno/07.basics.html)
 
-  ``python3 -m http.server [端口，默认8000]``
+一句话起http服务    ``python2 -m SimpleHTTPServer [端口，默认8000]``    or
+
+``python3 -m http.server [端口，默认8000]``
+
+- **语法**
+
+  1. 单引号和双引号效果一样，三引号里可以放前两者，让他们显示出来
+
+  2. 格式化
+
+     ```python
+     age = 20
+     name = 'Swaroop'
+     print('{0} was {1} years old when he wrote this book'.format(name, age))
+     
+     # 对于浮点数 '0.333' 保留小数点(.)后三位
+   print('{0:.3f}'.format(1.0/3))
+     # 使用下划线填充文本，并保持文字处于中间位置
+     # 使用 (^) 定义 '___hello___'字符串长度为 11
+     print('{0:_^11}'.format('hello'))
+     # 基于关键词输出 'Swaroop wrote A Byte of Python'  并去除最后的换行
+     print('{name} wrote {book}'.format(name='Swaroop', book='A Byte of Python'), end = '')
+     
+     ```
+  
+  3. 转义字符，与c类似，核心的有：``\t``    ``\n``    ``\"``    注意单纯的\会将上下两行代码拼接
+  
+  4. 整除`//`    且`and`    或`or`    非`not`
+  
+  5. 
 
