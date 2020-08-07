@@ -1,6 +1,6 @@
-duration		持续时间
+​		
 
-simulation		模拟
+​		
 
 expired		已过期
 
@@ -50,7 +50,15 @@ fetch		取
 
 sequence		序列
 
-| indent | 缩进 |
-| :----: | :--: |
-|        |      |
+|   indent   |   缩进   |
+| :--------: | :------: |
+|  duration  | 持续时间 |
+| simulation |   模拟   |
+|            |          |
+|            |          |
+|            |          |
+|            |          |
+|            |          |
+|            |          |
+|            |          |
 

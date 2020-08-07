@@ -70,35 +70,25 @@ git remote rm origin    //删掉远程仓库
 
 git push -u origin master    //在远程仓库创建master分支，并将当前分支git本地仓库上传上去
 git push -f    //强制让远程关联分支的git远程仓库被本地覆盖
-
+ssh -T git@github.com    //测试与github联通性
 ```
 
 
 
-一、pull操作
-1、将远程指定分支 拉取到 本地指定分支上：
+- pull操作
 
-git pull origin <远程分支名>:<本地分支名>
-1
-2、将远程指定分支 拉取到 本地当前分支上：
+1. 将远程指定分支拉取到本地指定分支上    `git pull origin {远程分支名}[:{本地分支名}，如果不要就是拉取到本地当前分支]`
 
-git pull origin <远程分支名>
-1
-3、将与本地当前分支同名的远程分支 拉取到 本地当前分支上(需先关联远程分支，方法见文章末尾)
+2. 将与本地当前分支同名的远程分支 拉取到 本地当前分支上(需先关联远程分支，方法见文章末尾)    `git pull`
 
-git pull
-1
-在克隆远程项目的时候，本地分支会自动与远程仓库建立追踪关系，可以使用默认的origin来替代远程仓库名，
-所以，我常用的命令就是 git pull origin <远程仓库名>，操作简单，安全可控。
+- push操作
+  1、将指定分支推送到远程指定分支    ``git push origin {本地分支名}:{远程分支名}``
 
-二、push操作
-1、将指定分支推送到远程指定分支    ``git push origin {本地分支名}:{远程分支名}``
+  2、将指定本地分支推送到同名远程分支    ``git push origin {本地分支名}``
 
-2、将指定本地分支推送到同名远程分支    ``git push origin {本地分支名}``
+  3、将本地当前分支 推送到 与远程同名分支上(需先关联远程分支，方法见文章末尾)    ``git push``
 
-3、将本地当前分支 推送到 与远程同名分支上(需先关联远程分支，方法见文章末尾)    ``git push``
-
-同样的，推荐使用第2种方式，git push origin <远程同名分支名>
+同样的，推荐使用第2种方式，git push origin <远程同名分支名>QE
 
 ``cat .git/config``看到本地与远程分支的关联关系
 
@@ -132,7 +122,7 @@ git reset HEAD XXX可以将暂存区回退到和git仓库当前版本一样。�
 
 git rm XXX 删掉暂存区中的文件，如果本地（工作区）文件未删除也会一并被删掉
 
-- 一些显示提示
+- 如何查看`git status`的提示
 
 『Changes to be committed』change需要提交的，也就是改变记录存在暂存区中的
 
@@ -215,10 +205,6 @@ git clone git@server-name:path/repo-name.git克隆到本地，会将所有文件
 
 
 
-
-
-
-
 ## 重载<<运算符示例
 
  ```c++
@@ -267,7 +253,7 @@ git clone git@server-name:path/repo-name.git克隆到本地，会将所有文件
 
 
 
-##6. 常见c语言函数
+## 常见c语言函数
 
 ```c
 	void *memcpy(void *dest, const void *src, size_t n)
@@ -360,7 +346,25 @@ Setting	--	Keymap
 
 
 
+## c++相关
 
+1. 在有派生类时各构造函数和析构函数调用顺序
+
+   构造函数顺序：基类构造函数、对象成员构造函数、派生类本身的构造函数 
+
+   析构函数顺序：派生类本身的析构函数、对象成员析构函数、基类析构函数（与构造顺序正好相反）
+
+
+
+
+
+## 设计模式
+
+1. 观察者模式
+
+   ​	场景为有一个通知者和多个观察者，在通知者发生或发现某种变化时，挨个通知每个观察者。实现上说白了就是在通知者内部保存一个可调用对象的list，设置一个通知函数来依次调用每个可调用对象，该list可以动态增加减少。当然在通知者内部也可以是一个对象队列，通知函数为调用每个对象的update函数。反正核心就是有可调用对象的队列在通知者里面。由于计算机语言的限制，大部分语言实现上该可调用对象list的每一个都是有同样的参数列表和返回值，不然无法将一堆不同的可调用对象放在同一个list里面。
+
+   ​	注意在多线程中如果一个线程往list添加可调用对象，一个线程负责在发生事件调用通知函数（也许这个事件只发生一次，所以希望在调用通知程序前所有可调用对象已加入），就可能涉及竞争问题。好的做法是把增加操作和调用通知程序放在同一个线程中
 
 
 
@@ -878,9 +882,9 @@ ctrl + y 粘贴”命令行剪切板“
 
 ## ssh rsa key
 
-通过``ssh-keygen -t rsa``生成rsa密钥对
+通过`ssh-keygen -t rsa`生成rsa密钥对
 
-在Linux体系存储位置为``~/.ssh``
+在Linux体系存储位置为`~/.ssh`
 
 windows 一般在 /c/Users/{用户名}/.ssh
 
@@ -1000,7 +1004,8 @@ tar
 
 压缩
 tar –cvf jpg.tar *.jpg //将目录里所有jpg文件打包成tar.jpg
-tar –czf jpg.tar.gz *.jpg   //将目录里所有jpg文件打包成jpg.tar后，并且将其用gzip压缩，生成一个gzip压缩过的包，命名为jpg.tar.gz
+tar zcf jpg.tar.gz *.jpg   //将所有jpg后缀文件压缩为一个gz压缩包
+tar zcf cg.tgz ./*    //将所有文件压缩为tgz文件（参数可以记为“政策房”，将零散的村落打包压缩在一起）
 tar –cjf jpg.tar.bz2 *.jpg //将目录里所有jpg文件打包成jpg.tar后，并且将其用bzip2压缩，生成一个bzip2压缩过的包，命名为jpg.tar.bz2
 tar –cZf jpg.tar.Z *.jpg   //将目录里所有jpg文件打包成jpg.tar后，并且将其用compress压缩，生成一个umcompress压缩过的包，命名为jpg.tar.Z
 rar a jpg.rar *.jpg //rar格式的压缩，需要先下载rar for linux
@@ -1015,9 +1020,10 @@ unrar e file.rar //解压rar
 unzip file.zip //解压zip
 
 总结
+加压解压都可以加v参数看中间过程
 1、*.tar 用 tar –xvf 解压
 2、*.gz 用 gzip -d或者gunzip 解压
-3、*.tar.gz和*.tgz 用 tar –xzf 解压
+3、*.tar.gz和*.tgz 用 tar –xzf 解压（参数几位“想做饭”，将米煮成饭，就膨胀了，也就是解压缩）
 4、*.bz2 用 bzip2 -d或者用bunzip2 解压
 5、*.tar.bz2用tar –xjf 解压
 6、*.Z 用 uncompress 解压
@@ -1061,5 +1067,15 @@ unzip file.zip //解压zip
   
   4. 整除`//`    且`and`    或`or`    非`not`
   
-  5. 
+  5. 可以在while后面接else
+
+
+
+- 多线程
+
+  1. 多线程相关QE
+
+  2. 线程池
+
+     [不错的讲解](http://c.biancheng.net/view/2627.html)
 
