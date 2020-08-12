@@ -54,7 +54,7 @@ sequence		序列
 | :--------: | :------: |
 |  duration  | 持续时间 |
 | simulation |   模拟   |
-|            |          |
+|   agile    |   敏捷   |
 |            |          |
 |            |          |
 |            |          |

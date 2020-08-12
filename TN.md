@@ -1,12 +1,11 @@
 ## 笔记规范
 
 - 要求易懂且简洁
-- 标题：一级用##，二级用黑点，三级用数字+英文点（用空格后在typora上会自动向下拼加），四级用
+- 标题：一级用##，二级用黑点，三级用数字+英文点（用空格后在typora上会自动向下拼加），四级用二级黑点，五级用数字+英文点
 - 可选参数用英文中括号（[]）括起来，必要参数用大括号（{}）括起来
-- 在一个大的点或者一个一级标题结束后有个回车
+- 在一大段论述或者一个一级标题内容结束后有个回车
 - 同一行内容间隔4空格
-- 有疑问的地方用QE标记，如果紧急在前面加三个@
-- 
+- 有疑问的地方用QE标记，如果紧急在前面加三个$$$
 
 
 
@@ -14,37 +13,25 @@
 
 - 在linux体系机器，临时文件放/test_for_all，提示文件放~/readme
 
-  
+- 代码注释
 
+  维护代码时，在原来代码上基于新需求增加或修改代码，要备注来自第几个新需求，备注方法为`//{新需求的顺序id}`
+
+  ​	如第一个需求注释为`//+++01`
+  
+  如果只是对原来代码做一些改动，如打印调试信息，注释为`//@@@`
+  
+  如果是很重要的地方`//$$$`    正在view的地方`//$$$$`
+  
   
 
 ##  git及github相关
 
-
-
 **概念**
 
-所有的版本控制系统，只能跟踪文本文件的改动
+注意所有的版本控制系统，只能跟踪文本文件的改动
 
-首先用git init 来在当前文件夹创建git的数据库，记录版本相关的东西
-
-在git里有三个区
-
-- 工作区：也就是我们直接改东西的地方，我们能看见的文件等
-
-- 暂存区：记录了一些工作区改变后的文件，如
-
-  git add将工作区改变/新增的文件加入暂存区，git add .会将工作区所有改变记入暂存区中
-
-  git rm将工作区文件删掉，并记录入暂存区
-
-  可理解为提交的文件修改通通放到暂存区，然后，一次性提交暂存区的所有修改
-
-- git仓库（分支）:也就是打游戏的各个存档
-
-  这三个区可以理解为三个同样的仓库，最终的存档需要先改到暂存区（git add XXX），再改到git仓库(git commit)
-
-  
+首先用`git init `来在当前文件夹创建git的数据库，记录版本相关的东西
 
 将整个git分为4个仓库，在数据同步后可以理解为四个相同的文件夹：
 
@@ -55,7 +42,7 @@
 - git本地仓库：也就是打游戏的各个存档
 - git远程仓库：远程版``git本地仓库``，为了方便联网和多人操作
 
-而多一个分支，表明多了一份``大仓库``，也就是四个上方所述仓库。
+而多一个分支，表明多了一份”大仓库“，也就是四个上方所述仓库。
 
 
 
@@ -63,6 +50,7 @@
 
 ``` shell
 git init    //在当前文件夹建设git数据库，之后对当前文件夹及其子文件夹提交到比工作区更上层的仓库后，再变化工作区相关文件，就能够知道其变化
+//添加远程仓库有以下两种方式，添加后，远程库的名字就是origin，这是Git默认的叫法，也可以改成别的，但是origin这个名字一看就知道是远程库
 git remote add orinin https://github.com/wanggaolang/test.git		//https方式添加远程仓库
 git remote add orinin git@{server_name,如“github.com”}:wanggaolang/test.git  //ssh方式添加远程仓库
 git remote set-url orinin {以上两种方式的远程仓库}    //以覆盖的放式添加远程仓库orinin，也就是说若orinin有则被覆盖
@@ -131,23 +119,6 @@ git rm XXX 删掉暂存区中的文件，如果本地（工作区）文件未删
 stage形容了从工作区步入暂存区
 
   
-
-```shell
-git remote add origin git@github.com:wanggaolang/test_for_git.git
-添加后，远程库的名字就是origin，这是Git默认的叫法，也可以改成别的，但是origin这个名字一看就知道是远程库
-git push -u origin master
-把本地库的内容推送到远程，用git push命令，实际上是把当前分支master推送到远程。
-
-由于远程库是空的，我们第一次推送master分支时，加上了-u参数，Git不但会把本地的master分支内容推送的远程新的master分支，还会把本地的master分支和远程的master分支关联起来，在以后的推送或者拉取时就可以简化命令。
-
----
-小结
-要关联一个远程库，使用命令git remote add origin git@server-name:path/repo-name.git；
-
-关联后，使用命令git push -u origin master第一次推送master分支的所有内容；
-
-此后，每次本地提交后，只要有必要，就可以使用命令git push origin master推送最新修改；
-```
 
 git clone git@server-name:path/repo-name.git克隆到本地，会将所有文件保存在仓库名文件夹中，也就是不用自己创建一个文件夹在clone，在主目录clone就行了
 
@@ -752,15 +723,23 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
   
   
 - 权限
-  
+
   chmod只是改变文件的读写、执行权限，更底层的属性控制是由chattr来改变的QE lsattr
-  
+
   让文件不可删除`chattr +i {file/folder}`  
+
   
+
+- 命令别名
+
+  将一个长命令起一个别名，变为短命令    `alias {新命令}="{老命令}"`
+
+  查看有哪些起了别名的命令    `alias`
+
   
+
   
-  
-  
+
 - mac相关
   
   1. **Homebrew**：是Mac OS 不可或缺的套件管理器。可以通过它安装软件，比如wget
@@ -878,7 +857,21 @@ ctrl + u 剪切一行命令，放入”命令行剪切板“
 
 ctrl + y 粘贴”命令行剪切板“
 
+查看当前文件夹文件数量（子文件夹算1文件）    `ls | wc -w`
 
+
+
+## vim
+
+- 快捷键模式
+
+  全选:    `ggVG`    一行行选择`V`，一个个光标单位选择`v`
+
+  将选择的复制`y`，粘贴`p`
+
+  - 光标移动
+    1. 到行尾:`$`    到下一行行尾:`2$`    到从当前行算起第n行行尾:`n$`
+    2. 到行首:`0`
 
 ## ssh rsa key
 
@@ -959,9 +952,13 @@ Optional：表示是一个可选字段，可选对于发送方，在发送消息
 
 Repeated：表示该字段可以包含0~N个元素。其特性和optional一样，但是每一次可以包含多个值。可以看作是在传递一个数组的值。N 表示打包的字节并不是固定。而是根据数据的大小或者长度。
 
-2、可以将message理解为一个结构体，每个结构体有一定的 required\optional\repeated，对于某结构体的可选字段（Optional），会生成``{结构体对象名}.has_{可选字段名}``，函数返回bool；对于结构体的repeated字段，
+2、可以将message理解为一个结构体，每个结构体有一定的 required\optional\repeated，对于某结构体的可选字段（Optional），会生成`{结构体对象名}.has_{Optional成员名字}`，函数返回bool；对于结构体的repeated字段，
 
 会生成``{结构体对象名}.{repeated对象名}_size()``，函数返回int
+
+对于Required和Optional成员，如果存在，可以通过{message，对象承接的名字}.{成员名字}()来获取
+
+而对于Repeated成员，需要通过{message，对象承接的名字}.{成员名字}(index，int类型)
 
 
 
@@ -1023,7 +1020,7 @@ unzip file.zip //解压zip
 加压解压都可以加v参数看中间过程
 1、*.tar 用 tar –xvf 解压
 2、*.gz 用 gzip -d或者gunzip 解压
-3、*.tar.gz和*.tgz 用 tar –xzf 解压（参数几位“想做饭”，将米煮成饭，就膨胀了，也就是解压缩）
+3、*.tar.gz和*.tgz 用 tar –xzf 解压（参数几位“香樟房”，散开的叶子这么多，也就是解压缩）
 4、*.bz2 用 bzip2 -d或者用bunzip2 解压
 5、*.tar.bz2用tar –xjf 解压
 6、*.Z 用 uncompress 解压
@@ -1037,6 +1034,8 @@ unzip file.zip //解压zip
 ## python相关
 
 教程看的[简明python教程](https://bop.mol.uno/07.basics.html)
+
+python中所有都可看做对象，如变量，函数，类，类的对象
 
 一句话起http服务    ``python2 -m SimpleHTTPServer [端口，默认8000]``    or
 
@@ -1054,7 +1053,7 @@ unzip file.zip //解压zip
      print('{0} was {1} years old when he wrote this book'.format(name, age))
      
      # 对于浮点数 '0.333' 保留小数点(.)后三位
-   print('{0:.3f}'.format(1.0/3))
+      print('{0:.3f}'.format(1.0/3))
      # 使用下划线填充文本，并保持文字处于中间位置
      # 使用 (^) 定义 '___hello___'字符串长度为 11
      print('{0:_^11}'.format('hello'))
@@ -1062,14 +1061,37 @@ unzip file.zip //解压zip
      print('{name} wrote {book}'.format(name='Swaroop', book='A Byte of Python'), end = '')
      
      ```
-  
+
   3. 转义字符，与c类似，核心的有：``\t``    ``\n``    ``\"``    注意单纯的\会将上下两行代码拼接
-  
+
   4. 整除`//`    且`and`    或`or`    非`not`
-  
+
   5. 可以在while后面接else
 
+  6. **imoport 模块**
 
+     将模块理解为一个.py的文件，每次导入该文件都是原地执行了一次该文件
+
+     可以通过`__name__ == '__main__'`的值判断对当前文件的执行是真正的运行这个文件还是被当模块导入时顺带执行
+
+     通过`from {模块名} import {变量名}`语句可以在当前文件直接使用变量，而不用使用`{模块名}.{变量名}`
+
+  7. dir({模块/对象名})
+
+     返回该模块/对象内部的对象，也就是变量，函数，类，类的对象等等
+
+  8. del {对象名}
+
+     可理解为调用了该对象析构函数，后续不能使用该对象
+  
+  9. 类
+  
+     @
+  
+  
+  
+
+​     
 
 - 多线程
 
@@ -1078,4 +1100,20 @@ unzip file.zip //解压zip
   2. 线程池
 
      [不错的讲解](http://c.biancheng.net/view/2627.html)
+
+
+
+## expect脚本
+
+if {$value eq "abc"} {XXX}    注意大括号的左括号左边要有空格，右括号右边要有空格
+
+中途退出    `exit`
+
+spawn
+
+echo  QE
+
+
+
+## 厨房
 
