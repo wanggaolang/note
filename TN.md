@@ -63,6 +63,11 @@ ssh -T git@github.com    //测试与github联通性
 
 
 
+**各个仓库的常规流动**
+
+1. 查看前三个仓库间的未提交状况:`git status`
+2. 
+
 - pull操作
 
 1. 将远程指定分支拉取到本地指定分支上    `git pull origin {远程分支名}[:{本地分支名}，如果不要就是拉取到本地当前分支]`
@@ -82,31 +87,35 @@ ssh -T git@github.com    //测试与github联通性
 
 ---
 
+**仓库间之间和仓库内部版本的回滚**
+
+- 从`git本地仓库`回滚某次提交（commit）到`工作区`
+
+  `git reset --hard {某次commit}`    该命令使工作区回滚到指定的一次commit，这个参数可以是sha值（不用写全），
+
+  也可以是:`HEAD~{数字}`，表示回到相对当前版本之前上多少个版本
+
+  ？git reset HEAD {文件名}
+
+  在回退后再查看git log发现退回来后的已看不到先进版本，
+
+  好比从21世纪坐时光机来到了19世纪，想再回去已经回不去了
+
+  `git reflog`能够解决这个问题，显示所有的版本
+
+  
 
 
-git status查看状态
-
-git diff可以查看某个文件改变的内容 git diff HEAD -- readme.txt 可以查看工作区和版本库里面最新版本的区别 //QE TODO
 
 git log将显示git仓库中各个版本，就像查看游戏中的所有存档，HEAD指向当前版本
 
-git reset --hard XXX 便能回到XXX版本，XXX可以是sha值（不用写全），
 
-也可以是『HEAD~X』，X是一个数字，表示回到相对当前版本之前第X版本
-
-？git reset HEAD {文件名}
-
-在回退后再查看git log发现退回来后的已看不到先进版本，
-
-好比从21世纪坐时光机来到了19世纪，想再回去已经回不去了
-
-git relog能够解决这个问题，显示所有的版本
 
 git checkout -- XXX 也就是让暂存区版本倒灌进工作区
 
 git reset HEAD XXX可以将暂存区回退到和git仓库当前版本一样。举例，有一个bug版本已经在本地写好并提交到暂存区，就可以需要用将暂存区覆盖，再用git checkout -- XXX
 
-让本地分支被远程分支XXX覆盖git fetch    ``git reset --hard origin/XXX``
+让本地分支被远程分支XXX覆盖   `git reset --hard origin/XXX`    QE 描述有问题样
 
 git rm XXX 删掉暂存区中的文件，如果本地（工作区）文件未删除也会一并被删掉
 
@@ -118,11 +127,11 @@ git rm XXX 删掉暂存区中的文件，如果本地（工作区）文件未删
 
 stage形容了从工作区步入暂存区
 
-  
+  在键入`git commit -m {消息}`后想修改消息通过`git commit --amend`命令
 
 git clone git@server-name:path/repo-name.git克隆到本地，会将所有文件保存在仓库名文件夹中，也就是不用自己创建一个文件夹在clone，在主目录clone就行了
 
-
+git fetch QE
 
 - 分支相关
 
@@ -156,9 +165,15 @@ git clone git@server-name:path/repo-name.git克隆到本地，会将所有文件
   
   可以用``git log --graph``看到分支合并图
 
+- 杂项
 
+  `git diff [多个参数]`    
 
-​	
+  ​	比较当前工作区与暂存区区别:`git diff`
+
+  ​	比较俩commit区别:`git diff {第1个commit的sha值} {第2个commit的sha值}`
+
+  ​	比较本地git仓库和远端区别:`git diff origin`
 
 
 
@@ -950,11 +965,13 @@ Required: 表示是一个必须字段，必须相对于发送方，在发送消�
 
 Optional：表示是一个可选字段，可选对于发送方，在发送消息时，可以有选择性的设置或者不设置该字段的值。对于接收方，如果能够识别可选字段就进行相应的处理，如果无法识别，则忽略该字段，消息中的其它字段正常处理。---因为optional字段的特性，很多接口在升级版本中都把后来添加的字段都统一的设置为optional字段，这样老的版本无需升级程序也可以正常的与新的软件进行通信，只不过新的字段无法识别而已，因为并不是每个节点都需要新的功能，因此可以做到按需升级和平滑过渡。
 
-Repeated：表示该字段可以包含0~N个元素。其特性和optional一样，但是每一次可以包含多个值。可以看作是在传递一个数组的值。N 表示打包的字节并不是固定。而是根据数据的大小或者长度。
+Repeated：表示该字段可以包含0~N个元素。其特性和optional一样，但是每一次可以包含多个值。可以看作是在传递一个数组的值。N 表示打包的字节并不是固定。而是根据数据的大小或者长度。对于结构体的repeated字段，会生成
 
-2、可以将message理解为一个结构体，每个结构体有一定的 required\optional\repeated，对于某结构体的可选字段（Optional），会生成`{结构体对象名}.has_{Optional成员名字}`，函数返回bool；对于结构体的repeated字段，
+``{结构体对象名}.{repeated对象名}_size()``，函数返回int。如果想取出某个index对应的单位:   
 
-会生成``{结构体对象名}.{repeated对象名}_size()``，函数返回int
+ `{结构体对象名}.{repeated对象名}({index})`
+
+2、可以将message理解为一个结构体，每个结构体有一定的 required\optional\repeated，对于某结构体的可选字段（Optional），会生成`{结构体对象名}.has_{Optional成员名字}`，函数返回bool；
 
 对于Required和Optional成员，如果存在，可以通过{message，对象承接的名字}.{成员名字}()来获取
 
@@ -1086,7 +1103,7 @@ python中所有都可看做对象，如变量，函数，类，类的对象
   
   9. 类
   
-     @
+     @classmethod和@staticmethod一个是类方法，一个叫静态方法。其实都可以理解为c++的类静态函数。这两者的区别是前者第一个参数声明为cls，意为类本身，实际调用不需要带上它。
   
   
   
