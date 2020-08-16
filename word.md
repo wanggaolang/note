@@ -46,18 +46,18 @@ segment		分段
 
 pattern		模式
 
-fetch		取
+​		
 
-sequence		序列
+​		
 
 |   indent   |   缩进   |
 | :--------: | :------: |
 |  duration  | 持续时间 |
 | simulation |   模拟   |
 |   agile    |   敏捷   |
-|            |          |
-|            |          |
-|            |          |
+|  summary   |   总结   |
+|  sequence  |   序列   |
+|   fetch    |    取    |
 |            |          |
 |            |          |
 |            |          |
