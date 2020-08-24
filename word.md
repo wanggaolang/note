@@ -1,54 +1,42 @@
-​		
 
-​		
 
-expired		已过期
+| notify  | 通知/告知 |
+| :-----: | :-------: |
+|  query  |   查询    |
+| expired |  已过期   |
+| sample  |   样品    |
+|         |           |
+|         |           |
+|         |           |
+|         |           |
+|         |           |
+|         |           |
 
-query		查询
 
-notify		通知/告知
 
-wrapper		包装纸
+| presentation |  介绍  |
+| :----------: | :----: |
+|   progress   |  进展  |
+|  attribute   |  属性  |
+|    valid     |  有效  |
+|    chart     |  图表  |
+|   property   |  属性  |
+|    async     | 异步的 |
+|    batch     |  批量  |
+|  component   |  零件  |
+|   wrapper    | 包装纸 |
 
-component		零件
-
-batch		批量
-
-async		异步的
-
-property		属性
-
-chart		图表 
-
-valid		有效
-
-attribute		属性
-
-progress		进展
-
-presentation		介绍
-
-Expected		预期
-
-dependent		依赖的
-
-element		元件/元素
-
-parse		解析
-
-merge		合并
-
-obstacle		障碍物
-
-lane		车道
-
-segment		分段
-
-pattern		模式
-
-​		
-
-​		
+|    lane    |   车道    |
+| :--------: | :-------: |
+|  obstacle  |  障碍物   |
+|   merge    |   合并    |
+|   parse    |   解析    |
+|  element   | 元件/元素 |
+| dependent  |  依赖的   |
+|  expected  |   预期    |
+|  vertical  |   垂直    |
+| horizontal |  水平的   |
+|  constant  |   不变    |
 
 |   indent   |   缩进   |
 | :--------: | :------: |
@@ -58,7 +46,7 @@ pattern		模式
 |  summary   |   总结   |
 |  sequence  |   序列   |
 |   fetch    |    取    |
-|            |          |
-|            |          |
-|            |          |
+| interpret  |   解释   |
+|  pattern   |   模式   |
+|  segment   |   分段   |
 
