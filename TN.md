@@ -25,7 +25,7 @@
   
   
 
-##  git及github相关
+##  git相关及github相关
 
 **概念**
 
@@ -127,7 +127,7 @@ git fetch QE
 
 - 分支相关
 
-  1、创建分支``git branch {新分支名}``    新分支复刻当前分支，并且HEAD指针，也就是当前工作区的分支导向不变
+  1、创建分支``git branch {新分支名}``    新分支复刻当前分支，并且HEAD指针，也就是当前工作区指向的分支仍为原来分支
 
   2、切换分支``git checkout {分支名}``
 
@@ -166,6 +166,17 @@ git fetch QE
   ​	比较俩commit区别:`git diff {第1个commit的sha值} {第2个commit的sha值}`
 
   ​	比较本地git仓库和远端区别:`git diff origin`
+  
+  解决`git diff`中文文件名乱码问题：
+  
+  ```shell
+  $ git config --global core.quotepath false          # 显示 status 编码
+  $ git config --global gui.encoding utf-8            # 图形界面编码
+  $ git config --global i18n.commit.encoding utf-8    # 提交信息编码
+  $ git config --global i18n.logoutputencoding utf-8  # 输出 log 编码
+  ```
+  
+  
 
 ## 内存操作的小技巧 
 
@@ -278,7 +289,7 @@ Setting	--	Keymap
 
 光标到下一个光标：搜索forward	
 
-## vscode
+## vscode相关
 
 **快捷键**
 
@@ -293,6 +304,8 @@ Setting	--	Keymap
 当前文档打开终端:    `control + ~`    或者 查看-终端
 
 到大括号的尾端/首部:    `Ctrl + Shift+\`
+
+删除光标行：`ctrl+shift+k`
 
 **三个配置文件**
 
@@ -361,9 +374,9 @@ Setting	--	Keymap
 
 6. `LD_LIBRARY_PATH`是Linux环境变量名，该环境变量主要用于指定查找共享库（动态链接库）时除了默认路径之外的其他路径
 
-   一般的用法为`export LD_LIBRARY_PATH={新添加地址}:$LD_LIBRARY_PATH`，放冒号左边表示先搜索
+   一般的用法为`export LD_LIBRARY_PATH={新添加地址}:$LD_LIBRARY_PATH`，放冒号左边表示先搜索。这是临时性的，退出shell再进就没了
    
-   动态链接库默认导入路径在linux中查看配置`/etc/ld.so.conf`
+   动态链接库默认导入路径在linux中查看配置`/etc/ld.so.conf`，可以将路径写入配置，再用`ldconfig`载入，永久生效。
    
 7. scp 从本地复制到远程    `scp [-r] {本地文件/夹} {remote_username@remote_ip:文件/夹} `
 
@@ -686,6 +699,12 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
 
   Iterm2的配色可以好好看一下，目前用的**Solarized Dark Higher Contrast**配色
   
+  为了让多用户都使用同样的配置，要将`~/.zshrc`复制到每个用户下
+  
+  通过历史记录自动补全`pip install powerline-status`
+  
+  插件配置（位于~/.zshrc）：`plugins=(git zsh-autosuggestions extract zsh-syntax-highlighting z)`
+  
   Iterm2快捷键：
   
   ```bash
@@ -859,7 +878,7 @@ function<int(int, int> add_2_num = bind(add_3_num, _1, _2, 0);
 
 
 
-## 终端shell快捷键
+## 终端shell相关
 
 ctrl + u 剪切一行命令，放入”命令行剪切板“
 
@@ -867,9 +886,23 @@ ctrl + y 粘贴”命令行剪切板“
 
 查看当前文件夹文件数量（子文件夹算1文件）    `ls | wc -w`
 
+`| awk '{print $1}'`    （注意是单引号）将每一行中以空格为分割符的第一个字段打印出来
+
+`| xargs`    将多行合并到一行，以空格分割
+
+查看某个端口的tcp状态：`netstat -antop | grep {portID}`
+
+改变当前用户默认shell：`chsh`
 
 
-## vim
+
+## shell编程
+
+
+
+
+
+## vim相关
 
 - 快捷键模式
 
@@ -906,9 +939,9 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
 
 
 
-## docker
+## docker相关
 
- **docker相关概念**
+ **docker概念**
 
 镜像就是模板类；容器是对应模板的具象化（对象）
 
@@ -917,15 +950,21 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
 
 
 
-- 查看镜像    ``docker image ls``
-- 查看ov相关的的容器    ``docker ps -a | grep ov``
+- 查看镜像    ``docker image ls``或者`docker images`
+
+- 查看ov相关的的容器，前面显示所有容器    ``docker ps -a | grep ov``
+
 - 启动某个容器    ``doeker start {containerID}``
 
 - 进入某个容器中    ``docker exec -it {containerID} /bin/bash``
 
-- 主机拷贝文件到容器    `docker cp {主机路径} {容器hash，如96f7f14e99ab}:{容器路径，末尾有/}`
+- 主机和容器间文件的拷贝
 
-  可以将前后路径对换，将容器文件拷贝到主机，如:    `docker cp 96f7f14e99ab:/www /tmp/`
+  主机拷贝文件到容器    `docker cp {主机路径} {容器hash，如96f7f14e99ab}:{容器路径，末尾有/}`
+  
+  将容器文件拷贝到主机，如:    `docker cp 96f7f14e99ab:/www /tmp/`
+  
+- 删除容器：`docker rm {containerID}`
 
 
 
@@ -1055,7 +1094,7 @@ unzip file.zip //解压zip
 
 
   4. 在同时安装了python2和python3时使用pip安装第三方库会产生歧义，要指定具体哪个python的pip安装可以用一下方法`{python版本:python2或python3} -m pip install {第三方库名}`
-  5. 
+  5. 在Python的string前面加上‘r’， 是为了告诉编译器这个string是个raw string，不要转意backslash '\' 。 例如，\n 在raw string中，是两个字符，\和n， 而不会转意为换行符。由于正则表达式和 \ 会有冲突，因此，当一个字符串使用了正则表达式后，最好在前面加上'r'
 
 
 
@@ -1160,7 +1199,7 @@ trap {
 - 准备
     葱姜蒜
     汁：酱油，糖，料酒，胡椒粉，配至半碗
-    虾去虾线，减掉腿和触须以及嘴角，并在背部切一刀
+    虾去虾线，减掉腿、触须以及嘴角，并在背部切一刀
 - 实操
     放油放虾，多炒下炸酥脆炒出虾油，放入葱姜蒜，翻炒下放入汁，再大火收汁
 
@@ -1181,3 +1220,98 @@ trap {
   放油炒鸡肉，多炒下把油炒干，然后放入花椒、辣椒、鱼佐料、姜翻炒下，放入卤料材料翻炒加水
 
   然后加入生抽老抽，盐。在鸡肉好的差不多的时候加入土豆，注意水淹没土豆，煮好就行
+
+**火锅**
+
+- 准备
+
+  火锅底料，卤料包（很重要），火锅香油
+
+  各类菜（如黄瓜、莴笋、土豆、藕片、
+
+## json相关
+
+jsoncpp是cpp处理json的库，可以直接在github上拉取，然后找到amalgamate.py文件，执行`python amalgamate.py`命令，会在`dist`目录下生成两个头文件和一个源文件`json-forwards.h` 、`json.h`和`jsoncpp.cpp`。之后就直接`include "jsoncpp.cpp"`便可以使用了。
+
+因为每次使用json会先声明一个json对象，如果不考虑重复使用对象，则每一个大括号就是一个对象，而`”key“:{XXX}`这种值为一个大括号的又是一个新的对象，可以用`json["key"] = obj`来复制；而`”key“:[{XXX}]`也是一个对象，对于这种，可以用json["key"].append(obj)来插值。也就是说对于json的对象，在有key时其value是对象还是数组，取决于用等号还是append函数。
+
+- 清空Json对象中的数组    `root["array"].resize(0);`
+- 删除Json对象    `root.removeMember("key");`
+- 产生value为null的对象：` root["abc"];`    //root["abc"] = null
+- 判断json对象是否为空：`bool Json::Value::isNull () const`
+
+## 时间戳相关
+
+在cpp上返回返回1970年01月01日00时00分00秒起至现在的总秒数。
+
+可以通过函数返回值或者传入指针获取时间戳：`extern time_t time(time_t *__timer)`
+
+```c++
+#include <iostream>
+#include <time.h>
+using namespace std;
+ 
+int main()
+{
+    time_t myt=time(NULL);
+    cout<<"sizeof(time_t) is: "<<sizeof(time_t)<<endl;
+    cout<<"myt is :"<<myt<<endl;
+ 
+    time_t t;
+    time(&t);
+    cout<<"t is:"<<t<<endl;
+}
+```
+
+
+
+获取当前时间
+
+```c++
+#include <time.h>
+#include <stdio.h>
+int main(){
+    char *wday[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+    time_t timep;
+    struct tm *p;
+    time(&timep);
+    p = localtime(&timep); //取得当地时间
+    printf ("%d/%d/%d ", (1900+p->tm_year), (1+p->tm_mon), p->tm_mday);
+    printf("%s %d:%d:%d\n", wday[p->tm_wday], p->tm_hour, p->tm_min, p->tm_sec);
+}
+
+//其中localtime把time_t转换为了下方的结构体
+struct tm {
+   int tm_sec;         /* 秒，范围从 0 到 59*/
+   int tm_min;         /* 分，范围从 0 到 59*/
+   int tm_hour;        /* 小时，范围从 0 到 23*/
+   int tm_mday;        /* 一月中的第几天，范围从 1 到 31*/
+   int tm_mon;         /* 月份，范围从 0 到 11*/
+   int tm_year;        /* 自 1900 起的年数 */
+   int tm_wday;        /* 一周中的第几天，范围从 0 到 6*/
+   int tm_yday;        /* 一年中的第几天，范围从 0 到 365*/
+   int tm_isdst;       /* 夏令时*/    
+};
+```
+
+## 文件操作相关
+
+cpp中的fstream
+
+```c++
+	#include<fstream>
+		ofstream fout;
+    fout.open("/Users/songhongshan/code/cpp_code/code_1/test", std::ios::in);
+    fout << json.toStyledString();
+    fout.close();
+```
+
+open函数有下列的打开方式，默认的打开方式是`ios_base::in | ios_base::out`
+
+ios::in	为输入(读)而打开文件
+ios::out	为输出(写)而打开文件
+ios::ate	初始位置：文件尾
+ios::app	所有输出附加在文件末尾
+ios::trunc	如果文件已存在则先删除该文件
+ios::binary	二进制方式
+

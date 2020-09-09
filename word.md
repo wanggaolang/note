@@ -1,16 +1,16 @@
 
 
-| notify  | 通知/告知 |
-| :-----: | :-------: |
-|  query  |   查询    |
-| expired |  已过期   |
-| sample  |   样品    |
-|         |           |
-|         |           |
-|         |           |
-|         |           |
-|         |           |
-|         |           |
+|   notify    | 通知/告知 |
+| :---------: | :-------: |
+|    query    |   查询    |
+|   expired   |  已过期   |
+|   sample    |   样品    |
+|  indicator  |   指标    |
+|  overhead   |  上面的   |
+|  permanent  |   永久    |
+|    mock     | 嘲笑/模仿 |
+| orientation |   方向    |
+|             |           |
 
 
 
@@ -38,15 +38,15 @@
 | horizontal |  水平的   |
 |  constant  |   不变    |
 
-|   indent   |   缩进   |
-| :--------: | :------: |
-|  duration  | 持续时间 |
-| simulation |   模拟   |
-|   agile    |   敏捷   |
-|  summary   |   总结   |
-|  sequence  |   序列   |
-|   fetch    |    取    |
-| interpret  |   解释   |
-|  pattern   |   模式   |
-|  segment   |   分段   |
+|   indent   |   缩进    |
+| :--------: | :-------: |
+|  duration  | 持续时间  |
+| simulation |   模拟    |
+|   agile    |   敏捷    |
+|  summary   | 总结/摘要 |
+|  sequence  |   序列    |
+|   fetch    |    取     |
+| interpret  |   解释    |
+|  pattern   |   模式    |
+|  segment   |   分段    |
 
