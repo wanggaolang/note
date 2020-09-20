@@ -10,7 +10,7 @@
 |  permanent  |   永久    |
 |    mock     | 嘲笑/模仿 |
 | orientation |   方向    |
-|             |           |
+| definition  |   疑问    |
 
 
 
@@ -26,6 +26,8 @@
 |  component   |  零件  |
 |   wrapper    | 包装纸 |
 
+
+
 |    lane    |   车道    |
 | :--------: | :-------: |
 |  obstacle  |  障碍物   |
@@ -38,6 +40,8 @@
 | horizontal |  水平的   |
 |  constant  |   不变    |
 
+
+
 |   indent   |   缩进    |
 | :--------: | :-------: |
 |  duration  | 持续时间  |
@@ -49,4 +53,18 @@
 | interpret  |   解释    |
 |  pattern   |   模式    |
 |  segment   |   分段    |
+
+
+
+| cautious | 谨慎 |
+| :------: | :--: |
+|  doubt   | 疑惑 |
+|  blank   | 空白 |
+| expired  | 过期 |
+|          |      |
+|          |      |
+|          |      |
+|          |      |
+|          |      |
+|          |      |
 

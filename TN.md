@@ -244,7 +244,7 @@ git fetch QE
 	char *strcpy(char *dest, const char *src)
 把 src 所指向的字符串复制到 dest，会先清空dest。
 	
-	取绝对值：abs(obj)
+	取绝对值：abs(obj)和fabs(obj),前者是整数，后者是浮点数。都需要导入<math.h>
     a的b次方：pow(a, b)
 ```
 
@@ -293,15 +293,19 @@ Setting	--	Keymap
 
 **快捷键**
 
+快捷键设置：`ctrl+k+s`
+
 查找文件名：command + p
 
 在打开的文件夹中查找一个函数：左侧那个放大镜
 
-回到上一个光标：command + -
+回到上一个光标：mac：`command + -`    windows：`alt + ←`
 
 批量向左、向右缩进：``ctrl + [``   、 ``ctrl + ]``
 
-当前文档打开终端:    `control + ~`    或者 查看-终端
+批量保存文件：（改了键位的）windows：`ctrl + alt + s`    mac：`command + option + s`
+
+打开终端:    `control + ~`    或者 查看-终端
 
 到大括号的尾端/首部:    `Ctrl + Shift+\`
 
@@ -379,6 +383,12 @@ Setting	--	Keymap
    动态链接库默认导入路径在linux中查看配置`/etc/ld.so.conf`，可以将路径写入配置，再用`ldconfig`载入，永久生效。
    
 7. scp 从本地复制到远程    `scp [-r] {本地文件/夹} {remote_username@remote_ip:文件/夹} `
+
+8. 在同一文件夹下多个文件中查找某个关键字：
+
+   通过`cat ./* | grep {查找内容}`确认文件中是否有这个关键字
+
+   通过`find . -type f -name "*" | xargs grep {查找内容}`找到这个文件//todo 查看原理
 
    
 
@@ -691,12 +701,45 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
 
 
 
-## Linux相关/终端terminal相关
+## Linux相关/终端相关/terminal相关
+
+- Ubuntu启动终端：`Ctrl + Alt + T`
+
+- 终端和shell的区别：类似编辑器和编译器，编辑器展示给程序员看，编译器用来真正的编译
+
+- 配置shell-bash：增加或在原文注释改动为以下内容
+
+  ```shell
+  if [ "$color_prompt" = yes ]; then
+  	#这些注释掉的就是原文
+      #PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+      PS1='${debian_chroot:+($debian_chroot)}\w\$ '
+  else
+      #PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+      PS1='${debian_chroot:+($debian_chroot)}\w\$ '
+  fi
+  unset color_prompt force_color_prompt
+  
+  # If this is an xterm set the title to user@host:dir
+  case "$TERM" in
+  xterm*|rxvt*)
+      #PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS3"
+      #w展示全路径，W展示最后一截路径；\u@\h表示：用户名@电脑型号名
+      PS1=" \[\e[32;32m\]\w\[\e[0m\]\\$ "
+      ;;
+  *)
+      ;;
+  esac
+  ```
+
+  
 
 - 配置终端
 
-  Iterm2 + oh-my-zsh，注意需要配置Meslo 字体，否则会乱码
+  **Iterm2 **
 
+  Iterm2 + oh-my-zsh，注意需要配置Meslo 字体，否则会乱码
+  
   Iterm2的配色可以好好看一下，目前用的**Solarized Dark Higher Contrast**配色
   
   为了让多用户都使用同样的配置，要将`~/.zshrc`复制到每个用户下
@@ -731,8 +774,43 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
   
   
   
+  **terminator**
   
+  1. sudo apt-get install terminator
   
+  2. 启动terminator，在里边`vim .config/terminator/config`
+  
+     ```shell
+     [global_config]
+       title_font = Ubuntu Mono 11[keybindings]
+     [layouts]
+       [[default]]
+         [[[child1]]]
+           parent = window0
+           type = Terminal
+         [[[window0]]]
+           parent = ""
+           type = Window
+     [plugins]
+     [profiles]
+       [[default]]
+         background_color = "#002b36"
+         background_darkness = 0.91
+         background_image = None
+         background_type = transparent
+         font = Ubuntu Mono 11
+         foreground_color = "#e0f0f1"
+         use_system_font = False
+         show_titlebar = False
+     ```
+  
+     
+3. 通过dconfig-editor将terminator设置为默认终端（自己搜）
+4. 修改`.bashrc`：https://blog.csdn.net/zhangkzz/article/details/90524066
+
+  
+
+
 - 快捷键
 
   新建终端		在当前窗口为终端情况下：ctrl + shift + n 
@@ -764,6 +842,21 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
   查看有哪些起了别名的命令    `alias`
 
   
+
+- 一些疑难问题
+
+  1. Ubuntu下`alt + tab`出现两个窗口
+
+     原因：系统启动了两个不同的程序切换程序
+
+     办法：安装Compiz，然后关掉“应用程序切换条”
+
+     ```shell
+     sudo apt-get install compiz-plugins
+     sudo apt-get install compizconfig-settings-manager
+     ```
+
+     
 
   
 
@@ -890,7 +983,7 @@ ctrl + y 粘贴”命令行剪切板“
 
 `| xargs`    将多行合并到一行，以空格分割
 
-查看某个端口的tcp状态：`netstat -antop | grep {portID}`
+f查看某个端口的tcp状态：`netstat -antop | grep {portID}`
 
 改变当前用户默认shell：`chsh`
 
@@ -1300,10 +1393,12 @@ cpp中的fstream
 
 ```c++
 	#include<fstream>
-		ofstream fout;
-    fout.open("/Users/songhongshan/code/cpp_code/code_1/test", std::ios::in);
-    fout << json.toStyledString();
-    fout.close();
+	std::ofstream fout;
+    fout.open("./test", std::ios::in | std::ios::ate);
+    if (fout.is_open()) {
+        fout << "json.toStyledString();";
+        fout.close();
+    }
 ```
 
 open函数有下列的打开方式，默认的打开方式是`ios_base::in | ios_base::out`
