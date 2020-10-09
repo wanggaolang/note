@@ -11,7 +11,7 @@
 
 ## 常用规范
 
-- 在linux体系机器，临时文件放/test_for_all，提示文件放~/readme
+- 在linux体系机器，临时文件放/test_for_all，提示文件放~/README
 
 - 代码注释
 
@@ -23,7 +23,14 @@
   
   如果是很重要的地方`//$$$`    正在view的地方`//$$$$`
   
-  
+
+
+
+## typora相关
+
+- 页内跳转
+  1. 如果想调到指定标题名去，可用[任意内容]\(#标题名，注意带左边的#号\)
+  2. 如果想跳到任意文本处：1）要先在该文本处加上”锚点“，\<a name=锚点名>指定文本（也可以空白）\</a>    2）[任意内容]\(#锚点名，注意带左边的#号\)
 
 ##  git相关及github相关
 
@@ -1013,7 +1020,13 @@ f查看某个端口的tcp状态：`netstat -antop | grep {portID}`
 
   - 光标移动
     1. 到行尾:`$`    到下一行行尾:`2$`    到从当前行算起第n行行尾:`n$`
+    
     2. 到行首:`0`
+    
+  - 撤销：命令模式下按u    撤销的撤销：ctrl + r
+  
+    
+  
 
 ## ssh rsa key
 
@@ -1066,6 +1079,22 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
   将容器文件拷贝到主机，如:    `docker cp 96f7f14e99ab:/www /tmp/`
   
 - 删除容器：`docker rm {containerID}`
+
+- 复制容器
+
+  - 保存镜像
+
+    docker save ID > xxx.tar
+
+    docker load < xxx.tar
+
+  - 保存容器
+
+    docker export ID >xxx.tar
+
+    docker import xxx.tar containr:v1
+
+    然后再docker run -it containr:v1 bash
 
 
 
