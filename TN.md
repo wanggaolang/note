@@ -132,37 +132,43 @@ git clone git@server-name:path/repo-name.git克隆到本地，会将所有文件
 
 git fetch QE
 
-- 分支相关
+**分支相关**
 
-  1、创建分支``git branch {新分支名}``    新分支复刻当前分支，并且HEAD指针，也就是当前工作区指向的分支仍为原来分支
 
-  2、切换分支``git checkout {分支名}``
 
-  3、创建并切入新分支``git checkout -b {分支名}``
+分支的作用：1）多人同时操作同一仓库，为了防止混乱，要让每个人有自己的`git本地仓库`，而多一个分支就多一个`git本地仓库`。    2）当有一个新需求需要更改代码，而更改过程中可能要回到没改变之前的样子用于调试修复其他功能模块。这时候可以将新功能commit到新分支，再切换回来修复其他功能模块。当新需求完成后在master分支merge该分支，处理冲突并commit就行了。这时在master分支只会多出一个merge的log版本。
 
-  4、创建分支并与远程分支关联``git checkout -b {新建分支} origin/{远程分支}``    这时新建分支内容就是关联分支内容
+如果在XXX分支中进行了改变并commit，切回主分支，不做任何改动就merge，虽然两者内容冲突，但时间线上XXX更新，所以会将XXX的改变改过来，也就是master指针指向XXX
 
-  5、删除分支``git branch -d {要删分支}``
+如果在XXX改了后切到master分支又改东西，即使两者都是添加新东西，在merge时，也会产生冲突，因为产生了两个时间线
 
-  6、查看所以分支``git branch -a``    不加``- a``为显示本地分支
 
-  ？将远程分支与本地已有分支BBB与关联起来``git branch -u AAA BBB``
 
-  8、添加远程分支：git push origin {本地分支}:{远程分支}
+1、创建分支``git branch {新分支名}``    新分支复刻当前分支，并且HEAD指针，也就是当前工作区指向的分支仍为原来分支
 
-  9、删除远程分支：git push origin {空格}:{远程分支}		or		 git push origin --delete {远程分支}
+2、切换分支``git checkout {分支名}``
 
-  
+3、创建并切入新分支``git checkout -b {分支名}``
 
-  合并当前分支与XXX分支 ``git merge XXX`` 前提当前版本是XXX版本的子集或者相等
+4、创建分支并与远程分支关联``git checkout -b {新建分支} origin/{远程分支}``    这时新建分支内容就是关联分支内容
 
-  
+5、删除分支``git branch -d {要删分支}``
 
-  如果在XXX分支中进行了改变，切回主分支，不做任何改动就merge，虽然两者内容冲突，但时间线上XXX更新，所以会将XXX的改变改过来，也就是master指针指向XXX
+6、查看所以分支``git branch -a``    不加``- a``为显示本地分支
 
-  如果在XXX改了后切到master分支又改东西，即使两者都是添加新东西，在merge时，也会产生冲突，因为产生了两个时间线
-  
-  可以用``git log --graph``看到分支合并图
+？将远程分支与本地已有分支BBB与关联起来``git branch -u AAA BBB``
+
+8、添加远程分支：git push origin {本地分支}:{远程分支}
+
+9、删除远程分支：git push origin {空格}:{远程分支}		or		 git push origin --delete {远程分支}
+
+10、在当前分支合并（并入）指定分支：git merge {指定分之名}   如果有冲突需要解决冲突再add，commit。若无冲突会自动commit
+
+
+
+合并当前分支与XXX分支 ``git merge XXX`` 前提当前版本是XXX版本的子集或者相等
+
+可以用``git log --graph``看到分支合并图
 
 - 杂项
 
@@ -1096,9 +1102,7 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
 
     然后再docker run -it containr:v1 bash
 
-
-
-
+- 容器内部查看容器ID:
 
 
 

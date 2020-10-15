@@ -61,7 +61,7 @@
 |  doubt   | 疑惑 |
 |  blank   | 空白 |
 | expired  | 过期 |
-|          |      |
+|  batch   | 批量 |
 |          |      |
 |          |      |
 |          |      |
