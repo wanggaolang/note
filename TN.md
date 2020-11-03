@@ -110,7 +110,7 @@ ssh -T git@github.com    //测试与github联通性
 
   `git reflog`能够解决这个问题，显示所有的版本
 
-- 暂存区回滚到工作区:    `git checkout -- {文件名，用*表示所有。注意文件名前有空格} `
+- 暂存区回滚到工作区:    `git checkout -- {文件名，用.表示所有。注意文件名前有空格} `
 
 git reset HEAD XXX可以将暂存区回退到和git仓库当前版本一样。举例，有一个bug版本已经在本地写好并提交到暂存区，就可以需要用将暂存区覆盖，再用git checkout -- XXX
 
@@ -122,15 +122,17 @@ git rm XXX 删掉暂存区中的文件，如果本地（工作区）文件未删
 
 『Changes to be committed』change需要提交的，也就是改变记录存在暂存区中的
 
-『Changes not staged for commit』更改没有步入（staged）提交（准备）的，也就是改变记录存在工作区的
-
-stage形容了从工作区步入暂存区
+『Changes not staged for commit』更改没有步入（staged）提交（准备）的，也就是改变记录存在工作区的stage形容了从工作区步入暂存区
 
   在键入`git commit -m {消息}`后想修改消息通过`git commit --amend`命令
 
 git clone git@server-name:path/repo-name.git克隆到本地，会将所有文件保存在仓库名文件夹中，也就是不用自己创建一个文件夹在clone，在主目录clone就行了。这种clone会把git数据库克隆过来，所以会让本地有所有远程分支
 
 git fetch QE
+
+- 在使用git提交代码的时，`git commit -m "内容"` 如果内容编写错误：
+
+  使用`git commit --amend` 对上次提交的内容进行修改
 
 **分支相关**
 
@@ -151,6 +153,8 @@ git fetch QE
 3、创建并切入新分支``git checkout -b {分支名}``
 
 4、创建分支并与远程分支关联``git checkout -b {新建分支} origin/{远程分支}``    这时新建分支内容就是关联分支内容
+
+​	新建分支并与当前分支某个commit关联`git checkout -b {新分支名} {commit_id}`
 
 5、删除分支``git branch -d {要删分支}``
 
@@ -174,10 +178,14 @@ git fetch QE
 
   `git diff [多个参数]`    
 
+  ​	概念：git diff a b意味着相较于b来说，a增加了啥，减少了啥
+
+  ​	只显示不同文件名：--name-only
+
   ​	比较当前工作区与暂存区区别:`git diff`
-
+  
   ​	比较俩commit区别:`git diff {第1个commit的sha值} {第2个commit的sha值}`
-
+  
   ​	比较本地git仓库和远端区别:`git diff origin`
   
   解决`git diff`中文文件名乱码问题：
@@ -332,6 +340,16 @@ Setting	--	Keymap
 
 编译：mac快捷键 command + shift + b
 
+解决ubuntu中vscode字体间距过大问题：安装适配`firacode`字体
+
+1. 更新可用软件包列表: `sudo apt update`;
+2. 通过安装/升级软件来更新系统: `sudo apt upgrade`;
+3. 安装字体管理器: `sudo apt install font-manage`;
+4. 安装`firacode`字体: `sudo apt install fonts-firacode`;
+5. 在首选项-设置-字体中将`Fira Code`放最前边，重启vscode;
+
+解决 \#ifdef 的地方可能变灰问题：文件-首选项-设置-搜索dimInactiveRegions    取消勾选
+
 
 
 
@@ -363,7 +381,36 @@ Setting	--	Keymap
    
    - 可以省略掉参数列表和返回值，如: `auto get_1 = []{return 1;};`
 
+3. 格式化：#include \<iomanip\>  std::fixed << std::setprecision(8) << _double    前者表示以非科学计数法打印，后者表示显示８位小数
 
+4. 类模板的成员函数在类外定义以及类模板的函数特例化
+
+   ```c++
+   //类模板，但是在类外定义成员函数的时候，需要使用函数模板 
+   #include <iostream>  
+   using namespace std ;  
+   template <class T>  
+   class Base  
+   {  
+   public :
+       T a ;
+       Base(T b)    {  a = b ;    }
+       T getA(){ return a ;} //类内定义
+       void setA(T c);
+   };
+   
+   template <class T>   void  Base<T>::setA(T c)//模板成员函数在类外的定义
+   {
+       a = c ;
+   }
+   
+   template<> void Base<int>::setA(int value)//模板成员函数的特例化
+   {
+       a = value*2;
+   }
+   ```
+
+   
 
 
 
@@ -411,9 +458,15 @@ Setting	--	Keymap
    
 9. 查看linux发行版本：`cat /etc/issue`
    
-   
-   
-   
+10. linux命令行`2>&1`    标准错误重定向到标准输出
+
+11. 罗技鼠标驱动软件：官网－下载－Logitech G HUB
+
+12. 查看当前目录下，每个文件夹大小：du -h --max-depth=1
+
+13. 用md5sum计算文件的消息摘要
+
+    
 
 
 
@@ -1010,9 +1063,11 @@ f查看某个端口的tcp状态：`netstat -antop | grep {portID}`
 
 
 
-## shell编程
+## shell编程/shell脚本编程
 
+1. $0 是shell脚本本身名字，$1是shell脚本第一个参数，以此类推。注意c语言的int main(int argc, char *argv[])与此类似，argv[0]是程序本身名字，然后就是参数，argc是包含程序本身名的参数数量(>=1)
 
+   ![image-20201103165334785](/home/songhongshan/Desktop/normal/cp_from_mac/important/pic/image-20201103165334785.png)
 
 
 
@@ -1107,7 +1162,7 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
 
 
 
-## photoshop
+## photoshop相关
 
 - ctrl+alt复制图片时总是卡住，解决办法：
 
@@ -1117,13 +1172,7 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
 
 
 
-
-
-
-
-
-
-## protobuf
+## protobuf相关
 
 1、限定修饰符包含 required\optional\repeated 
 
@@ -1365,6 +1414,18 @@ trap {
 
   各类菜（如黄瓜、莴笋、土豆、藕片、
 
+
+
+**海鲜蘸料**
+
+- 准备
+
+  醋(总酸3.5)，酱油，老姜
+
+- 实操
+
+  老姜切碎泡在醋里1小时，吃的时候在放入酱油
+
 ## json相关
 
 jsoncpp是cpp处理json的库，可以直接在github上拉取，然后找到amalgamate.py文件，执行`python amalgamate.py`命令，会在`dist`目录下生成两个头文件和一个源文件`json-forwards.h` 、`json.h`和`jsoncpp.cpp`。之后就直接`include "jsoncpp.cpp"`便可以使用了。
@@ -1430,6 +1491,8 @@ struct tm {
 };
 ```
 
+
+
 ## 文件操作相关
 
 cpp中的fstream
@@ -1453,3 +1516,11 @@ ios::app	所有输出附加在文件末尾
 ios::trunc	如果文件已存在则先删除该文件
 ios::binary	二进制方式
 
+
+
+## gdb相关
+
+1. 开始    gdb {程序名}
+2. 输入参数    set args {参数}
+3. 下断点     b {断点，如launch_service.cpp:127}
+4. 打印参数    p {参数}
