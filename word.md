@@ -56,15 +56,15 @@
 
 
 
-| cautious | 谨慎 |
-| :------: | :--: |
-|  doubt   | 疑惑 |
-|  blank   | 空白 |
-| expired  | 过期 |
-|  batch   | 批量 |
-|          |      |
-|          |      |
-|          |      |
-|          |      |
-|          |      |
+| cautious |  谨慎  |
+| :------: | :----: |
+|  doubt   |  疑惑  |
+|  blank   |  空白  |
+| expired  |  过期  |
+|  batch   |  批量  |
+| ethernet | 以太网 |
+| storage  |  存储  |
+|          |        |
+|          |        |
+|          |        |
 

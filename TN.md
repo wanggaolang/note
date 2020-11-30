@@ -160,7 +160,7 @@ git fetch QE
 
 6、查看所以分支``git branch -a``    不加``- a``为显示本地分支
 
-？将远程分支与本地已有分支BBB与关联起来``git branch -u AAA BBB``
+？将远程分支与本地已有分支BBB与关联起来``git branch --set-upstream-to=remotes/AAA BBB``
 
 8、添加远程分支：git push origin {本地分支}:{远程分支}
 
@@ -176,7 +176,7 @@ git fetch QE
 
 - 杂项
 
-  `git diff [多个参数]`    
+  1. `git diff [多个参数]`    
 
   ​	概念：git diff a b意味着相较于b来说，a增加了啥，减少了啥
 
@@ -197,11 +197,13 @@ git fetch QE
   $ git config --global i18n.logoutputencoding utf-8  # 输出 log 编码
   ```
   
-  `暂存git stash`
+  2. `暂存git stash`
   
   将包括未追踪文件一同暂存进栈：git stash -u
   
   出栈：git stash pop
+  
+  3. 忽略当前git仓库下某些文件夹：在git仓库根目录的`.gitignore`文件写入这些文件夹名字，注意是以git仓库根目录作为基础目录的相对路径，如ABC就是./ABC
   
   
 
@@ -783,7 +785,7 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
 
 
 
-## Linux相关/终端相关/terminal相关
+## linux相关/终端相关/terminal相关
 
 - Ubuntu启动终端：`Ctrl + Alt + T`
 
@@ -817,48 +819,10 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
 
   
 
-- 配置终端
+- 配置终端  
 
-  **Iterm2 **
-
-  Iterm2 + oh-my-zsh，注意需要配置Meslo 字体，否则会乱码
-  
-  Iterm2的配色可以好好看一下，目前用的**Solarized Dark Higher Contrast**配色
-  
-  为了让多用户都使用同样的配置，要将`~/.zshrc`复制到每个用户下
-  
-  通过历史记录自动补全`pip install powerline-status`
-  
-  插件配置（位于~/.zshrc）：`plugins=(git zsh-autosuggestions extract zsh-syntax-highlighting z)`
-  
-  Iterm2快捷键：
-  
-  ```bash
-  command + ，设置
-  command + enter 进入与返回全屏模式
-  command + t 新建标签
-  command + w 关闭标签
-  command + 数字 command + 左右方向键    切换标签
-  command + enter 切换全屏
-  command + f 查找
-  command + d 水平分屏
-  command + shift + d 垂直分屏
-  command + option + 方向键 command + [ 或 command + ]    切换屏幕
-  command + ; 查看历史命令
-  command + shift + h 查看剪贴板历史
-  ctrl + u    清除当前行
-  ctrl + l    清屏
-  ctrl + a    到行首
-  ctrl + e    到行尾
-  ctrl + f/b  前进后退
-  ctrl + p    上一条命令
-  ctrl + r    搜索命令历史
-  ```
-  
-  
-  
   **terminator**
-  
+
   1. sudo apt-get install terminator
   
   2. 启动terminator，在里边`vim .config/terminator/config`
@@ -887,7 +851,6 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
          show_titlebar = False
      ```
   
-     
 3. 通过dconfig-editor将terminator设置为默认终端（自己搜）
 4. 修改`.bashrc`：https://blog.csdn.net/zhangkzz/article/details/90524066
 
@@ -939,18 +902,21 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
      sudo apt-get install compizconfig-settings-manager
      ```
 
-     
+
+  定时任务：crtontab命令，详见https://blog.csdn.net/rf_wu/article/details/1215094
+
+  ​	注意每隔6小时执行某个命令的时间应该这么写：1 */6 * * *   第一个不能用*，不然意味着每隔6小时的每分钟干一次
 
   
 
-- mac相关
-  
+  ## mac相关
+
   1. **Homebrew**：是Mac OS 不可或缺的套件管理器。可以通过它安装软件，比如wget
-  
+
      进入其目录    `cd "$(brew --repo)"`
-  
+
      换源:
-  
+
      ```shell
      //设置homebrew本身源：
      cd "$(brew --repo)" && git remote set-url origin git://mirrors.ustc.edu.cn/brew.git
@@ -962,17 +928,53 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
      echo 'export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.ustc.edu.cn/homebrew-bottles' >> ~/.bash_profile
      
      ```
-  
+
      homebrew会将下载的软件统一安装在/usr/local/Cellar目录中
-  
-  2. 配置iterm2的配色为**`Solarized Dark Higher Contrast`**，在./etc下有一个版本可以用，最好在[这](https://iterm2colorschemes.com/)弄最新的
-  
+
+     2.  **Iterm2 **
+
+    Iterm2 + oh-my-zsh，注意需要配置Meslo 字体，否则会乱码
+    
+    Iterm2的配色可以好好看一下，目前用的**Solarized Dark Higher Contrast**配色
+    
+    为了让多用户都使用同样的配置，要将`~/.zshrc`复制到每个用户下
+    
+    通过历史记录自动补全`pip install powerline-status`
+    
+    插件配置（位于~/.zshrc）：`plugins=(git zsh-autosuggestions extract zsh-syntax-highlighting z)`
+    
+    Iterm2快捷键：
+
+  ```bash
+    command + ，设置
+    command + enter 进入与返回全屏模式
+    command + t 新建标签
+    command + w 关闭标签
+    command + 数字 command + 左右方向键    切换标签
+    command + enter 切换全屏
+    command + f 查找
+    command + d 水平分屏
+    command + shift + d 垂直分屏
+    command + option + 方向键 command + [ 或 command + ]    切换屏幕
+    command + ; 查看历史命令
+    command + shift + h 查看剪贴板历史
+    ctrl + u    清除当前行
+    ctrl + l    清屏
+    ctrl + a    到行首
+    ctrl + e    到行尾
+    ctrl + f/b  前进后退
+    ctrl + p    上一条命令
+    ctrl + r    搜索命令历史
+  ```
+
+  3.  配置iterm2的配色为**`Solarized Dark Higher Contrast`**，在./etc下有一个版本可以用，最好在[这](https://iterm2colorschemes.com/)弄最新的
+
   3. 在当前窗口是终端时新建一个终端``command + t``
-  
+
   4. 在finder根目录中`command + shift + .`显示隐藏文件
-  
+
   5. 录屏：QuickTime player
-  
+
   
 
 
@@ -1064,6 +1066,8 @@ ctrl + y 粘贴”命令行剪切板“
 
 查看当前文件夹文件数量（子文件夹算1文件）    `ls | wc -w`
 
+查看文件大小：du -ah [--max-depth=n，默认深度为1]
+
 `| awk '{print $1}'`    （注意是单引号）将每一行中以空格为分割符的第一个字段打印出来
 
 `| xargs`    将多行合并到一行，以空格分割
@@ -1098,9 +1102,24 @@ shell配色：PS1
 
 
 
+自动补全相关：
+
+1. 忽略大小写：在~/.inputrc文件键入set completion-ignore-case on    重新打开终端生效
+
+2. 键入命令首部分字符之后，用方向键Up，Down来搜索以该串字符开头的历史命令，需在~/.bashrc中输入以下两行：
+
+   ```shell
+   bind '"\e[A": history-search-backward' 
+   bind '"\e[B": history-search-forward'
+   ```
+
+   
+
+
+
 ## shell编程/shell脚本编程
 
-1. $0 是shell脚本本身名字，$1是shell脚本第一个参数，以此类推。注意c语言的int main(int argc, char *argv[])与此类似，argv[0]是程序本身名字，然后就是参数，argc是包含程序本身名的参数数量(>=1)
+1. $0 是shell脚本本身名字，$1是shell脚本第一个参数，以此类推。注意c语言的int main(int argc, char *argv[])与此类似，argv[0]是程序本身名字，然后就是参数，argc是包含程序本身名的参数数量(>=1)，但是$#不包含程序本身名的参数个数
 
    ![image-20201103165334785](./etc/pic/image-20201103165334785.png)
 
@@ -1178,23 +1197,21 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
   
 - 删除容器：`docker rm {containerID}`
 
-- 复制容器
+- 镜像删除使用 `docker rmi` 命令，或者`docker images rm`，后边跟镜像名/镜像id
 
-  - 保存镜像
+- 复制容器（将容器或镜像转换为文件包）
 
-    docker save ID > xxx.tar
+  - 保存镜像：docker save ID > xxx.tar
 
-    docker load < xxx.tar
+  - 导入镜像：docker load < xxx.tar
 
-  - 保存容器
+  - 保存容器：docker export ID >xxx.tar
 
-    docker export ID >xxx.tar
-
-    docker import xxx.tar containr:v1
+  - 导入容器：docker import xxx.tar containr:v1（containr:v1应该就是这个容器的名字了）
 
     然后再docker run -it containr:v1 bash
 
-- 容器内部查看容器ID:
+- 将容器转为镜像：docker commit {container_id} {image_name}
 
 
 
@@ -1311,6 +1328,8 @@ unzip file.zip //解压zip
   3. 一句话起http服务    ``python2 -m SimpleHTTPServer [端口，默认8000]``    or
 
      `python3 -m http.server [端口，默认8000]`
+     
+     如果需要带有上传服务的http服务，运行`python ./SimpleHTTPServerWithUpload.py 1234`，SimpleHTTPServerWithUpload.py见./etc里
 
 
   4. 在同时安装了python2和python3时使用pip安装第三方库会产生歧义，要指定具体哪个python的pip安装可以用一下方法`{python版本:python2或python3} -m pip install {第三方库名}`
