@@ -199,9 +199,13 @@ git fetch QE
   
   2. `暂存git stash`
   
-  将包括未追踪文件一同暂存进栈：git stash -u
+  常规：git stash push -m "my_stash"
   
-  出栈：git stash pop
+  将包括未追踪文件一同暂存进栈：git stash push -u
+  
+  To apply a stash and remove it from the stash stack, type:git stash pop stash@{n}
+  
+  To apply a stash and keep it in the stash stack, type:git stash apply stash@{n}
   
   3. 忽略当前git仓库下某些文件夹：在git仓库根目录的`.gitignore`文件写入这些文件夹名字，注意是以git仓库根目录作为基础目录的相对路径，如ABC就是./ABC
   
