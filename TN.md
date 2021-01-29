@@ -31,6 +31,10 @@
 - 页内跳转
   1. 如果想调到指定标题名去，可用[任意内容]\(#标题名，注意带左边的#号\)
   2. 如果想跳到任意文本处：1）要先在该文本处加上”锚点“，\<a name=锚点名>指定文本（也可以空白）\</a>    2）[任意内容]\(#锚点名，注意带左边的#号\)
+  
+- 关闭首字母大写
+
+  选择“编辑”-“拼写和语法检查”-“自动纠正拼写”
 
 ##  git相关及github相关
 
@@ -168,6 +172,8 @@ git fetch QE
 
 10、在当前分支合并（并入）指定分支：git merge {指定分之名}   如果有冲突需要解决冲突再add，commit。若无冲突会自动commit
 
+11、将另一分支某次提交合并到本分支：git cherry-pick {commitHash}
+
 
 
 合并当前分支与XXX分支 ``git merge XXX`` 前提当前版本是XXX版本的子集或者相等
@@ -209,7 +215,19 @@ git fetch QE
   
   3. 忽略当前git仓库下某些文件夹：在git仓库根目录的`.gitignore`文件写入这些文件夹名字，注意是以git仓库根目录作为基础目录的相对路径，如ABC就是./ABC
   
+  4. 修改当前仓库用户和邮箱：
   
+     vim .git/config    修改为形如：
+  
+     ```
+     [user]
+         name = songhongshan
+         email = songhongshan@xx.com
+     ```
+  
+     git commit --amend --reset-author
+  
+     
 
 ## 内存操作的小技巧 
 
@@ -344,15 +362,17 @@ Setting	--	Keymap
 
 删除光标行：`ctrl+shift+k`
 
+统计总代码行数：
+
 **三个配置文件**
 
 //TODO
 
 
 
-编译：mac快捷键 command + shift + b
+- 编译：mac快捷键 command + shift + b
 
-解决ubuntu中vscode字体间距过大问题：安装适配`firacode`字体
+- 解决ubuntu中vscode字体间距过大问题：安装适配`firacode`字体
 
 1. 更新可用软件包列表: `sudo apt update`;
 2. 通过安装/升级软件来更新系统: `sudo apt upgrade`;
@@ -360,11 +380,20 @@ Setting	--	Keymap
 4. 安装`firacode`字体: `sudo apt install fonts-firacode`;
 5. 在首选项-设置-字体中将`Fira Code`放最前边，重启vscode;
 
-解决 \#ifdef 的地方可能变灰问题：文件-首选项-设置-搜索dimInactiveRegions    取消勾选
+- 解决 \#ifdef 的地方可能变灰问题：文件-首选项-设置-搜索dimInactiveRegions    取消勾选
 
-代码配色：.vscode/settings.json    >>    "workbench.colorTheme": "Default Dark+"
+- 代码配色：.vscode/settings.json    >>    "workbench.colorTheme": "Default Dark+"
 
+- C/C++代码跳转：1）安装c/c++插件；2）在.vscode/c_cpp_properties.json中的includePath里加入查找路径，形如：
 
+```json
+"includePath": [
+                "${workspaceFolder}/**",
+                "/home/"
+            ],
+```
+
+- 代码增加80和120字基准线：settings.json--增加一行："editor.rulers": [80,120]
 
 
 
@@ -395,7 +424,7 @@ Setting	--	Keymap
    
    - 可以省略掉参数列表和返回值，如: `auto get_1 = []{return 1;};`
 
-3. 格式化：#include \<iomanip\>  std::fixed << std::setprecision(8) << _double    前者表示以非科学计数法打印，后者表示显示８位小数
+3. 格式化：#include <iomanip>  std::fixed << std::setprecision(8) << _double    前者表示以非科学计数法打印，后者表示显示８位小数
 
 4. 类模板的成员函数在类外定义以及类模板的函数特例化
 
@@ -476,11 +505,11 @@ Setting	--	Keymap
 
 11. 罗技鼠标驱动软件：官网－下载－Logitech G HUB
 
-12. 查看当前目录下，每个文件夹大小：du -h --max-depth=1
+12. 查看当前目录下，每个文件夹大小：du -h --max-depth=1   mac下：du -hd1
 
 13. 用md5sum计算文件的消息摘要
 
-14. 
+14. chrome 书签搜索插件：Holmes
 
     
 
@@ -797,31 +826,7 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
 
 - 终端和shell的区别：类似编辑器和编译器，编辑器展示给程序员看，编译器用来真正的编译
 
-- 配置shell-bash：增加或在原文注释改动为以下内容
-
-  ```shell
-  if [ "$color_prompt" = yes ]; then
-  	#这些注释掉的就是原文
-      #PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
-      PS1='${debian_chroot:+($debian_chroot)}\w\$ '
-  else
-      #PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
-      PS1='${debian_chroot:+($debian_chroot)}\w\$ '
-  fi
-  unset color_prompt force_color_prompt
   
-  # If this is an xterm set the title to user@host:dir
-  case "$TERM" in
-  xterm*|rxvt*)
-      #PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS3"
-      #w展示全路径，W展示最后一截路径；\u@\h表示：用户名@电脑型号名
-      #\e[32;32m是绿色，\e[0m表示后边自己的输入变为默认色
-      PS1="\[\e[32;32m\]\w\[\e[0m\]\$"
-      ;;
-  *)
-      ;;
-  esac
-  ```
 
   
 
@@ -869,15 +874,11 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
 
   回到桌面		ctrl + win + d
   
-  
-  
 - 命令
 
   创建多级目录/文件夹    ``mkdir -p {路径}``
   
   查找文件``find / -name {文件名，可配合通配符} 2>/dev/null``
-  
-  
   
 - 权限
 
@@ -885,15 +886,11 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
 
   让文件不可删除`chattr +i {file/folder}`  
 
-  
-
 - 命令别名
 
   将一个长命令起一个别名，变为短命令    `alias {新命令}="{老命令}"`
 
   查看有哪些起了别名的命令    `alias`
-
-  
 
 - 一些疑难问题
 
@@ -908,15 +905,35 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
      sudo apt-get install compizconfig-settings-manager
      ```
 
-  
-
 - 定时任务：crtontab命令，详见https://blog.csdn.net/rf_wu/article/details/1215094
 
   ​	注意每隔6小时执行某个命令的时间应该这么写：1 */6 * * *   第一个不能用*，不然意味着每隔6小时的每分钟干一次
 
 ​	查看/启动crtontab服务：service crond status/start    （有的是service cron status/start）
 
-  
+- 对cp命令的细节探讨
+
+  假设现在有个/tmp和/other文件夹，我们在/tmp内部，则cp ./ /other复制的是当前文件夹内部所有内容，不包括/tmp文件夹。
+
+  如果cp的第二个参数是文件夹，则就是放到该文件夹内部。如果是文件或者是某个路径且最后一个/后的名字不存在，就是对第一个参数的复制并重命名
+
+- 防止Linux连接终端超时自动断开连接
+
+  ```
+  # 用以下命令判断是否是否设置了该参数
+  echo $TMOUT
+  # 如果输出空或0表示不超时，大于0的数字n表示n秒没有收入则超时
+  # 修改方法
+  vi /etc/profile
+  # ----------------------------
+  export TMOUT=900
+  # ----------------------------
+  # 将以上900修改为0就是设置不超时
+  source /etc/profile
+  # 让配置立即生效
+  ```
+
+- top解决程序名被截断问题：top -c
 
   ## mac相关
 
@@ -933,34 +950,38 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
      //设置并更新formula源
      cd "$(brew --repo)/Library/Taps/homebrew/homebrew-core" && git remote set-url origin git://mirrors.ustc.edu.cn/homebrew-core.git
      
+     
+     
+     
+     
      //使用中科大的bottles源：
      echo 'export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.ustc.edu.cn/homebrew-bottles' >> ~/.bash_profile
-     
      ```
-
+    
      homebrew会将下载的软件统一安装在/usr/local/Cellar目录中
+     
+2.  **Iterm2相关 **
+    
 
-     2.  **Iterm2 **
+  安装iterm2：brew install iterm2
+    
+    卸载：brew uninstall iterm2
 
-    Iterm2 + oh-my-zsh，注意需要配置Meslo 字体，否则会乱码
-    
-    Iterm2的配色可以好好看一下，目前用的**Solarized Dark Higher Contrast**配色
-    
-    为了让多用户都使用同样的配置，要将`~/.zshrc`复制到每个用户下
-    
-    通过历史记录自动补全`pip install powerline-status`
-    
-    插件配置（位于~/.zshrc）：`plugins=(git zsh-autosuggestions extract zsh-syntax-highlighting z)`
-    
-    Iterm2快捷键：
+
+​    
+​    Iterm2 + oh-my-zsh，注意需要配置Meslo 字体，否则会乱码
+​    为了让多用户都使用同样的配置，要将`~/.zshrc`复制到每个用户下
+​    通过历史记录自动补全`pip install powerline-status`
+​    插件配置（位于~/.zshrc）：`plugins=(git zsh-autosuggestions extract zsh-syntax-highlighting z)`
 
   ```bash
-    command + ，设置
+      Iterm2快捷键：
+    
+  command + ，设置
     command + enter 进入与返回全屏模式
     command + t 新建标签
     command + w 关闭标签
-    command + 数字 command + 左右方向键    切换标签
-    command + enter 切换全屏
+  command + 数字 command + 左右方向键    切换标签
     command + f 查找
     command + d 水平分屏
     command + shift + d 垂直分屏
@@ -972,28 +993,28 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
     ctrl + a    到行首
     ctrl + e    到行尾
     ctrl + f/b  前进后退
-    ctrl + p    上一条命令
+      ctrl + p    上一条命令
     ctrl + r    搜索命令历史
+    最大化Tab中的pane，隐藏本Tab中的其他pane：⌘+ shift +enter , 再次还原
   ```
+3.  配置iterm2的配色为**`Solarized Dark Higher Contrast`**，在./etc下有一个版本可以用，最好在[这](https://iterm2colorschemes.com/)弄最新的
+3. 在当前窗口是终端时新建一个终端``command + t``
+3. 设置iterm2保留行数：设置(command+,)--Profiles--terminal--Scrollback Buffer
 
-  3.  配置iterm2的配色为**`Solarized Dark Higher Contrast`**，在./etc下有一个版本可以用，最好在[这](https://iterm2colorschemes.com/)弄最新的
+**mac相关小知识**
 
-  3. 在当前窗口是终端时新建一个终端``command + t``
+- 在finder根目录中`command + shift + .`显示隐藏文件
 
-  4. 在finder根目录中`command + shift + .`显示隐藏文件
-
-  5. 录屏：QuickTime player
-
-  
+- 录屏：QuickTime player
 
 
 
 ## word技巧
 
-```
+  ```
 1.一行装英文+网址装不下，会将网址放下一行，英文稀疏占满一行，将网址分开
 选中-->段落-->中文版式-->允许西文在单词中换行
-```
+  ```
 
 ## excel技巧 
 
@@ -1122,6 +1143,7 @@ shell配色：PS1
    bind '"\e[B": history-search-forward'
    ```
 
+
 例如我想求当前目录下以-开头的普通文件，而且该文件后缀为.a   可以用这种写法：`ls -l | grep '^-.*a$'`
 
 ^-表示以-开头
@@ -1146,7 +1168,21 @@ a$表示以a结尾
 
    ![image-20201103165334785](./etc/pic/image-20201103165334785.png)
 
+2. 走入当前脚本所在文件夹的上层文件夹
 
+   ```shell
+   # path of this file
+   if [[ -L "$0" ]];then
+       FILE=$(readlink -f "$0")
+   else
+       FILE=$0
+   fi
+    
+   #当前文件的上层文件夹
+   BASE_DIR=$(cd $(dirname ${FILE})/..; pwd)
+   ```
+
+   
 
 ## vim相关
 
@@ -1162,11 +1198,19 @@ a$表示以a结尾
     2. 到行首:`0`
     
   - 撤销：命令模式下按u    撤销的撤销：ctrl + r
-  
+
   - 查看关键字出现次数：%s/{关键字}//gn  
-  
-    
-  
+
+  选中1列：ctrl + v 向上下移动光标
+  插入列
+  	插入操作的话知识稍有区别。例如我们在每一行前都插入"() "：
+  	1.光标定位到要操作的地方。
+  	2.CTRL+v 进入“可视 块”模式，选取这一列操作多少行。
+  	3.SHIFT+i(I) 输入要插入的内容。
+  	4.ESC 按两次，会在每行的选定的区域出现插入的内容。
+
+- 翻页：向下：ctrl+f    向上：ctrl+b
+
 
 ## ssh rsa key
 
@@ -1210,6 +1254,10 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
 
 - 启动某个容器    ``doeker start {containerID}``
 
+- 通过镜像起新容器：docker run --name {容器名} -it --privileged=true --entrypoint /bin/bash {镜像名或id}
+
+  注意 --entrypoint /bin/bash是一起的
+
 - 进入某个容器中    ``docker exec -it {containerID} /bin/bash``
 
 - 主机和容器间文件的拷贝
@@ -1220,7 +1268,7 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
   
 - 删除容器：`docker rm {containerID}`
 
-- 镜像删除使用 `docker rmi` 命令，或者`docker images rm`，后边跟镜像名/镜像id
+- 删除镜像： `docker rmi` 命令，或者`docker images rm`，后边跟镜像名/镜像id
 
 - 复制容器（将容器或镜像转换为文件包）
 
@@ -1240,6 +1288,10 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
 
 - 端口映射： -p {主机端口}:{容器端口}
 
+- 让容器内支持中文输入：docker exec -it cdee10f86126 env LANG=en_US.utf8 /bin/bash
+
+- 指定网络类型：--net host
+
 //不确定
 
 网上有些文章说，要让docker 的容器自动在开机启动，是写脚本，比如在 rc.local 中写。
@@ -1255,7 +1307,23 @@ docker update --restart=always xxx
 
 //不确定
 
+- 更改docker存储位置（centos7）：
 
+  查看存储位置：docker info | grep Root
+
+  修改：vim /lib/systemd/system/docker.service    （或者是/usr/lib/systemd/system/docker.service，反正我改了前者后者也立刻自动同步了）
+
+  ![image-20201222220338244](etc/pic/image-20201222220338244.png)
+
+  重启：
+  
+  ​	systemctl  daemon-reload
+  
+  ​	systemctl restart docker 
+  
+  然后查看是否启动成功，主要是后边参数是否改变：![image-20201223110821726](etc/pic/image-20201223110821726.png)
+  
+  
 
 
 ## photoshop相关
@@ -1270,27 +1338,27 @@ docker update --restart=always xxx
 
 ## protobuf相关/pb相关
 
-1、限定修饰符包含 required\optional\repeated 
+- 限定修饰符包含 required\optional\repeated 
 
-Required: 表示是一个必须字段，必须相对于发送方，在发送消息之前必须设置该字段的值，对于接收方，必须能够识别该字段的意思。发送之前没有设置required字段或者无法识别required字段都会引发编解码异常，导致消息被丢弃。
+  Required: 表示是一个必须字段，必须相对于发送方，在发送消息之前必须设置该字段的值，对于接收方，必须能够识别该字段的意思。发送之前没有设置required字段或者无法识别required字段都会引发编解码异常，导致消息被丢弃。
 
-Optional：表示是一个可选字段，可选对于发送方，在发送消息时，可以有选择性的设置或者不设置该字段的值。对于接收方，如果能够识别可选字段就进行相应的处理，如果无法识别，则忽略该字段，消息中的其它字段正常处理。---因为optional字段的特性，很多接口在升级版本中都把后来添加的字段都统一的设置为optional字段，这样老的版本无需升级程序也可以正常的与新的软件进行通信，只不过新的字段无法识别而已，因为并不是每个节点都需要新的功能，因此可以做到按需升级和平滑过渡。
+  Optional：表示是一个可选字段，可选对于发送方，在发送消息时，可以有选择性的设置或者不设置该字段的值。对于接收方，如果能够识别可选字段就进行相应的处理，如果无法识别，则忽略该字段，消息中的其它字段正常处理。---因为optional字段的特性，很多接口在升级版本中都把后来添加的字段都统一的设置为optional字段，这样老的版本无需升级程序也可以正常的与新的软件进行通信，只不过新的字段无法识别而已，因为并不是每个节点都需要新的功能，因此可以做到按需升级和平滑过渡。
 
-Repeated：表示该字段可以包含0~N个元素。其特性和optional一样，但是每一次可以包含多个值。可以看作是在传递一个数组的值。N 表示打包的字节并不是固定。而是根据数据的大小或者长度。对于结构体的repeated字段，会生成
+  Repeated：表示该字段可以包含0~N个元素。其特性和optional一样，但是每一次可以包含多个值。可以看作是在传递一个数组的值。N 表示打包的字节并不是固定。而是根据数据的大小或者长度。对于结构体的repeated字段，会生成
 
-``{结构体对象名}.{repeated对象名}_size()``，函数返回int。如果想取出某个index对应的单位:   
+  ``{结构体对象名}.{repeated对象名}_size()``，函数返回int。如果想取出某个index对应的单位:   
 
- `{结构体对象名}.{repeated对象名}({index})`
+   `{结构体对象名}.{repeated对象名}({index})`
 
-2、可以将message理解为一个结构体，每个结构体有一定的 required\optional\repeated，对于某结构体的可选字段（Optional），会生成`{结构体对象名}.has_{Optional成员名字}`，函数返回bool；
+- 可以将message理解为一个结构体，每个结构体有一定的 required\optional\repeated，对于某结构体的可选字段（Optional），会生成`{结构体对象名}.has_{Optional成员名字}`，函数返回bool；
 
-对于Required和Optional成员，如果存在，可以通过{message，对象承接的名字}.{成员名字}()来获取
+  对于Required和Optional成员，如果存在，可以通过{message，对象承接的名字}.{成员名字}()来获取
 
-而对于Repeated成员，需要通过{message，对象承接的名字}.{成员名字}(index，int类型)
+  而对于Repeated成员，需要通过{message，对象承接的名字}.{成员名字}(index，int类型)
 
 
 
-## 压缩/解压文件
+## tar相关/压缩/解压文件
 
 ```shell
 tar
@@ -1299,6 +1367,7 @@ tar
 -t：查看内容
 -r：向压缩归档文件末尾追加文件
 -u：更新原压缩包中的文件
+
 
 这五个是独立的命令，压缩解压都要用到其中一个，可以和别的命令连用但只能用其中一个。下面的参数是根据需要在压缩或解压档案时可选的。
 
@@ -1399,6 +1468,7 @@ unzip file.zip //解压zip
      print('{name} wrote {book}'.format(name='Swaroop', book='A Byte of Python'), end = '')
      
      ```
+
 
   3. 转义字符，与c类似，核心的有：``\t``    ``\n``    ``\"``    注意单纯的\会将上下两行代码拼接
 
@@ -1522,7 +1592,7 @@ trap {
 
 - 实操
 
-  老姜切碎泡在醋里1小时，吃的时候在放入酱油
+  老姜切碎泡在醋里1小时，吃的时候再放入酱油
 
 ## json相关
 
@@ -1545,13 +1615,13 @@ jsoncpp是cpp处理json的库，可以直接在github上拉取，然后找到ama
 #include <iostream>
 #include <time.h>
 using namespace std;
- 
+
 int main()
 {
     time_t myt=time(NULL);
     cout<<"sizeof(time_t) is: "<<sizeof(time_t)<<endl;
     cout<<"myt is :"<<myt<<endl;
- 
+
     time_t t;
     time(&t);
     cout<<"t is:"<<t<<endl;
@@ -1601,7 +1671,6 @@ cpp中的fstream
         fout << "json.toStyledString();";
         fout.close();
     }
-```
 
 open函数有下列的打开方式，默认的打开方式是`ios_base::in | ios_base::out`
 
@@ -1611,12 +1680,44 @@ ios::ate	初始位置：文件尾
 ios::app	所有输出附加在文件末尾
 ios::trunc	如果文件已存在则先删除该文件
 ios::binary	二进制方式
+```
 
 
 
-## gdb相关
+## gcc相关
+- gdb相关
 
 1. 开始    gdb {程序名}
 2. 输入参数    set args {参数}
 3. 下断点     b {断点，如launch_service.cpp:127}
 4. 打印参数    p {参数}
+
+
+
+- gcc参数：编译时引入/usr/local/lib文件夹下的so：-L/usr/local/lib
+
+```bash
+// 在gcc中可以通过-L参数指定库文件搜索路径，通过-l参数指定库文件，如下方表示在指定的文件夹下找libboost_system.so文件
+gcc -o hello hello.cpp -Lbc_out/baidu/adu-3rd/boost/output/so -lboost_system
+```
+
+查看依赖的so文件是否都有：ldd {程序名或so文件}
+
+系统so存放经典位置：/lib/x86_64-linux-gnu/    /usr/lib/x86_64-linux-gnu
+
+如果某个动态链接，如/test/libboost_filesystem.so.1.65.1没在某个程序的链接里，可以在上一行的文件夹创造一个软链：ln -s /test/libboost_filesystem.so.1.65.1，这样只要该程序查找路径包含该文件夹就ok了
+
+- g++等同于gcc -xc++ -lstdc++ -shared-libgcc：
+
+  | gcc/g++指令选项         | 功 能                                                        |
+  | ----------------------- | ------------------------------------------------------------ |
+  | -x                      | 手动指定文件类型，后边加如c++、c等                           |
+  | -E（大写）              | 预处理指定的源文件，不进行编译。                             |
+  | -S（大写）              | 编译指定的源文件，但是不进行汇编。                           |
+  | -c                      | 编译、汇编指定的源文件，但是不进行链接。                     |
+  | -o                      | 指定生成文件的文件名。                                       |
+  | -llibrary（-I library） | 其中 library 表示要搜索的库文件的名称。该选项用于手动指定链接环节中程序可以调用的库文件。建议 -l 和库文件名之间不使用空格，比如 -lstdc++。 |
+  | -ansi                   | 对于 C 语言程序来说，其等价于 -std=c90；对于 C++ 程序来说，其等价于 -std=c++98。 |
+  | -std=                   | 手动指令编程语言所遵循的标准，例如 c89、c90、c++98、c++11 等。 |
+
+  
