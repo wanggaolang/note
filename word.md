@@ -85,7 +85,7 @@
 |  batch   |  批量  |
 | ethernet | 以太网 |
 | storage  |  存储  |
-|          |        |
+| resident |  居民  |
 |          |        |
 |          |        |
 

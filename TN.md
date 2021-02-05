@@ -371,14 +371,12 @@ Setting	--	Keymap
 
 
 - 编译：mac快捷键 command + shift + b
-
 - 解决ubuntu中vscode字体间距过大问题：安装适配`firacode`字体
-
-1. 更新可用软件包列表: `sudo apt update`;
-2. 通过安装/升级软件来更新系统: `sudo apt upgrade`;
-3. 安装字体管理器: `sudo apt install font-manage`;
-4. 安装`firacode`字体: `sudo apt install fonts-firacode`;
-5. 在首选项-设置-字体中将`Fira Code`放最前边，重启vscode;
+  1. 更新可用软件包列表: `sudo apt update`;
+  2. 通过安装/升级软件来更新系统: `sudo apt upgrade`;
+  3. 安装字体管理器: `sudo apt install font-manage`;
+  4. 安装`firacode`字体: `sudo apt install fonts-firacode`;
+  5. 在首选项-设置-字体中将`Fira Code`放最前边，重启vscode;
 
 - 解决 \#ifdef 的地方可能变灰问题：文件-首选项-设置-搜索dimInactiveRegions    取消勾选
 
@@ -395,7 +393,9 @@ Setting	--	Keymap
 
 - 代码增加80和120字基准线：settings.json--增加一行："editor.rulers": [80,120]
 
-
+- 能够编译运行单个文件：
+  1. 安装Code Runner
+  2. 重启后编译运行，press F1 and then select/type Run Code
 
 ## 进程，线程，协程
 
@@ -997,9 +997,15 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
     ctrl + r    搜索命令历史
     最大化Tab中的pane，隐藏本Tab中的其他pane：⌘+ shift +enter , 再次还原
   ```
-3.  配置iterm2的配色为**`Solarized Dark Higher Contrast`**，在./etc下有一个版本可以用，最好在[这](https://iterm2colorschemes.com/)弄最新的
+3. 配置iterm2的配色为**`Solarized Dark Higher Contrast`**，在./etc下有一个版本可以用，最好在[这](https://iterm2colorschemes.com/)弄最新的
+
 3. 在当前窗口是终端时新建一个终端``command + t``
+
 3. 设置iterm2保留行数：设置(command+,)--Profiles--terminal--Scrollback Buffer
+
+- 设置vim中光标能上下滑动：
+  iTerm2 > Preferences > Advanced
+  Mouse > Scroll wheel sends arrow keys in alternate screen mode.
 
 **mac相关小知识**
 
@@ -1210,6 +1216,21 @@ a$表示以a结尾
   	4.ESC 按两次，会在每行的选定的区域出现插入的内容。
 
 - 翻页：向下：ctrl+f    向上：ctrl+b
+
+- 设置鼠标能上下滑动：
+
+  ```
+  方法一：
+  1. vi ~/.vimrc
+  2. set mouse=a
+  3. source  ~/.vimrc
+  
+  方法二（在mac iterm2中）
+  iTerm2 > Preferences > Advanced
+  Mouse > Scroll wheel sends arrow keys in alternate screen mode.
+  ```
+
+  
 
 
 ## ssh rsa key
@@ -1720,4 +1741,4 @@ gcc -o hello hello.cpp -Lbc_out/baidu/adu-3rd/boost/output/so -lboost_system
   | -ansi                   | 对于 C 语言程序来说，其等价于 -std=c90；对于 C++ 程序来说，其等价于 -std=c++98。 |
   | -std=                   | 手动指令编程语言所遵循的标准，例如 c89、c90、c++98、c++11 等。 |
 
-  
+- 标准库的大部分函数通常放在文件 libc.a 中（文件名后缀.a代表“achieve”，译为“获取”），或者放在用于共享的动态链接文件 libc.so 中（文件名后缀.so代表“share object”，译为“共享对象”）。这些链接库一般位于 /lib/ 或 /usr/lib/，或者位于 GCC 默认搜索的其他目录
