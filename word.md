@@ -86,6 +86,6 @@
 | ethernet | 以太网 |
 | storage  |  存储  |
 | resident |  居民  |
-|          |        |
+| manually |  手动  |
 |          |        |
 

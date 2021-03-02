@@ -1,0 +1,129 @@
+" General {
+" Basic
+set nocompatible                " be iMproved
+filetype plugin indent on       " automatically detect file types.
+syntax on                       " syntax highlight
+set autochdir                   " always switch to the current file directory
+set cscopeverbose               " show tips when adding cscope database
+set number                      " show line numbers
+set ruler                       " show cursor position all the time
+
+" UI
+set laststatus=2                " always show status line.
+set showcmd                     " display an incomplete command in statusline
+set showmode                    " display the current mode
+set wildmenu                    " show list instead of just completing
+set background=dark
+colorscheme slate
+
+" Encoding
+set encoding=utf-8
+set termencoding=utf-8
+set fileencoding=utf-8
+set fileencodings=ucs-bom,utf-8,chinese,gb2312,gbk,cp936
+
+set backspace=indent,eol,start  " allow backspacing over everything in insert mode
+
+" Indent
+set autoindent                  " preserve current indent on new lines
+set cindent                     " set C style indent
+
+" Fold
+set foldenable                  " turn on folding
+set foldmethod=syntax           " zo and zc
+
+" Searching
+set hlsearch                    " highlight search terms
+set incsearch                   " find as you type search
+set showmatch                   " show matching brackets/parenthesis
+
+" Tab and wrap
+" set nowrap                      " not wrap long lines
+set wrap                        " 一行太长则分行显示
+set expandtab                   " convert all tabs typed to spaces
+set tabstop=4                   " indentation levels every four columns
+set shiftwidth=4                " indent/outdent by four columns
+set shiftround                  " indent/outdent to nearest tabstop
+set smarttab                    " be smart when using tabs ;)
+" }
+
+" Key mapping {
+" Smart way to move between windows
+map <C-j> <C-W>j
+map <C-k> <C-W>k
+map <C-h> <C-W>h
+map <C-l> <C-W>l
+
+" Switch buffers
+noremap <C-Left> :bp<CR>
+noremap <C-Right> :bn<CR>
+
+" Switch CWD to the directory of the open buffer
+map <leader>cd :cd %:p:h<CR>:pwd<CR>
+
+" Swtich ignore case
+map <leader><leader>i :set ignorecase<CR>
+map <leader><leader>I :set noignorecase<CR>
+
+" Use SPACE to open and close fold,  fdm must be set as syntax
+nnoremap <space> @=((foldclosed(line('.')) < 0) ? 'zc' : 'zo')<CR>
+
+" Move a line of text using ALT+[jk] or Comamnd+[jk] on mac
+nmap <M-j> mz:m+<cr>`z
+nmap <M-k> mz:m-2<cr>`z
+vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
+vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
+
+" Other Custom Keys
+map <F1> :E<CR>
+map <F2> :ls<CR>:buffer<Space>
+map <F3> :Rgrep<CR>
+map <F7> :botright copen<CR>
+map <F8> :cclose<CR>
+
+" }
+
+" Powerful status line {
+set statusline+=[%{strlen(&fenc)?&fenc:'none'}    "file encoding
+set statusline+=\ %F      "full path
+set statusline+=\ %c      "cursor column
+set statusline+=\ %l/%L   "cursor line/total lines
+set statusline+=\ %P      "percent through file
+set statusline+=\ %r      "read only flag
+" }
+
+" Plugins::{
+let Grep_Skip_Dirs = '.git .svn cvs rcs sccs'
+let Grep_Skip_Files = 'tags *.bak *~ cscope.* *.a *.o *.pyc *.bak *.swp'
+let Grep_Default_Filelist = '*.c *.h *.cc *.cpp *.php *.py *.js *.html'
+" }
+
+
+" Generate tags & cscope database for C/C++
+function GenerateCppTags()
+    silent! execute "!ctags -f tags -R --c++-kinds=+p --fields=+iaS --extra=+q --exclude=.svn --exclude=.git ."
+endf
+
+" Generate tags & cscope database for PHP
+function GeneratePHPTags()
+    silent! execute "!ctags -f tags -R --langmap=php:+.engine.inc.module --php-kinds=cdfi --exclude=.svn --exclude=.git ."
+endf
+
+" Generate tags & cscope database for Python, `--python-kinds` mean skip indexing import statements
+function GeneratePyTags()
+    silent! execute "!ctags -f tags -R --python-kinds=-i --exclude=build --exclude=.svn --exclude=.git ."
+endf
+
+
+" Attach tags & cscope database
+set tags=./tags,tags;
+
+" 光标移动显示横线
+set cursorline
+
+" 分屏情况下光标移动控制
+nmap <C-h> <C-w>h
+nmap <C-j> <C-w>j
+nmap <C-k> <C-w>k
+nmap <C-l> <C-w>l
+" VIMRC END

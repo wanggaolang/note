@@ -1,28 +1,22 @@
 ## 笔记规范
 
 - 要求易懂且简洁
-- 标题：一级用##，二级用数字+英文点（用空格后在typora上会自动向下拼加），三级用黑点，四级用数字+英文点，五级用二级黑点
-- 可选参数用英文中括号（[]）括起来，必要参数用大括号（{}）括起来。如果括号是真正需要显示的，则在里面再加一个`{}`，在该大括号中添加描述性语言。如: `[{外面的中括号是必要的}]`
+- 标题：一级用##，二级用黑点，三级用数字+英文点，四级用数字+中文反括号，五级用二级黑点
+- 可选参数用英文中括号（[]）括起来，必要参数用大括号（{}）括起来。如果括号是真正需要显示的，则在里面再加一个`{}`，在该大括号中添加描述性语言。如: `[{外面的中括号意义是可选的}]`
 - 在一大段论述或者一个一级标题内容结束后有个回车
 - 同一行内容间隔4空格
-- 有疑问的地方用QE标记，如果紧急在前面加三个$$$
+- 有疑问的地方用todo标记
 
 
 
 ## 常用规范
 
-- 在linux体系机器，临时文件放/test_for_all，提示文件放~/README
+- 在linux体系机器，临时文件放/test_for_all，里边分3个文件夹：1-3once，3代表最不重要；提示文件放~/README
 
 - 代码注释
 
-  维护代码时，在原来代码上基于新需求增加或修改代码，要备注来自第几个新需求，备注方法为`//{新需求的顺序id}`
+  维护代码时，在原来代码上基于新需求增加或修改代码，要备注来自第几个新需求，备注方法为`//{新需求的顺序id}`，如第一个需求注释为`//demand01`，如果是很重要的地方`//重要`
 
-  ​	如第一个需求注释为`//+++01`
-  
-  如果只是对原来代码做一些改动，如打印调试信息，注释为`//@@@`
-  
-  如果是很重要的地方`//$$$`    正在view的地方`//$$$$`
-  
 
 
 
@@ -76,8 +70,7 @@ ssh -T git@github.com    //测试与github联通性
 
 **各个仓库的常规流动**
 
-1. 查看前三个仓库间的未提交状况:`git status`
-2. 
+- 查看前三个仓库间的未提交状况:`git status`
 
 - pull操作
 
@@ -92,7 +85,7 @@ ssh -T git@github.com    //测试与github联通性
 
   3、将本地当前分支 推送到 与远程同名分支上(需先关联远程分支，方法见文章末尾)    ``git push``
 
-同样的，推荐使用第2种方式，git push origin <远程同名分支名>QE
+同样的，推荐使用第2种方式，git push origin <远程同名分支名>
 
 ``cat .git/config``看到本地与远程分支的关联关系
 
@@ -100,13 +93,11 @@ ssh -T git@github.com    //测试与github联通性
 
 **仓库间之间和仓库内部版本的回滚**
 
-- 从`git本地仓库`回滚某次提交（commit）到`工作区`
+- 从`git本地仓库`回滚某次提交（commit）到`暂存区`和`工作区`
 
   `git reset --hard {某次commit}`    该命令使工作区回滚到指定的一次commit，这个参数可以是sha值（不用写全），
 
   也可以是:`HEAD~{数字}`，表示回到相对当前版本之前上多少个版本
-
-  ？git reset HEAD {文件名}
 
   git log将显示git仓库中各个版本，就像查看游戏中的所有存档，HEAD指向当前版本
 
@@ -114,13 +105,15 @@ ssh -T git@github.com    //测试与github联通性
 
   `git reflog`能够解决这个问题，显示所有的版本
 
+- 从`git本地仓库`回滚某次提交（commit）到`暂存区`（即对git add的撤销）：git reset
+
+  git reset HEAD XXX可以将git仓库当前版本某个文件回滚到暂存区。举例，有一个bug版本已经在本地写好并提交到暂存区，就可以先git reset HEAD bug.file将本地仓库数据回流到暂存区，再用git checkout -- XXX将暂存区数据回流到工作区，让这个bug.file回到最开始的状态。（git reset --hard更合适，这只是举例子）
+
 - 暂存区回滚到工作区:    `git checkout -- {文件名，用.表示所有。注意文件名前有空格} `
 
-git reset HEAD XXX可以将暂存区回退到和git仓库当前版本一样。举例，有一个bug版本已经在本地写好并提交到暂存区，就可以需要用将暂存区覆盖，再用git checkout -- XXX
+---
 
-让本地分支被远程分支XXX覆盖   `git reset --hard origin/XXX`    QE 描述有问题样
-
-git rm XXX 删掉暂存区中的文件，如果本地（工作区）文件未删除也会一并被删掉
+- git rm XXX 删掉暂存区中的文件，如果本地（工作区）文件未删除也会一并被删掉
 
 - 如何查看`git status`的提示
 
@@ -128,19 +121,15 @@ git rm XXX 删掉暂存区中的文件，如果本地（工作区）文件未删
 
 『Changes not staged for commit』更改没有步入（staged）提交（准备）的，也就是改变记录存在工作区的stage形容了从工作区步入暂存区
 
-  在键入`git commit -m {消息}`后想修改消息通过`git commit --amend`命令
+- git clone git@server-name:path/repo-name.git克隆到本地，会将所有文件保存在仓库名文件夹中，也就是不用自己创建一个文件夹在clone，在主目录clone就行了。这种clone会把git数据库克隆过来，所以会让本地有所有远程分支
 
-git clone git@server-name:path/repo-name.git克隆到本地，会将所有文件保存在仓库名文件夹中，也就是不用自己创建一个文件夹在clone，在主目录clone就行了。这种clone会把git数据库克隆过来，所以会让本地有所有远程分支
-
-git fetch QE
+git fetch todo
 
 - 在使用git提交代码的时，`git commit -m "内容"` 如果内容编写错误：
 
   使用`git commit --amend` 对上次提交的内容进行修改
 
 **分支相关**
-
-
 
 分支的作用：1）多人同时操作同一仓库，为了防止混乱，要让每个人有自己的`git本地仓库`，而多一个分支就多一个`git本地仓库`。    2）当有一个新需求需要更改代码，而更改过程中可能要回到没改变之前的样子用于调试修复其他功能模块。这时候可以将新功能commit到新分支，再切换回来修复其他功能模块。当新需求完成后在master分支merge该分支，处理冲突并commit就行了。这时在master分支只会多出一个merge的log版本。
 
@@ -150,84 +139,90 @@ git fetch QE
 
 
 
-1、创建分支``git branch {新分支名}``    新分支复刻当前分支，并且HEAD指针，也就是当前工作区指向的分支仍为原来分支
+- 创建分支``git branch {新分支名}``    新分支复刻当前分支，并且HEAD指针，也就是当前工作区指向的分支仍为原来分支
 
-2、切换分支``git checkout {分支名}``
+- 切换分支``git checkout {分支名}``
 
-3、创建并切入新分支``git checkout -b {分支名}``
+- 创建并切入新分支``git checkout -b {分支名}``
 
-4、创建分支并与远程分支关联``git checkout -b {新建分支} origin/{远程分支}``    这时新建分支内容就是关联分支内容
+- 创建分支并与远程分支关联``git checkout -b {新建分支} origin/{远程分支}``    这时新建分支内容就是关联分支内容
 
 ​	新建分支并与当前分支某个commit关联`git checkout -b {新分支名} {commit_id}`
 
-5、删除分支``git branch -d {要删分支}``
+- 删除分支``git branch -d {要删分支}``
 
-6、查看所以分支``git branch -a``    不加``- a``为显示本地分支
+- 查看所以分支``git branch -a``    不加``- a``为显示本地分支
 
-？将远程分支与本地已有分支BBB与关联起来``git branch --set-upstream-to=remotes/AAA BBB``
+- 添加远程分支：git push origin {本地分支}:{远程分支}
 
-8、添加远程分支：git push origin {本地分支}:{远程分支}
+- 删除远程分支：git push origin {空格}:{远程分支}		or		 git push origin --delete {远程分支}
 
-9、删除远程分支：git push origin {空格}:{远程分支}		or		 git push origin --delete {远程分支}
+- 在当前分支合并（并入）指定分支：git merge {指定分之名}   如果有冲突需要解决冲突再add，commit。若无冲突会自动commit
 
-10、在当前分支合并（并入）指定分支：git merge {指定分之名}   如果有冲突需要解决冲突再add，commit。若无冲突会自动commit
+- 将另一分支某次提交合并到本分支：git cherry-pick {commitHash}，注意这只会合并这次提交的相关改变，如某个值和本分支不一样，但是并非这次提交才不一样，合并不会让本分支冲突。
 
-11、将另一分支某次提交合并到本分支：git cherry-pick {commitHash}
+- 可以用``git log --graph``看到分支合并图
 
+---
 
+**杂项**
 
-合并当前分支与XXX分支 ``git merge XXX`` 前提当前版本是XXX版本的子集或者相等
+- `git diff [多个参数]`    
 
-可以用``git log --graph``看到分支合并图
-
-- 杂项
-
-  1. `git diff [多个参数]`    
-
-  ​	概念：git diff a b意味着相较于b来说，a增加了啥，减少了啥
+  ​	概念：git diff a b意味着以a为基准，相较于b来说，a增加了啥，减少了啥
 
   ​	只显示不同文件名：--name-only
 
-  ​	比较当前工作区与暂存区区别:`git diff`
-  
+  ​	比较工作区与暂存区区别:git diff
+
+  ​	比较本暂存区和本地仓库区别：git diff --cached
+
   ​	比较俩commit区别:`git diff {第1个commit的sha值} {第2个commit的sha值}`
-  
+
   ​	比较本地git仓库和远端区别:`git diff origin`
-  
+
   ​	解决`git diff`中文文件名乱码问题：
-  
-  ```shell
-  $ git config --global core.quotepath false          # 显示 status 编码
-  $ git config --global gui.encoding utf-8            # 图形界面编码
-  $ git config --global i18n.commit.encoding utf-8    # 提交信息编码
-  $ git config --global i18n.logoutputencoding utf-8  # 输出 log 编码
-  ```
-  
-  2. `暂存git stash`
-  
+
+```shell
+$ git config --global core.quotepath false          # 显示 status 编码
+$ git config --global gui.encoding utf-8            # 图形界面编码
+$ git config --global i18n.commit.encoding utf-8    # 提交信息编码
+$ git config --global i18n.logoutputencoding utf-8  # 输出 log 编码
+```
+
+- 暂存git stash
+
   常规：git stash push -m "my_stash"
-  
+
   将包括未追踪文件一同暂存进栈：git stash push -u
-  
+
   To apply a stash and remove it from the stash stack, type:git stash pop stash@{n}
-  
-  To apply a stash and keep it in the stash stack, type:git stash apply stash@{n}
-  
-  3. 忽略当前git仓库下某些文件夹：在git仓库根目录的`.gitignore`文件写入这些文件夹名字，注意是以git仓库根目录作为基础目录的相对路径，如ABC就是./ABC
-  
-  4. 修改当前仓库用户和邮箱：
-  
-     vim .git/config    修改为形如：
-  
-     ```
-     [user]
-         name = songhongshan
-         email = songhongshan@xx.com
-     ```
-  
-     git commit --amend --reset-author
-  
-     
+
+  To apply a stash and keep it in the stash stack, type：git stash apply stash@{n}
+
+  删除：git stash drop stash@{1}
+
+- 正在新分支写feature发现主线有bug：
+
+  1）git stash push保存；2）切换到主线并新建分支；3）修复bug并commit；4）在主线和新分支分别git cherry-pick {commit}，如果没有冲突自动commit了；5）git stash apply恢复写到一半的feature；6）删除bug分支
+
+- 忽略当前git仓库下某些文件夹：在git仓库根目录的`.gitignore`文件写入这些文件夹名字，注意是以git仓库根目录作为基础目录的相对路径，如ABC就是./ABC
+
+- 修改当前仓库用户和邮箱：
+
+  vim .git/config    修改为形如：
+
+```
+[user]
+    name = songhongshan
+    email = songhongshan@xx.com
+```
+
+git commit --amend --reset-author
+
+- 解决工作区相对暂存区有更改情况下git stash apply失败问题：
+
+  1）git add -u .    2）git stash apply s    3)git reset
 
 ## 内存操作的小技巧 
 
@@ -287,7 +282,7 @@ git fetch QE
 
 ```c
 	void *memcpy(void *dest, const void *src, size_t n)
-从 src 复制 n 个字符到 dest，不会先清空dest。
+从 src 的0下标复制 n 个字符到以0下标开始的 dest，不会先清空dest。
 	void *memset(void *str, int c, size_t n)
 复制字符 c（一个无符号字符）到参数 str 所指向的字符串的前 n 个字符。
 	char *strcat(char *dest, const char *src)
@@ -364,11 +359,7 @@ Setting	--	Keymap
 
 统计总代码行数：
 
-**三个配置文件**
-
-//TODO
-
-
+- 3个配置文件：见etc/vscode_conf
 
 - 编译：mac快捷键 command + shift + b
 - 解决ubuntu中vscode字体间距过大问题：安装适配`firacode`字体
@@ -393,9 +384,24 @@ Setting	--	Keymap
 
 - 代码增加80和120字基准线：settings.json--增加一行："editor.rulers": [80,120]
 
-- 能够编译运行单个文件：
-  1. 安装Code Runner
-  2. 重启后编译运行，press F1 and then select/type Run Code
+- 插件
+
+  ```
+  能够编译运行单个文件：
+  	1. 安装Code Runner
+  	2. 设置-> code-runner:Run in Terminal
+  	3. 重启后编译运行，press F1 and then select/type Run Code
+  	
+  复制文件名：
+  	Copy file name
+  	
+  c++的插件
+  选择C/C++微软开发的版本和C++ Intellisenseaustin的版本安装两个扩展.
+  ```
+
+  
+
+
 
 ## 进程，线程，协程
 
@@ -404,8 +410,6 @@ Setting	--	Keymap
 线程：进程的一个实体，是cpu调度和分派的基本单位。线程只拥有一点在运行中必不可少的资源(如程序计数器,一组寄存器和栈),但是它可与同属一个进程的其他的线程共享进程所拥有的全部资源。线程间通信主要通过共享内存，上下文切换很快，资源开销较少，但相比进程不够稳定容易丢失数据。
 
 协程：
-
-
 
 ## c++相关
 
@@ -420,7 +424,7 @@ Setting	--	Keymap
    - [{捕获列表}]\({参数列表})->{返回值}{{函数体}}    举例: `auto add_1 = [](int a)->int {return a+1;};`
    
    - 该表达式一般定义在函数内部，也就是函数中定义函数
-   - 捕获列表用于传入lambda所在函数的非static变量，对于其他变量或者函数，只要lambda所在函数能调用它便能使用。捕获列表默认为const值传递而非地址传递。如[v_1, v_2]在内部改变他们值并不会改变lambda所在函数里他们的值。地址传递需要在其前面加上&，如[&v_1, &v_2]。如果传入值很多可以隐式传递，编译器会根据函数体内部的调用情况推断传入了哪些值。[=]为值传递，[&]为地址传递，如果两者皆有，则第一个参数必须为&或=，表示默认传递方式，在其后面跟上另外的参数，如[=, &v_2, &v_3]
+   - 捕获列表用于传入lambda所在函数的非static变量，对于除上述以外变量或者函数，只要lambda所在函数能调用它便能使用。捕获列表默认为const值传递而非地址传递。如[v_1, v_2]在内部改变他们值并不会改变lambda所在函数里他们的值。地址传递需要在其前面加上&，如[&v_1, &v_2]。如果传入值很多可以隐式传递，编译器会根据函数体内部的调用情况推断传入了哪些值。[=]为值传递，[&]为地址传递，如果两者皆有，则第一个参数必须为&或=，表示默认传递方式，在其后面跟上另外的参数，如[=, &v_2, &v_3]
    
    - 可以省略掉参数列表和返回值，如: `auto get_1 = []{return 1;};`
 
@@ -491,12 +495,10 @@ Setting	--	Keymap
 
    1）通过`cat ./* | grep {查找内容}`确认文件中是否有这个关键字
 
-   ​	通过`find . -type f -name "*" | xargs grep {查找内容}`找到这个文件//todo 查看原理
-
    2）find {文件夹，如果是当前文件夹可以省略} -type f -name "*.c" | xargs grep {查找的关键字}
 
    - type f 意思是只找文件
-   
+
    - name "\*.c"  表示只找C语言写的代码，从而避免去查binary；也可以不写，表示找所有文件
    
 9. 查看linux发行版本：`cat /etc/issue`
@@ -658,7 +660,7 @@ int main()
 
 > It is okay to write to a socket that has received a FIN, but it is an error to write to a socket that has received an RST
 
-## 浮点数大小	//QE
+## 浮点数大小	//todo
 
 float：32位	1位符号位，8位指数位，23位尾数
 
@@ -826,10 +828,6 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
 
 - 终端和shell的区别：类似编辑器和编译器，编辑器展示给程序员看，编译器用来真正的编译
 
-  
-
-  
-
 - 配置终端  
 
   **terminator**
@@ -882,7 +880,7 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
   
 - 权限
 
-  chmod只是改变文件的读写、执行权限，更底层的属性控制是由chattr来改变的QE lsattr
+  chmod只是改变文件的读写、执行权限，更底层的属性控制是由chattr来改变的todo lsattr
 
   让文件不可删除`chattr +i {file/folder}`  
 
@@ -933,85 +931,124 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
   # 让配置立即生效
   ```
 
-- top解决程序名被截断问题：top -c
+- shell相关小知识
 
-  ## mac相关
-
-  1. **Homebrew**：是Mac OS 不可或缺的套件管理器。可以通过它安装软件，比如wget
-
-     进入其目录    `cd "$(brew --repo)"`
-
-     换源:
-
+  1. top解决程序名被截断问题：top -c
+  
+  2. wc可以计算文件的Byte数(-c)、字数(-w)、或是列数(-l)
+  
+  3. 处理行级别字符串适合awk
+  
      ```shell
+     1）在后边跟两个单引号，里边是筛选条件
+     2）操作内容要包含在大括号里，可以理解大括号类似c++的作用域。示例：
+     	awk 'BEGIN {FS=":"} $3 < 50 {print $1 "\t " $3}'
+     	BEGIN会提前设置FS，否则第一行仍然以空格分割字段，没有括号的部分是条件筛选
+     	awk 'NR>=2 {total=$1 + $2 + $3
+     	printf "%10d%10d%10d%10.2f\n" $1,$2,$3,total}'
+     	大括号有多个语句时，用回车或分号间隔，功能：对于第二行之后（NR最小为1），显示每行累加
+     ```
+     
+  4. 光标
+  
+    隐藏光标 ：  echo -e "\033[?25l"  
+  
+    显示光标 ：  echo -e "\033[?25h"
+  
+  5. ls -l的时间是修改时间，ls -ul时间是访问时间
+
+## mac相关
+
+**Homebrew**：是Mac OS 不可或缺的套件管理器。可以通过它安装软件，比如wget
+
+   进入其目录    `cd "$(brew --repo)"`
+
+   换源:
+
+  ```shell
      //设置homebrew本身源：
      cd "$(brew --repo)" && git remote set-url origin git://mirrors.ustc.edu.cn/brew.git
      
      //设置并更新formula源
      cd "$(brew --repo)/Library/Taps/homebrew/homebrew-core" && git remote set-url origin git://mirrors.ustc.edu.cn/homebrew-core.git
-     
-     
-     
-     
-     
+  
      //使用中科大的bottles源：
      echo 'export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.ustc.edu.cn/homebrew-bottles' >> ~/.bash_profile
-     ```
-    
+  ```
+
      homebrew会将下载的软件统一安装在/usr/local/Cellar目录中
-     
-2.  **Iterm2相关 **
-    
-
-  安装iterm2：brew install iterm2
-    
-    卸载：brew uninstall iterm2
 
 
-​    
-​    Iterm2 + oh-my-zsh，注意需要配置Meslo 字体，否则会乱码
-​    为了让多用户都使用同样的配置，要将`~/.zshrc`复制到每个用户下
-​    通过历史记录自动补全`pip install powerline-status`
-​    插件配置（位于~/.zshrc）：`plugins=(git zsh-autosuggestions extract zsh-syntax-highlighting z)`
+**Iterm2相关 **
+
+- 安装iterm2：brew install iterm2    卸载：brew uninstall iterm2
+
+- 需要配置的东西：
+
+  ```
+  1.Iterm2 + oh-my-zsh + Meslo 字体
+  2.配置iterm2的配色为Solarized Dark Higher Contrast，在./etc下有一个版本可以用，最好在https://iterm2colorschemes.com/弄最新的
+  3.通过历史记录自动补全：pip install powerline-status
+  4.插件配置（位于~/.zshrc）：`plugins=(git zsh-autosuggestions extract zsh-syntax-highlighting z)`
+  ```
+
+  
+
+- 为了让多用户都使用同样的配置，要将`~/.zshrc`复制到每个用户下
+
+- Iterm2快捷键：
 
   ```bash
-      Iterm2快捷键：
-    
+  command + shift + h 查看剪贴板历史
   command + ，设置
-    command + enter 进入与返回全屏模式
-    command + t 新建标签
-    command + w 关闭标签
-  command + 数字 command + 左右方向键    切换标签
-    command + f 查找
-    command + d 水平分屏
-    command + shift + d 垂直分屏
-    command + option + 方向键 command + [ 或 command + ]    切换屏幕
-    command + ; 查看历史命令
-    command + shift + h 查看剪贴板历史
-    ctrl + u    清除当前行
-    ctrl + l    清屏
-    ctrl + a    到行首
-    ctrl + e    到行尾
-    ctrl + f/b  前进后退
-      ctrl + p    上一条命令
-    ctrl + r    搜索命令历史
-    最大化Tab中的pane，隐藏本Tab中的其他pane：⌘+ shift +enter , 再次还原
+  command + enter 进入与返回全屏模式
+  command + t 新建标签
+  command + w 关闭标签
+  command + 数字    command + 左右方向键    切换标签
+  command + f 查找
+  command + d 水平分屏
+  command + shift + d 垂直分屏
+  command + option + 方向键 command + [ 或 command + ]    切换屏幕
+  command + ; 查看历史命令
+  ctrl + u    清除当前行
+  ctrl + l    清屏
+  ctrl + a    到行首
+  ctrl + e    到行尾
+  ctrl + f/b  前进后退
+  ctrl + p    上一条命令
+  ctrl + r    搜索命令历史
+  最大化Tab中的pane，隐藏本Tab中的其他pane：⌘+ shift +enter , 再次还原
   ```
-3. 配置iterm2的配色为**`Solarized Dark Higher Contrast`**，在./etc下有一个版本可以用，最好在[这](https://iterm2colorschemes.com/)弄最新的
-
-3. 在当前窗口是终端时新建一个终端``command + t``
-
-3. 设置iterm2保留行数：设置(command+,)--Profiles--terminal--Scrollback Buffer
+- 设置iterm2保留行数：设置(command+,)--Profiles--terminal--Scrollback Buffer
 
 - 设置vim中光标能上下滑动：
   iTerm2 > Preferences > Advanced
   Mouse > Scroll wheel sends arrow keys in alternate screen mode.
+  
+  注意这可能导致一个问题：偶现在terminal triggers the command history。解决办法为vim某个东西再退出
 
 **mac相关小知识**
 
 - 在finder根目录中`command + shift + .`显示隐藏文件
 
 - 录屏：QuickTime player
+
+- 设置默认打开方式
+
+  ```shell
+  只改变指定文件的默认打开方式:
+  	1.在Finder中右键点击要改变的文件，调出菜单
+  	2.按住”Option”键，你会发现菜单中”打开方式”(Open With)选项变成了”总是以此方式打开”
+  	3.点其中的”其他”(Other)选项，这时你可以从所有应用程序里选择你要找的默认程序，记得要把界面上的”总是以此方式打开”(Always Open With)选项钩上
+  
+  改变某一类型文件的默认打开方式
+  	1.在Finder中右键点击一个该类型的文件，调出菜单
+  	2.在菜单中选择”显示简介”(Get Info)选项
+  	3.在弹出的对话框中，展开”打开方式”(Open With)选项
+  	4.选择你要改变的默认打开程序，并点击下方的”全部更改…“(Change All)
+  ```
+
+  
 
 
 
@@ -1174,7 +1211,7 @@ a$表示以a结尾
 
    ![image-20201103165334785](./etc/pic/image-20201103165334785.png)
 
-2. 走入当前脚本所在文件夹的上层文件夹
+- 走入当前脚本所在文件夹的上层文件夹
 
    ```shell
    # path of this file
@@ -1188,11 +1225,44 @@ a$表示以a结尾
    BASE_DIR=$(cd $(dirname ${FILE})/..; pwd)
    ```
 
+- 获取当前时间：time=$(date "+%Y-%m-%d %H:%M:%S")
+
+- 检查程序是否存在：
+
+   ```shell
+   function check(){
+         echo "\$1: $1"
+         ps aux |grep "$1" |grep -v "grep" |grep -v $0
+         echo $str
+         count=`ps aux |grep "$1" |grep -v "grep" |grep -v $0 |wc -l`
+         #echo $count
+         if [ 0 == $count ];then
+             echo "process not exist"
+         else
+             echo "process id: $count"
+         fi
+       }
+   check "$1"
+   ```
    
+- 注意：对于类似$1等可能带有空格的参数，作实参需要加上引号。错误示例：
+  
+  <img src="./etc/pic/image-20210208200005642.png" alt="image-20210208200005642" style="zoom:50%;" />
+  
+  
+  
+  
+
 
 ## vim相关
 
-- 快捷键模式
+- vim的3种模式
+
+  1. 正常(Normal)模式，也就是vim file进去时的模式
+2. 编辑模式，可以输入文本到文件
+  3. 命令行模式，输入【:/?】，光标移动到最下面一行的模式
+
+- 正常(Normal)模式
 
   全选:    `ggVG`    一行行选择`V`，一个个光标单位选择`v`
 
@@ -1207,14 +1277,13 @@ a$表示以a结尾
 
   - 查看关键字出现次数：%s/{关键字}//gn  
 
-  选中1列：ctrl + v 向上下移动光标
-  插入列
-  	插入操作的话知识稍有区别。例如我们在每一行前都插入"() "：
-  	1.光标定位到要操作的地方。
-  	2.CTRL+v 进入“可视 块”模式，选取这一列操作多少行。
-  	3.SHIFT+i(I) 输入要插入的内容。
-  	4.ESC 按两次，会在每行的选定的区域出现插入的内容。
-
+  - 插入列
+    	插入操作的话知识稍有区别。例如我们在每一行前都插入"() "：
+    	1.光标定位到要操作的地方。
+    	2.CTRL+v 进入“可视 块”模式，选取这一列操作多少行。
+    	3.SHIFT+i(I) 输入要插入的内容。
+    	4.ESC 按两次，会在每行的选定的区域出现插入的内容。
+  
 - 翻页：向下：ctrl+f    向上：ctrl+b
 
 - 设置鼠标能上下滑动：
@@ -1228,6 +1297,28 @@ a$表示以a结尾
   方法二（在mac iterm2中）
   iTerm2 > Preferences > Advanced
   Mouse > Scroll wheel sends arrow keys in alternate screen mode.
+  注意这可能导致一个问题：偶现在terminal triggers the command history。解决办法为vim某个东西再退出
+  ```
+
+- vim退出后终端是否显示部分vim的文本：
+
+  - User1使用TERM = **xterm**，在这种情况下，当您退出vim时，它将清除终端。
+  
+  - User2使用TERM = **vt100**，在这种情况下，退出vim不会清除终端。
+  
+- 展开所有折叠：一般命令行模式直接使用zi就可以展开和折叠了
+
+- 分屏
+
+  横向分屏：:sp    纵向分屏：:vsp
+
+  光标移动：ctrl+w+【hjkl任一】但是ctrl+w经常会关闭窗口，所以一般做个快捷键映射，在vimrc中写入：
+
+  ```shell
+  nmap <C-h> <C-w>h
+  nmap <C-j> <C-w>j
+  nmap <C-k> <C-w>k
+  nmap <C-l> <C-w>l
   ```
 
   
@@ -1270,8 +1361,6 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
 
 
 - 查看镜像    ``docker image ls``或者`docker images`
-
-- 查看ov相关的的容器，前面显示所有容器    ``docker ps -a | grep ov``
 
 - 启动某个容器    ``doeker start {containerID}``
 
@@ -1347,7 +1436,7 @@ docker update --restart=always xxx
   
 
 
-## photoshop相关
+## photoshop相关/PS相关
 
 - ctrl+alt复制图片时总是卡住，解决办法：
 
@@ -1355,7 +1444,9 @@ docker update --restart=always xxx
 
   方法2：任务管理器--关闭ps进程下的一些怀疑对象，卡住画面恢复
 
-
+- 合并多个图层：ctrl+鼠标左键选中多个图层，ctrl+e合并
+- 新建透明图层：ctrl+shift+N
+- 将背景改为透明：1）选中背景，再反向选择；2）编辑-剪切；3）新建透明图层（ctrl+shift+N）；4）编辑-粘贴；5）删除原始图层；6）保存为png格式
 
 ## protobuf相关/pb相关
 
@@ -1375,9 +1466,61 @@ docker update --restart=always xxx
 
   对于Required和Optional成员，如果存在，可以通过{message，对象承接的名字}.{成员名字}()来获取
 
-  而对于Repeated成员，需要通过{message，对象承接的名字}.{成员名字}(index，int类型)
+  而对于Repeated成员，需要通过{message，对象承接的名字}.{成员名字}(index，int类型)获取
+  
+- 通用常识
+
+  1. 输出到文件：SerializeToOstream    输出到终端：
+  2. 赋值：a=b;    或者下方的CopyFrom函数
+  3. 
 
 
+- Standard Message Methods
+
+  Each message class also contains a number of other methods that let you check or manipulate the entire message, including:
+
+  - `bool IsInitialized() const;`: checks if all the required fields have been set.
+  - `string DebugString() const;`: returns a human-readable representation of the message, particularly useful for debugging.
+  -  `void PrintDebugString() const;`: Convenience function useful in GDB.  Prints DebugString() to stdout.
+  - `void CopyFrom(const Person& from);`: overwrites the message with the given message's values.
+  - `void Clear();`: clears all the elements back to the empty state.
+
+- Parsing and Serialization
+
+  1. `bool SerializeToString(string* output) const;`: serializes the message and stores the bytes in the given string. Note that the bytes are binary, not text; we only use the `string` class as a convenient container.
+
+  2. `bool ParseFromString(const string& data);`: parses a message from the given string.
+
+  3. `bool SerializeToOstream(ostream* output) const;`: writes the message to the given C++ `ostream`.
+
+  4. `bool ParseFromIstream(istream* input);`: parses a message from the given C++ `istream`.
+  
+- pb对象的可视化和json接入
+
+  一般用DebugString或PrintDebugString查看，不过输出不是严格意义的json。如果要合法数据，有以下方式
+
+  ```c++
+  //转严格合法json字符串
+  #include <google/protobuf/text_format.h>
+  if (std::string s; google::protobuf::TextFormat::PrintToString(msg, &s)) {
+    std::cout << "Your message: " << s;
+  } else {
+    std::cerr << "Message not valid (partial content: "
+              << msg.ShortDebugString() << ")\n";
+  }
+  
+  //第二种方法
+  #include <google/protobuf/util/json_util.h>
+  static std::string ProtoToJson(const google::protobuf::Message& proto)
+  {
+    std::string json;
+    //主要就是下方这行函数
+    google::protobuf::util::MessageToJsonString(proto, &json);
+    return json;
+  }
+  ```
+
+  
 
 ## tar相关/压缩/解压文件
 
@@ -1530,13 +1673,13 @@ unzip file.zip //解压zip
 
 - 多线程
 
-  1. 多线程相关QE
+  1. 多线程相关todo
 
   2. 线程池
 
      [不错的讲解](http://c.biancheng.net/view/2627.html)
 
-
+- conf处理库：configparser
 
 ## expect脚本
 
@@ -1546,7 +1689,7 @@ if {$value eq "abc"} {XXX}    注意大括号的左括号左边要有空格，�
 
 spawn
 
-echo  QE
+echo  todo
 
 expect脚本自动ssh登陆，当终端窗口发生变化时，默认expect不会将终端窗口大小改变的信号传送到远程的服务器上，因此在使用上会出现很不方便的地方，比如vim打开文件时出现串行，要是含有中文的文件可能根本无法编辑。解决办法是在脚本中添加: 
 
@@ -1687,13 +1830,11 @@ cpp中的fstream
 ```c++
 	#include<fstream>
 	std::ofstream fout;
-    fout.open("./test", std::ios::in | std::ios::ate);
+    fout.open("./test", std::ios::out | std::ios::ate);
     if (fout.is_open()) {
         fout << "json.toStyledString();";
         fout.close();
     }
-
-open函数有下列的打开方式，默认的打开方式是`ios_base::in | ios_base::out`
 
 ios::in	为输入(读)而打开文件
 ios::out	为输出(写)而打开文件
@@ -1701,6 +1842,14 @@ ios::ate	初始位置：文件尾
 ios::app	所有输出附加在文件末尾
 ios::trunc	如果文件已存在则先删除该文件
 ios::binary	二进制方式
+
+只可以对 ofstream 或 fstream 对象设定 out 模式
+只可以对 ifstream 或 fstream 对象设定 in 模式
+只有当 out 也被设定时才可以设定 trunc 模式
+只要 trunc 没被设定，就可以设定 app 模式。在 app 模式下，即使没有显式指定 out 模式，文件也总是以输出方式被打开
+默认情况下，即使我们没有指定 trunc，以 out 模式打开的文件也会被截断(指 out 默认情况下都是重写文件，而不是追加)。为了保留以 out 模式打开的文件的内容，我们必须同时指定 app 模式，这样只会将数据追加写道文件末尾；或者同时指定 in 模式，即打开文件同时进行读写操作。(之后将会介绍对同一文件即输入又输出的方法)
+ate 和 binary 模式可用于任何类型的文件流对象，且可以与其他任何文件模式组合使用
+每个文件流类型都定义了默认的文件模式，当未指定文件模式时，便使用默认模式。如与 ifstream 关联的文件默认以 in 模式打开；与 ofstream 关联的文件默认以 out 模式打开；与 fstream 关联的文件默认以 in 和 out 模式打开。
 ```
 
 
@@ -1709,24 +1858,65 @@ ios::binary	二进制方式
 - gdb相关
 
 1. 开始    gdb {程序名}
+
 2. 输入参数    set args {参数}
+
 3. 下断点     b {断点，如launch_service.cpp:127}
+
 4. 打印参数    p {参数}
 
+5. 下边列出了GDB一些常用的操作。
+
+   - 启动程序：run
+
+   - 设置断点：b 行号|函数名
+
+   - 删除断点：delete 断点编号
+
+   - 禁用断点：disable 断点编号
+
+   - 启用断点：enable 断点编号
+
+   - 单步跟踪：next (简写 n)
+
+   - 单步跟踪：step (简写 s)
+
+   - 打印变量：print 变量名字 （简写p）
+
+   - 设置变量：set var=value
+
+   - 查看变量类型：ptype var
+
+   - 顺序执行到结束：cont
+
+   - 顺序执行到某一行： util lineno
+
+   - 打印堆栈信息：bt
+
+6. gdb调试core文件：
+
+   1）设置core文件位置，如echo "/corefile/core-%e-%p-%t" > /proc/sys/kernel/core_pattern，
+
+   ​	则core文件会生成在/corefile文件夹下
+
+   2）gdb {程序路径} {core文件路径}
+
+   3）bt
 
 
-- gcc参数：编译时引入/usr/local/lib文件夹下的so：-L/usr/local/lib
+
+- gcc参数：编译时引入/usr/local/lib文件夹下的so：-L/usr/local/lib，某个头文件在/home/other：-I/home/other
 
 ```bash
 // 在gcc中可以通过-L参数指定库文件搜索路径，通过-l参数指定库文件，如下方表示在指定的文件夹下找libboost_system.so文件
-gcc -o hello hello.cpp -Lbc_out/baidu/adu-3rd/boost/output/so -lboost_system
+gcc -o hello hello.cpp -L/home/test -lboost_system
 ```
 
-查看依赖的so文件是否都有：ldd {程序名或so文件}
+- 查看依赖的so文件是否都有：ldd {程序名或so文件}
 
-系统so存放经典位置：/lib/x86_64-linux-gnu/    /usr/lib/x86_64-linux-gnu
+- 系统so存放经典位置：/lib/x86_64-linux-gnu/    /usr/lib/x86_64-linux-gnu
 
-如果某个动态链接，如/test/libboost_filesystem.so.1.65.1没在某个程序的链接里，可以在上一行的文件夹创造一个软链：ln -s /test/libboost_filesystem.so.1.65.1，这样只要该程序查找路径包含该文件夹就ok了
+- 如果某个动态链接，如/test/libboost_filesystem.so.1.65.1没在某个程序的链接路径里，可以在上方说的文件夹创造一个软链：ln -s /test/libboost_filesystem.so.1.65.1，这样只要该程序查找路径包含该文件夹就ok了
 
 - g++等同于gcc -xc++ -lstdc++ -shared-libgcc：
 
@@ -1742,3 +1932,44 @@ gcc -o hello hello.cpp -Lbc_out/baidu/adu-3rd/boost/output/so -lboost_system
   | -std=                   | 手动指令编程语言所遵循的标准，例如 c89、c90、c++98、c++11 等。 |
 
 - 标准库的大部分函数通常放在文件 libc.a 中（文件名后缀.a代表“achieve”，译为“获取”），或者放在用于共享的动态链接文件 libc.so 中（文件名后缀.so代表“share object”，译为“共享对象”）。这些链接库一般位于 /lib/ 或 /usr/lib/，或者位于 GCC 默认搜索的其他目录
+
+- LD_RUN_PATH是RPATH对应的环境变量，用于指定程序启动时动态库的加载路径，既可以在编译阶段指定，也可以在运行阶段指定。编译时指定rpath：gcc -Wl,-rpath=/home    查看程序默认RPATH, bin 替换为真实的应用程序：readelf -d bin | grep RPATH
+
+- 生成动态库
+
+  ```
+  gcc -fPIC -c first.cpp second.cpp
+  # 生产动态库与应用程序的编译命令之间的主要区别是-fPIC，-shared两个参数，-shared是告诉连接器要生成动态库，参数-fPIC作用是生产位置无关代码，方便后续在运行阶段动态加载
+  gcc -shared first.o second.o -o libxx.so
+  
+  假设对test.cpp制作了个libtest.so的静态库，则链接静态库：
+  g++ main.cpp -L/home/test -ltest
+  ```
+
+- 静态库：多个目标文件(.o)集合，把这些目标文件压缩在一起，对其进行编号和索引，以便查找和检索，方便使用，这便形成了libxx.a
+
+  ```
+  生成静态库：ar rcs libxx.a first.o second.o
+  假设对test.cpp制作了个libtest.a的静态库，则链接静态库：
+  g++ main.cpp -L/home/test -ltest
+  
+  会发现静态和动态库的链接命令都一样的，链接器优先链接动态库，指定方法：
+  gcc会对-Bstatic后面的库使用静态链接。对-Bdynamic后面跟的库使用动态链接
+  如 g++ main.cpp -Bstatic -L/home/test -ltest -Bdynamic -ltest2
+  ```
+
+  
+
+## 正则表达式相关
+
+- 符号：
+
+  ```
+  *表示任意个任意字符。
+  .表示任意一个字符
+  .*表示任意个任意字符
+  ^后跟字符表示以这些字符开头
+  字符串后跟$表示以某字符串结束
+  ```
+
+  
