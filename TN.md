@@ -157,7 +157,7 @@ git fetch todo
 
 - 删除远程分支：git push origin {空格}:{远程分支}		or		 git push origin --delete {远程分支}
 
-- 在当前分支合并（并入）指定分支：git merge {指定分之名}   如果有冲突需要解决冲突再add，commit。若无冲突会自动commit
+- 在当前分支合并（并入）指定分支：git merge {指定分支名}   如果有冲突需要解决冲突再add，commit。若无冲突会自动commit
 
 - 将另一分支某次提交合并到本分支：git cherry-pick {commitHash}，注意这只会合并这次提交的相关改变，如某个值和本分支不一样，但是并非这次提交才不一样，合并不会让本分支冲突。
 
@@ -171,6 +171,8 @@ git fetch todo
 
   ​	概念：git diff a b意味着以a为基准，相较于b来说，a增加了啥，减少了啥
 
+  ​	git diff b等效于git diff {当前状态} b 
+
   ​	只显示不同文件名：--name-only
 
   ​	比较工作区与暂存区区别:git diff
@@ -180,7 +182,7 @@ git fetch todo
   ​	比较俩commit区别:`git diff {第1个commit的sha值} {第2个commit的sha值}`
 
   ​	比较本地git仓库和远端区别:`git diff origin`
-
+  
   ​	解决`git diff`中文文件名乱码问题：
 
 ```shell
@@ -201,6 +203,14 @@ $ git config --global i18n.logoutputencoding utf-8  # 输出 log 编码
   To apply a stash and keep it in the stash stack, type：git stash apply stash@{n}
 
   删除：git stash drop stash@{1}
+
+  如果git stash push后不小心drop掉了，恢复方法：
+
+  1）git fsck --unreachable    尽量看commit的sha
+
+  2）git show sha    看那个是被删的那个
+
+  3）git stash apply sha
 
 - 正在新分支写feature发现主线有bug：
 
@@ -399,7 +409,7 @@ Setting	--	Keymap
   选择C/C++微软开发的版本和C++ Intellisenseaustin的版本安装两个扩展.
   ```
 
-  
+- 解决include出错报错问题：设置-搜索includePath-在setting_json中配置，加入C_Cpp.default.includePath路径
 
 
 
@@ -457,7 +467,7 @@ Setting	--	Keymap
    }
    ```
 
-   
+5. vector产生二维数组： vector<vector<int> > newOne(r, vector<int>(c, 0));
 
 
 
@@ -472,8 +482,6 @@ Setting	--	Keymap
 
 
 ## 小知识（一）
-
-1. chrome快捷键：历史记录    ``ctrl + y``
 
 2. 类外定义成员函数不能加上默认参数，如：``Test fun(int a = 1)``会报错，同样static声明的成员在外部定义时候，必须省去static。同时，static成员变量只有跟了const才可以在类里面的初始化列表中进行初始化，其余的都要在类的外部初始化
 
@@ -511,11 +519,24 @@ Setting	--	Keymap
 
 13. 用md5sum计算文件的消息摘要
 
-14. chrome 书签搜索插件：Holmes
+    
 
     
 
 
+
+## chrome相关
+
+- 插件：
+
+  ```
+  书签搜索插件：Holmes
+  广告过滤插件：adblock
+  ```
+
+- chrome快捷键
+
+  1. 历史记录    ``ctrl + y`
 
 ## c++ string的实习
 
@@ -878,6 +899,8 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
   
   查找文件``find / -name {文件名，可配合通配符} 2>/dev/null``
   
+  find只查找当前文件夹一层   find ./ -maxdepth 1 -type d
+  
 - 权限
 
   chmod只是改变文件的读写、执行权限，更底层的属性控制是由chattr来改变的todo lsattr
@@ -956,6 +979,8 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
     显示光标 ：  echo -e "\033[?25h"
   
   5. ls -l的时间是修改时间，ls -ul时间是访问时间
+  
+- 设置光标在shell逐word移动：iterm2-设置-Profiles-Keys-修改option+←和option+→的映射，选择Action为“Send Escape Sequence”，然后输入“b”和“f”即可
 
 ## mac相关
 
@@ -963,7 +988,7 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
 
    进入其目录    `cd "$(brew --repo)"`
 
-   换源:
+   换源（最好自己搜Homebrew换源，清华的不错）:
 
   ```shell
      //设置homebrew本身源：
@@ -1019,6 +1044,7 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
   ctrl + r    搜索命令历史
   最大化Tab中的pane，隐藏本Tab中的其他pane：⌘+ shift +enter , 再次还原
   ```
+  
 - 设置iterm2保留行数：设置(command+,)--Profiles--terminal--Scrollback Buffer
 
 - 设置vim中光标能上下滑动：
@@ -1026,6 +1052,10 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
   Mouse > Scroll wheel sends arrow keys in alternate screen mode.
   
   注意这可能导致一个问题：偶现在terminal triggers the command history。解决办法为vim某个东西再退出
+  
+- 撤销关闭某个tab：command + z
+
+- 设置光标在shell逐word移动：设置-Profiles-Keys-修改option+←和option+→的映射，选择Action为“Send Escape Sequence”，然后输入“b”和“f”即可
 
 **mac相关小知识**
 
@@ -1076,6 +1106,20 @@ access函数
 测试文件是否存在以及文件权限
 
   
+
+## 操作系统相关
+
+- 程序内存分布
+
+  | 内存分区                 | 说明                                                         |
+  | ------------------------ | ------------------------------------------------------------ |
+  | 内核空间                 |                                                              |
+  | 栈区 (stack)             | 存放函数的参数值、局部变量的值等，其操作方式类似于数据结构中的栈。 |
+  | 动态链接库               | 用于在程序运行期间加载和卸载动态链接库。                     |
+  | 堆区 (heap)              | 一般由程序员分配和释放，若程序员不释放，程序运行结束时由操作系统回收。[malloc()](http://c.biancheng.net/cpp/html/137.html)、[calloc()](http://c.biancheng.net/cpp/html/134.html)、[free()](http://c.biancheng.net/cpp/html/135.html) 等函数操作的就是这块内存，这也是本章要讲解的重点。  注意：这里所说的堆区与数据结构中的堆不是一个概念，堆区的分配方式倒是类似于链表。 |
+  | 全局数据区 (global data) | 存放全局变量、静态变量等。这块内存有读写权限，因此它们的值在程序运行期间可以任意改变。 |
+  | 常量区 (constant)        | 存放一般的常量、字符串常量等。这块内存只有读取权限，没有写入权限，因此它们的值在程序运行期间不能改变。如：char *a = "abc"； |
+  | 程序代码区 (code)        | 存放函数体的二进制代码。一个C语言程序由多个函数构成，C语言程序的执行就是函数之间的相互调用。 |
 
 
 
@@ -1203,6 +1247,18 @@ a$表示以a结尾
 
 **例如\**：'ac\*d' 匹配a后接零个或多个前面的字符，将匹配：ad, acd, accd, acccd …等\****
 
+- 特殊变量列表
+
+  | 变量 | 含义                                                         |
+  | ---- | ------------------------------------------------------------ |
+  | $0   | 当前脚本的文件名                                             |
+  | $n   | 传递给脚本或函数的参数。n 是一个数字，表示第几个参数。例如，第一个参数是$1，第二个参数是$2。 |
+  | $#   | 传递给脚本或函数的参数个数。                                 |
+  | $*   | 传递给脚本或函数的所有参数。                                 |
+  | $@   | 传递给脚本或函数的所有参数。被双引号(" ")包含时，与 $* 稍有不同，下面将会讲到。 |
+  | $?   | 上个命令的退出状态，或函数的返回值。                         |
+  | $$   | 当前Shell进程ID。对于 Shell 脚本，就是这些脚本所在的进程ID。 |
+
 
 
 ## shell编程/shell脚本编程
@@ -1211,7 +1267,7 @@ a$表示以a结尾
 
    ![image-20201103165334785](./etc/pic/image-20201103165334785.png)
 
-- 走入当前脚本所在文件夹的上层文件夹
+- 走入当前脚本所在文件夹的上层文件夹、当前文件路径
 
    ```shell
    # path of this file
@@ -1973,3 +2029,45 @@ gcc -o hello hello.cpp -L/home/test -lboost_system
   ```
 
   
+
+## Makefile相关
+
+- 规则
+
+  targets : prerequisites
+    command
+
+  - targets：规则的目标，可以是 Object File（一般称它为中间文件），也可以是可执行文件，还可以是一个标签；
+  - prerequisites：是我们的依赖文件，要生成 targets 需要的文件或者是目标。可以是多个，也可以是没有；
+  - command：make 需要执行的命令（任意的 shell 命令）。可以有多条命令，每一条命令占一行。
+
+  ```makefile
+  main:main.o test1.o test2.o
+  gcc main.o test1.o test2.o -o main
+  main.o:main.c test.h
+  gcc -c main.c -o main.o
+  test1.o:test1.c test.h
+  gcc -c test1.c -o test1.o
+  test2.o:test2.c test.h
+  gcc -c test2.c -o test2.o
+  ```
+
+- make clean
+
+  ```makefile
+  .PHONY:clean
+  clean:
+      rm -rf *.o test
+  ```
+
+  
+
+| 自动化变量 | 说明                                                         |
+| ---------- | ------------------------------------------------------------ |
+| $@         | 表示规则的目标文件名。如果目标是一个文档文件（Linux 中，一般成 .a 文件为文档文件，也成为静态的库文件）， 那么它代表这个文档的文件名。在多目标模式规则中，它代表的是触发规则被执行的文件名。 |
+| $%         | 当目标文件是一个静态库文件时，代表静态库的一个成员名。       |
+| $<         | 规则的第一个依赖的文件名。如果是一个目标文件使用隐含的规则来重建，则它代表由隐含规则加入的第一个依赖文件。 |
+| $?         | 所有比目标文件更新的依赖文件列表，空格分隔。如果目标文件时静态库文件，代表的是库文件（.o 文件）。 |
+| $^         | 代表的是所有依赖文件列表，使用空格分隔。如果目标是静态库文件，它所代表的只能是所有的库成员（.o 文件）名。 一个文件可重复的出现在目标的依赖中，变量“$^”只记录它的第一次引用的情况。就是说变量“$^”会去掉重复的依赖文件。 |
+| $+         | 类似“$^”，但是它保留了依赖文件中重复出现的文件。主要用在程序链接时库的交叉引用场合。 |
+| $*         | 在模式规则和静态模式规则中，代表“茎”。“茎”是目标模式中“%”所代表的部分（当文件名中存在目录时， “茎”也包含目录部分）。 |
