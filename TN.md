@@ -111,6 +111,8 @@ ssh -T git@github.com    //测试与github联通性
 
 - 暂存区回滚到工作区:    `git checkout -- {文件名，用.表示所有。注意文件名前有空格} `
 
+- 清除当前目录下所有没add的修改：git clean -df [文件]   如果不加路径，则是所有未add文件都被清除
+
 ---
 
 - git rm XXX 删掉暂存区中的文件，如果本地（工作区）文件未删除也会一并被删掉
@@ -169,9 +171,9 @@ git fetch todo
 
 - `git diff [多个参数]`    
 
-  ​	概念：git diff a b意味着以a为基准，相较于b来说，a增加了啥，减少了啥
+  ​	概念：git diff a b意味着以a为基准，相较于a来说，b增加了啥，减少了啥
 
-  ​	git diff b等效于git diff {当前状态} b 
+  ​	git diff b等效于git diff b {当前状态}
 
   ​	只显示不同文件名：--name-only
 
@@ -194,23 +196,21 @@ $ git config --global i18n.logoutputencoding utf-8  # 输出 log 编码
 
 - 暂存git stash
 
-  常规：git stash push -m "my_stash"
+  - 常规：git stash push -m "my_stash"
 
-  将包括未追踪文件一同暂存进栈：git stash push -u
+  - 将包括未追踪文件一同暂存进栈：git stash push -u
 
-  To apply a stash and remove it from the stash stack, type:git stash pop stash@{n}
+  - To apply a stash and remove it from the stash stack, type:git stash pop stash@{n}
 
-  To apply a stash and keep it in the stash stack, type：git stash apply stash@{n}
+  - To apply a stash and keep it in the stash stack, type：git stash apply stash@{n}
 
-  删除：git stash drop stash@{1}
+  - 删除：git stash drop stash@{1}
 
-  如果git stash push后不小心drop掉了，恢复方法：
-
-  1）git fsck --unreachable    尽量看commit的sha
-
-  2）git show sha    看那个是被删的那个
-
-  3）git stash apply sha
+  - 如果git stash push后不小心drop掉了，恢复方法：
+  1. git fsck --unreachable    尽量看commit的sha
+    2. git show sha    看哪个是被删的那个
+  3. git stash apply sha
+  - 查看某次push的文件/具体内容：git stash show [-p，显示内容] stash@{0}
 
 - 正在新分支写feature发现主线有bug：
 
@@ -233,6 +233,8 @@ git commit --amend --reset-author
 - 解决工作区相对暂存区有更改情况下git stash apply失败问题：
 
   1）git add -u .    2）git stash apply s    3)git reset
+  
+- 更改本地分支名：git branch -m oldName newName
 
 ## 内存操作的小技巧 
 
@@ -519,8 +521,46 @@ Setting	--	Keymap
 
 13. 用md5sum计算文件的消息摘要
 
-    
+14. 求余和求模运算区别：
 
+    对于正数与正数之间的两种运算，没区别。对于含有负数的运算，区别在于：对于整型数a，b来说，取模运算或者求余运算的方法都是：
+    求整数商： c = a/b;
+    计算模或者余数： r = a - c*b
+    但是求模运算和求余运算在第一步不同，取余运算在取c的值时，向0 方向舍入，而取模（记为魔，堕向负无穷）运算在计算c的值时，向负无穷方向舍入。
+
+    > 计算-7 Mod 4
+    > 那么：a = -7；b = 4；
+    > 第一步：求整数商c，c应该是-1.75，如进行求模运算c = -2（向负无穷方向舍入），求余运算则c = -1（向0方向舍入）；
+    > 第二步：计算模和余数的公式相同，但因c的值不同，求模时r = 1，求余时r = -3。
+
+    结论：根据例子及推理。得出如下总结：
+
+    1. 当a和b符号一致时，求模运算和求余运算所得的c的值一致，因此结果一致。
+    2. 当符号不一致时，结果不一样。求模运算结果的符号和b一致，求余运算结果的符号和a一致。
+
+    经过测试，在C/C++, C#, JAVA, PHP这几门主流语言中，%运算符都是做取余运算，而在python中的%是做取模运算。
+
+    ​	说下我对求余的理解：求余即相对被除数的剩余，如果被除数是负数，负号理解为另一个世界的标志，值还是越大表明越富有。比如-5/3的余数，商-2已经没有那个世界的剩余值了，只有商-1，还留下-2。所以求余的值的正负号应该牢跟被除数的正负号（价值观）。
+    
+15. 对于浮点数，比较时不要直接用等于号：
+
+    ```c++
+    if (double_a == double_b) 错误用法
+    
+    应该用：
+    const double EPSILON = 1e-10; // 比如说，接受1e-10以内的误差
+    if(fabs(double_a - double_b) < EPSILON)
+      
+    if (double_a != double_b) 错误用法
+    应该用：
+    const double EPSILON = 1e-10; // 比如说，接受1e-10以内的误差
+    if(fabs(double_a - double_b) > EPSILON)
+    ```
+    
+    
+    
+    
+    
     
 
 
@@ -536,7 +576,12 @@ Setting	--	Keymap
 
 - chrome快捷键
 
-  1. 历史记录    ``ctrl + y`
+  1. 历史记录    `command + y`
+  2. 撤销关闭页面的快捷键    Crtl+Shift+T
+  
+- 清除指定网站cookie
+
+  ![image-20210507205446787](etc/pic/image-20210507205446787.png)
 
 ## c++ string的实习
 
@@ -880,11 +925,14 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
          use_system_font = False
          show_titlebar = False
      ```
-  
 3. 通过dconfig-editor将terminator设置为默认终端（自己搜）
 4. 修改`.bashrc`：https://blog.csdn.net/zhangkzz/article/details/90524066
 
-  
+- 更换为清华源
+
+
+
+
 
 
 - 快捷键
@@ -926,7 +974,7 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
      sudo apt-get install compizconfig-settings-manager
      ```
 
-- 定时任务：crtontab命令，详见https://blog.csdn.net/rf_wu/article/details/1215094
+- 定时任务：crontab命令，详见https://blog.csdn.net/rf_wu/article/details/1215094
 
   ​	注意每隔6小时执行某个命令的时间应该这么写：1 */6 * * *   第一个不能用*，不然意味着每隔6小时的每分钟干一次
 
@@ -972,7 +1020,13 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
      	大括号有多个语句时，用回车或分号间隔，功能：对于第二行之后（NR最小为1），显示每行累加
      ```
      
-  4. 光标
+  4. grep相关
+  
+     ```
+     查找时排除多个文件：grep -r "abcde"  --exclude-dir="log" --exclude-dir="log2" --exclude-dir="logs"
+     ```
+  
+  5. 光标
   
     隐藏光标 ：  echo -e "\033[?25l"  
   
@@ -981,6 +1035,18 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
   5. ls -l的时间是修改时间，ls -ul时间是访问时间
   
 - 设置光标在shell逐word移动：iterm2-设置-Profiles-Keys-修改option+←和option+→的映射，选择Action为“Send Escape Sequence”，然后输入“b”和“f”即可
+
+- 查询进程/线程/端口/主机状态相关
+
+  1. 查看端口占用情况：
+
+     1）lsof -i:{端口号}    需要root权限
+
+  2. 查看某个执行命令对应的进程id
+
+     1）ps aux | grep {执行命令}
+
+  
 
 ## mac相关
 
@@ -1021,6 +1087,10 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
 
 - 为了让多用户都使用同样的配置，要将`~/.zshrc`复制到每个用户下
 
+- 设置iterm2快捷键
+
+  <img src="etc/pic/image-20210609141706678.png" alt="image-20210609141706678" style="zoom:30%;" />
+
 - Iterm2快捷键：
 
   ```bash
@@ -1056,6 +1126,8 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
 - 撤销关闭某个tab：command + z
 
 - 设置光标在shell逐word移动：设置-Profiles-Keys-修改option+←和option+→的映射，选择Action为“Send Escape Sequence”，然后输入“b”和“f”即可
+
+- 在同一个tab（即一个页面的多个输入框）里同时输入：Shell-broadcast input-Broadcast ..in current tab
 
 **mac相关小知识**
 
@@ -1261,7 +1333,7 @@ a$表示以a结尾
 
 
 
-## shell编程/shell脚本编程
+## shell编程相关/shell脚本编程
 
 1. $0 是shell脚本本身名字，$1是shell脚本第一个参数，以此类推。注意c语言的int main(int argc, char *argv[])与此类似，argv[0]是程序本身名字，然后就是参数，argc是包含程序本身名的参数数量(>=1)，但是$#不包含程序本身名的参数个数
 
@@ -1302,10 +1374,14 @@ a$表示以a结尾
    ```
    
 - 注意：对于类似$1等可能带有空格的参数，作实参需要加上引号。错误示例：
-  
+
   <img src="./etc/pic/image-20210208200005642.png" alt="image-20210208200005642" style="zoom:50%;" />
+
+- 脚本中curl带变量：
+
+  To insert a variable in the middle of a single quoted text, you have to end the single quote, then concatenate with the double quoted variable, and re-open the single quote to continue the text: ‘foo bar’“$variable”‘more foo’.
   
-  
+  例子：
   
   
 
@@ -1339,6 +1415,10 @@ a$表示以a结尾
     	2.CTRL+v 进入“可视 块”模式，选取这一列操作多少行。
     	3.SHIFT+i(I) 输入要插入的内容。
     	4.ESC 按两次，会在每行的选定的区域出现插入的内容。
+    
+  - 删除列
+    
+    在【插入列】替换第三步为输入x即可
   
 - 翻页：向下：ctrl+f    向上：ctrl+b
 
@@ -1396,8 +1476,7 @@ windows 一般在 /c/Users/{用户名}/.ssh
 2. *\*在这中间的字会加粗\*\*
 3. 在typora中数字+英文点+空格会让后续自动增加序号，如果要将两段序号（如123、12）合为一个（12345），进入typora编辑模式，将中间的空格之类的清除就行
 4. []右边放()会产生隐藏链接，点击中括号内容便转到链接
-
-
+5. 插入复选框: - [ ] 注意每一个符合后都有空格，如果是选中，则把中括号的空格变为x
 
 ## 锁
 
@@ -1438,7 +1517,7 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
 
 - 复制容器（将容器或镜像转换为文件包）
 
-  - 保存镜像：docker save ID > xxx.tar
+  - 保存镜像：docker save {containr_id} > xxx.tar
 
   - 导入镜像：docker load < xxx.tar
 
@@ -1457,6 +1536,12 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
 - 让容器内支持中文输入：docker exec -it cdee10f86126 env LANG=en_US.utf8 /bin/bash
 
 - 指定网络类型：--net host
+
+- docker push
+
+  类似docker push abc.com/b/c:test_image
+
+  如果镜像没有这个tag，则在push之前需要：docker tag {镜像} abc.com/b/c:test_image   然后再push
 
 //不确定
 
@@ -2071,3 +2156,53 @@ gcc -o hello hello.cpp -L/home/test -lboost_system
 | $^         | 代表的是所有依赖文件列表，使用空格分隔。如果目标是静态库文件，它所代表的只能是所有的库成员（.o 文件）名。 一个文件可重复的出现在目标的依赖中，变量“$^”只记录它的第一次引用的情况。就是说变量“$^”会去掉重复的依赖文件。 |
 | $+         | 类似“$^”，但是它保留了依赖文件中重复出现的文件。主要用在程序链接时库的交叉引用场合。 |
 | $*         | 在模式规则和静态模式规则中，代表“茎”。“茎”是目标模式中“%”所代表的部分（当文件名中存在目录时， “茎”也包含目录部分）。 |
+
+
+
+
+
+## gflags相关
+
+- demo
+
+  ```c++
+  //main.cpp
+  #include "gflags/gflags.h"
+  #include<iostream>
+  using namespace std;
+  
+  DEFINE_string(languages, "french,german",
+                "comma-separated list of languages to offer in the 'lang' menu");
+  DEFINE_double(height, 1.7,
+               "people's height");
+  int main(int argc, char** argv) {
+      string cmd_before_glog;
+      for(int i = 0; i < argc; i++) {
+          cmd_before_glog = cmd_before_glog + argv[i] + " ";
+      }
+      cout << "cmd_before_glog: " << cmd_before_glog << endl;
+  
+      google::ParseCommandLineFlags(&argc, &argv, true);
+  
+      string cmd_after_glog;
+      for(int i = 0; i < argc; i++){
+          cmd_after_glog = cmd_after_glog + argv[i] + " ";
+      }
+      cout << "cmd_after_glog: " << cmd_after_glog << endl;
+      cout << "languages: " << FLAGS_languages << " height: " << FLAGS_height << endl;
+  }
+  ```
+
+  vim gflag_file：
+
+  ```
+  --languages=chinese
+  ```
+
+  编译：g++ main.cpp -lgflags
+
+  执行方法为：./a.out other_param [--height=1.8] [--flagfile=gflag_file]
+
+  ![image-20210615230550039](etc/pic/image-20210615230550039.png)
+
+  输入参数优先级高于DEFINE_XXX，两个输入参数优先级后输入者高

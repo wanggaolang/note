@@ -90,3 +90,15 @@
 |     manually     |  手动  |
 | exceed [ɪkˈsiːd] |  超过  |
 
+| fetch       | [fetʃ]         | 取来 |
+| ----------- | -------------- | ---- |
+| transfer    | [trænsˈfɜː(r)] | 转移 |
+| interaction | [ˌɪntərˈækʃən] | 交互 |
+| specify     | [ˈspesɪfaɪ]    | 指定 |
+| prefix      | [ˈpriːfɪks]    | 前缀 |
+| reverse     | [rɪˈvɜːs]      | 颠倒 |
+|             |                |      |
+|             |                |      |
+|             |                |      |
+|             |                |      |
+
