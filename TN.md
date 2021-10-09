@@ -12,10 +12,14 @@
 ## 常用规范
 
 - 在linux体系机器，临时文件放/test_for_all，里边分3个文件夹：1-3once，3代表最不重要；提示文件放~/README
-
 - 代码注释
 
-  维护代码时，在原来代码上基于新需求增加或修改代码，要备注来自第几个新需求，备注方法为`//{新需求的顺序id}`，如第一个需求注释为`//demand01`，如果是很重要的地方`//重要`
+  - 新增需求备注为  //demand {id}
+  - debug打印用  //debug start和//debug end  在commit时记得酌情是否注释或删除里边内容
+  - 临时打印记得删除用  //temp start和//temp end
+- 日志打印
+  - 遇到错误  get error或者get fail
+  - 阶段性处理的日志打印用  step {XXX}
 
 
 
@@ -109,9 +113,52 @@ ssh -T git@github.com    //测试与github联通性
 
   git reset HEAD XXX可以将git仓库当前版本某个文件回滚到暂存区。举例，有一个bug版本已经在本地写好并提交到暂存区，就可以先git reset HEAD bug.file将本地仓库数据回流到暂存区，再用git checkout -- XXX将暂存区数据回流到工作区，让这个bug.file回到最开始的状态。（git reset --hard更合适，这只是举例子）
 
-- 暂存区回滚到工作区:    `git checkout -- {文件名，用.表示所有。注意文件名前有空格} `
+- 暂存区回滚/覆盖到工作区:    `git checkout -- {文件名，用.表示所有。注意文件名前有空格} `
 
 - 清除当前目录下所有没add的修改：git clean -df [文件]   如果不加路径，则是所有未add文件都被清除
+
+- 回滚云端仓库  
+
+  撤销某次commit：git revert {参数，详见下方}  思想是新增一个commit，改动是源commit的反向改动
+
+  ```git
+  *   commit 9f90458ccb347581df6f83bd3ee7dfdcb33e97d6
+  |\  Merge: 460f055 2f1241f
+  | | Author: Your Name <you@example.com>
+  | | Date:   Mon Sep 13 20:53:31 2021 +0800
+  | |
+  | |     Merge branch 'b_revert_branch'
+  | |
+  | * commit 2f1241fa75e6aef10c59a03ac008eea432386df8 (b_revert_branch)
+  | | Author: Your Name <you@example.com>
+  | | Date:   Mon Sep 13 20:52:57 2021 +0800
+  | |
+  | |     add b_revert
+  | |
+  * | commit 460f0551004ebcc10e08d4cab84887d2946cb7da
+  |/  Author: Your Name <you@example.com>
+  |   Date:   Mon Sep 13 20:53:19 2021 +0800
+  |
+  |       add a_revert
+  |
+  * commit 886081a9659163de8b94ac539fb24e001416ea23
+  | Author: Your Name <you@example.com>
+  | Date:   Fri Mar 26 17:34:33 2021 +0800
+  |
+  |     常规提交
+  |     add test in ab
+  
+  revert针对两类commit分开讨论：普通commit和merge commit
+  
+  普通commit的撤销：git revert {commitId}
+    如git revert 460f0551004ebcc10e08d4cab84887d2946cb7da    其实就是相对向下的commitId（886081a9659163de8b94ac539fb24e001416ea23），撤销了a_revert文件
+    
+  merge commit的撤销：git revert {commitId} -m {1或2}
+    撤销相对下方的commitID的改变，但是merge commit有两个"下方commitID"，所以需要用-m指定第几个（见9f90458ccb347581df6f83bd3ee7dfdcb33e97d6下的Merge有两个commitId，左1右2）
+    如 git revert 9f90458ccb347581df6f83bd3ee7dfdcb33e97d6 -m 1 ，就撤销了460f0551004ebcc10e08d4cab84887d2946cb7da到9f90458ccb347581df6f83bd3ee7dfdcb33e97d6之间的内容
+  ```
+
+  
 
 ---
 
@@ -169,7 +216,7 @@ git fetch todo
 
 **杂项**
 
-- `git diff [多个参数]`    
+- `git diff [多个参数]`    git diff相关
 
   ​	概念：git diff a b意味着以a为基准，相较于a来说，b增加了啥，减少了啥
 
@@ -192,6 +239,10 @@ $ git config --global core.quotepath false          # 显示 status 编码
 $ git config --global gui.encoding utf-8            # 图形界面编码
 $ git config --global i18n.commit.encoding utf-8    # 提交信息编码
 $ git config --global i18n.logoutputencoding utf-8  # 输出 log 编码
+
+-----其他-----
+git config --add core.filemode false    #忽略文件权限的改变
+git config ---global core.editor vim    #git默认编辑器更改为vim
 ```
 
 - 暂存git stash
@@ -212,9 +263,15 @@ $ git config --global i18n.logoutputencoding utf-8  # 输出 log 编码
   3. git stash apply sha
   - 查看某次push的文件/具体内容：git stash show [-p，显示内容] stash@{0}
 
-- 正在新分支写feature发现主线有bug：
+- 经典操作
 
-  1）git stash push保存；2）切换到主线并新建分支；3）修复bug并commit；4）在主线和新分支分别git cherry-pick {commit}，如果没有冲突自动commit了；5）git stash apply恢复写到一半的feature；6）删除bug分支
+  - 正在新分支写feature发现主线有bug：
+
+    1）git stash push保存；2）切换到主线并新建分支；3）修复bug并commit；4）在主线和新分支分别git cherry-pick {commit}，如果没有冲突自动commit了；5）git stash apply恢复写到一半的feature；6）删除bug分支
+
+  - push后发现需要修改另外的一个文件a：
+
+    1）废弃掉这次push；2）修改文件a；3）git add a；4）git commit ----amend；（如果遇到编辑器是nano，则git config --global core.editor "vim"）
 
 - 忽略当前git仓库下某些文件夹：在git仓库根目录的`.gitignore`文件写入这些文件夹名字，注意是以git仓库根目录作为基础目录的相对路径，如ABC就是./ABC
 
@@ -235,6 +292,10 @@ git commit --amend --reset-author
   1）git add -u .    2）git stash apply s    3)git reset
   
 - 更改本地分支名：git branch -m oldName newName
+
+- 更改某次提交的message：1） git rebase -i {该次提交之前的一次提交} 2)在该提交前改pick为r并保存退出 3）自动跳到另一个vim，更改message并保存退出
+
+- 融合几次相连commit：1） git rebase -i {其中最旧提交之前的一次提交} 2）在最旧前改pick为r，其他都改pick为s，保存退出 3）自动跳到另一个vim，更改message并保存退出
 
 ## 内存操作的小技巧 
 
@@ -353,21 +414,43 @@ Setting	--	Keymap
 
 快捷键设置：`ctrl+k+s`
 
-查找文件名：command + p
+  - 查找文件名：command + p
 
-在打开的文件夹中查找一个函数：左侧那个放大镜
+  - 切换最近打开文件：cmd + e（原本键为ctrl + tab）改建位时下方两个都要改
 
-回到上一个光标：mac：`command + -`    windows：`alt + ←`
+    <img src="etc/pic/image-20210926193942209.png" alt="image-20210926193942209" style="zoom:50%;" />
+
+- 复制当前文件名  cmd + 1
+
+  <img src="etc/pic/image-20210926193700535.png" alt="image-20210926193700535" style="zoom:50%;" />
+
+- 复制当前文件相对路径  cmd + 2
+
+  <img src="etc/pic/image-20210926193532588.png" alt="image-20210926193532588" style="zoom:50%;" />
+
+- 复制当前文件绝对路径  cmd + 3
+
+  
+
+- 跳转到指定行：Ctrl + G
+
+- 回到上一个光标：mac：`command + -`    windows：`alt + ←`
+
+- 打开终端:    `control + ~`    或者 查看-终端
+
+- 删除光标行：`ctrl+shift+k`
+
+- 到大括号的尾端/首部:    `Ctrl + Shift+\`
+
+- 批量保存文件：（改了键位的）windows：`ctrl + alt + s`    mac：`command + option + s`
 
 批量向左、向右缩进：``ctrl + [``   、 ``ctrl + ]``
 
-批量保存文件：（改了键位的）windows：`ctrl + alt + s`    mac：`command + option + s`
 
-打开终端:    `control + ~`    或者 查看-终端
 
-到大括号的尾端/首部:    `Ctrl + Shift+\`
 
-删除光标行：`ctrl+shift+k`
+
+
 
 统计总代码行数：
 
@@ -402,10 +485,10 @@ Setting	--	Keymap
   能够编译运行单个文件：
   	1. 安装Code Runner
   	2. 设置-> code-runner:Run in Terminal
-  	3. 重启后编译运行，press F1 and then select/type Run Code
+  	3. 重启后编译运行，press F1 and then select/type Run Code    在mac为control + option + n
   	
   复制文件名：
-  	Copy file name
+  	Copy file name    设置快捷键：cmd + k + s -> 搜索copy file name: with extensions并安装 -> 查找上方"复制当前文件名  "的更改操作 -> cmd + 1
   	
   c++的插件
   选择C/C++微软开发的版本和C++ Intellisenseaustin的版本安装两个扩展.
@@ -423,7 +506,7 @@ Setting	--	Keymap
 
 协程：
 
-## c++相关
+## c++相关/cpp相关
 
 1. 在有派生类时各构造函数和析构函数调用顺序
 
@@ -440,7 +523,9 @@ Setting	--	Keymap
    
    - 可以省略掉参数列表和返回值，如: `auto get_1 = []{return 1;};`
 
-3. 格式化：#include <iomanip>  std::fixed << std::setprecision(8) << _double    前者表示以非科学计数法打印，后者表示显示８位小数
+3. 打印格式化：#include <iomanip>  std::fixed << std::setprecision(8) << _double    前者表示以非科学计数法打印，后者表示显示８位小数。
+
+   永久作用：    std::cout.unsetf(std::ios::scientific);std::cout.precision(8);
 
 4. 类模板的成员函数在类外定义以及类模板的函数特例化
 
@@ -471,7 +556,54 @@ Setting	--	Keymap
 
 5. vector产生二维数组： vector<vector<int> > newOne(r, vector<int>(c, 0));
 
+6. 常用cpp/c的函数：
 
+   ```c++
+   map::lower_bound(key):返回map中第一个大于或等于key的迭代器指针
+   
+   map::upper_bound(key):返回map中第一个大于key的迭代器指针
+   
+   所以，理解这两个函数请不要按照字面意义思考太复杂，因为仅仅是不小于（lower_bound）和大于（upper_bound）这么简单。
+   例子：
+     auto iterator = test_map.lower_bound(0);
+       if (iterator == test_map.begin()) {
+           cout << "all key >= 0";
+       }
+   ```
+
+7. 关于枚举类型
+
+   ```cpp
+   #include<iostream>
+   using namespace std;
+   namespace test{
+       enum ENU{
+           x = 1,
+           y = 2,
+           z = 3
+       };
+   }
+   
+   int main() {
+       test::ENU obj = test::x;  //枚举内成员可以理解为声明了和枚举名所在空间的成员，如x就是test空间的成员
+       obj = static_cast<test::ENU>(5);
+       cout << obj;
+   }
+   ```
+
+   
+
+**cpp小轮子**
+
+1. 计算耗时
+
+   ```cpp
+   auto start_time = std::chrono::system_clock::now();
+   //do sth
+   cout << "do sth cost:" << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start_time).count() << " ms";
+   ```
+
+   
 
 ## 设计模式
 
@@ -483,7 +615,7 @@ Setting	--	Keymap
 
 
 
-## 小知识（一）
+## 小小知识（一）
 
 2. 类外定义成员函数不能加上默认参数，如：``Test fun(int a = 1)``会报错，同样static声明的成员在外部定义时候，必须省去static。同时，static成员变量只有跟了const才可以在类里面的初始化列表中进行初始化，其余的都要在类的外部初始化
 
@@ -555,12 +687,18 @@ Setting	--	Keymap
     应该用：
     const double EPSILON = 1e-10; // 比如说，接受1e-10以内的误差
     if(fabs(double_a - double_b) > EPSILON)
+      
+    拓展：对于两个二维坐标系的角度计算(y-y0)/(x-x0)，要预防两点是同一个点，否则可能导致很大的误差
+    if (fabs(y - y0) < 1e-8 && fabs(x - x0) < 1e-8)
+      continue;
     ```
     
+16. 代码共享网页：https://paste.ubuntu.com/
     
+17. 查看具体进程的内存使用量：cat /proc/{pid}/status  VmRSS项
+
     
-    
-    
+
     
 
 
@@ -570,8 +708,9 @@ Setting	--	Keymap
 - 插件：
 
   ```
-  书签搜索插件：Holmes
+  书签搜索插件：Neater Bookmarks和Holmes，前者貌似速度更快 快捷键为cmd + b
   广告过滤插件：adblock
+  快速切换2tab之间：Toggle Tabs 快捷键为cmd + e
   ```
 
 - chrome快捷键
@@ -1008,11 +1147,12 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
   
   2. wc可以计算文件的Byte数(-c)、字数(-w)、或是列数(-l)
   
-  3. 处理行级别字符串适合awk
+  3. 处理多行多列字符串适合awk
   
      ```shell
      1）在后边跟两个单引号，里边是筛选条件
-     2）操作内容要包含在大括号里，可以理解大括号类似c++的作用域。示例：
+     2）| awk '{print $1}'    #（注意是单引号）将每一行中以空格为分割符的第一个字段打印出来，$0表示整个行
+     3）操作内容要包含在大括号里，可以理解大括号类似c++的作用域。示例：
      	awk 'BEGIN {FS=":"} $3 < 50 {print $1 "\t " $3}'
      	BEGIN会提前设置FS，否则第一行仍然以空格分割字段，没有括号的部分是条件筛选
      	awk 'NR>=2 {total=$1 + $2 + $3
@@ -1080,6 +1220,7 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
   1.Iterm2 + oh-my-zsh + Meslo 字体
   2.配置iterm2的配色为Solarized Dark Higher Contrast，在./etc下有一个版本可以用，最好在https://iterm2colorschemes.com/弄最新的
   3.通过历史记录自动补全：pip install powerline-status
+    但是注意可能自动补全显示历史命令，起作用的应该是下方的zsh-autosuggestions
   4.插件配置（位于~/.zshrc）：`plugins=(git zsh-autosuggestions extract zsh-syntax-highlighting z)`
   ```
 
@@ -1161,9 +1302,13 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
 选中-->段落-->中文版式-->允许西文在单词中换行
   ```
 
-## excel技巧 
+## excel技巧/excel相关
 
-excel中打回车 alet + 回车
+- excel小知识
+  1. excel中打回车 alet + 回车
+- 回车分隔的多行x、y，单行以空格分隔，粘贴进excel并绘制散点图
+  1. 粘贴-使用文本导入向导-一直点下一步到结束，即完成粘贴到两列
+  2. 选中两列所有数据，插入-散点图，即完成
 
  ## 命名空间
 
@@ -1257,9 +1402,9 @@ ctrl + y 粘贴”命令行剪切板“
 
 查看文件大小：du -ah [--max-depth=n，默认深度为1]
 
-`| awk '{print $1}'`    （注意是单引号）将每一行中以空格为分割符的第一个字段打印出来
+`| xargs`    将多行合并到一行，以空格分割  具体见[这](https://www.runoob.com/linux/linux-comm-xargs.html)
 
-`| xargs`    将多行合并到一行，以空格分割
+使用例子：find ./proto -name "*.proto" | xargs -i cp {} ./proto_tmp  将所有proto文件放入proto_tmp
 
 查看某个端口的tcp状态：`netstat -antop | grep {portID}`
 
@@ -1287,13 +1432,18 @@ shell配色：PS1
 |          |              7 | 和字体颜色一样的背景色 |
 |          | 与字体代码相同 |       默认背景？       |
 
-注意最后要用\[\e[0m\\]结尾，如这种（用typora源码模式看）：PS1="\[\e[32;32m\][\[\e[33;33m\]cp_3_05\[\e[32;32m\]:\w]\$ \[\e[0m\]"
+注意最后要用\[\e[0m\\]结尾，如这种：
+
+```
+PS1="\[\e[32;32m\][\[\e[33;33m\]cp_3_05\[\e[32;32m\]:\w]\$ \[\e[0m\]"
+```
 
 
 
-自动补全相关：
 
-1. 忽略大小写：在~/.inputrc文件键入set completion-ignore-case on    重新打开终端生效
+[初始化必备/初始化准备]自动补全相关：
+
+1. 忽略大小写：在~/.inputrc文件键入 set completion-ignore-case on    重新打开终端生效
 
 2. 键入命令首部分字符之后，用方向键Up，Down来搜索以该串字符开头的历史命令，需在~/.bashrc中输入以下两行：
 
@@ -1302,6 +1452,11 @@ shell配色：PS1
    bind '"\e[B": history-search-forward'
    ```
 
+3. 在bashrc：
+
+   ```
+   PS1="\[\e[32;32m\][\[\e[33;33m\]cp_3_05\[\e[32;32m\]:\w]\$ \[\e[0m\]"
+   ```
 
 例如我想求当前目录下以-开头的普通文件，而且该文件后缀为.a   可以用这种写法：`ls -l | grep '^-.*a$'`
 
@@ -1333,11 +1488,25 @@ a$表示以a结尾
 
 
 
-## shell编程相关/shell脚本编程
+## shell编程相关/shell脚本相关/shell脚本编程
 
 1. $0 是shell脚本本身名字，$1是shell脚本第一个参数，以此类推。注意c语言的int main(int argc, char *argv[])与此类似，argv[0]是程序本身名字，然后就是参数，argc是包含程序本身名的参数数量(>=1)，但是$#不包含程序本身名的参数个数
 
    ![image-20201103165334785](./etc/pic/image-20201103165334785.png)
+
+- 将多行，每行带有空格的转为数组：
+
+   ```shell
+   #!/bin/bash
+   
+   docker ps -a > docker_log
+   mapfile < docker_log ARRAY
+   array_index_set=(0 1 2)
+   for i in ${array_index_set[@]}
+   do
+           echo ${ARRAY[${i}]} i: ${i}
+   done
+   ```
 
 - 走入当前脚本所在文件夹的上层文件夹、当前文件路径
 
@@ -1354,6 +1523,10 @@ a$表示以a结尾
    ```
 
 - 获取当前时间：time=$(date "+%Y-%m-%d %H:%M:%S")
+
+   时间转换，拿到世界时间：date -d @{时间戳}
+
+   拿到时间戳：date -d '20210901 00:00:00' +'%s.%N'
 
 - 检查程序是否存在：
 
@@ -1383,7 +1556,18 @@ a$表示以a结尾
   
   例子：
   
-  
+- 将多行文本转为数组：
+
+   ```shell
+   docker ps -a > docker_log
+   mapfile < docker_log ARRAY
+   for i in ${ARRAY}
+   do
+       echo $i
+   done
+   ```
+
+   
 
 
 ## vim相关
@@ -1457,6 +1641,22 @@ a$表示以a结尾
   nmap <C-l> <C-w>l
   ```
 
+- vim插件
+
+  ```
+  git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim  #插件管理工具
+  
+  ---对于vimrc常用的
+  nmap <C-h> <C-w>h
+  nmap <C-j> <C-w>j
+  nmap <C-k> <C-w>k
+  nmap <C-l> <C-w>l
+  set incsearch                   " 查找时边输入边高亮匹配
+  set hlsearch                    " 查找高亮显示 
+  set wrap                        " 一行太长则分行显示
+  set paste                       " 粘贴时防止乱缩进
+  ```
+  
   
 
 
@@ -1473,10 +1673,22 @@ windows 一般在 /c/Users/{用户名}/.ssh
 ## markdown(md)一些用法
 
 1. \`将正常的代码放这四个符号间会被凸显，以代码形式显示\`，左右两个这种引号也行
+
 2. *\*在这中间的字会加粗\*\*
+
 3. 在typora中数字+英文点+空格会让后续自动增加序号，如果要将两段序号（如123、12）合为一个（12345），进入typora编辑模式，将中间的空格之类的清除就行
+
 4. []右边放()会产生隐藏链接，点击中括号内容便转到链接
+
 5. 插入复选框: - [ ] 注意每一个符合后都有空格，如果是选中，则把中括号的空格变为x
+
+6. 删除线![image-20210809112254377](etc/pic/image-20210809112254377.png)
+
+7. 页内跳转
+
+   1）如果想调到指定标题名去，可用[任意内容]\(#标题名，注意带左边的#号\)
+
+   2）如果想跳到任意文本处：1）要先在该文本处加上”锚点“，\<a name=锚点名>指定文本（也可以空白）\</a>    2）[任意内容]\(#锚点名，注意带左边的#号\)
 
 ## 锁
 
@@ -1499,9 +1711,15 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
 
 - 启动某个容器    ``doeker start {containerID}``
 
-- 通过镜像起新容器：docker run --name {容器名} -it --privileged=true --entrypoint /bin/bash {镜像名或id}
+- docker run相关
+
+  通过镜像起新容器：docker run --name {容器名} -it --privileged=true --entrypoint /bin/bash {镜像名或id}
 
   注意 --entrypoint /bin/bash是一起的
+
+  指定disk大小：--storage-opt size=30G
+
+  端口映射： -p {主机端口}:{容器端口}
 
 - 进入某个容器中    ``docker exec -it {containerID} /bin/bash``
 
@@ -1531,8 +1749,6 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
 
 - 将镜像转为容器：
 
-- 端口映射： -p {主机端口}:{容器端口}
-
 - 让容器内支持中文输入：docker exec -it cdee10f86126 env LANG=en_US.utf8 /bin/bash
 
 - 指定网络类型：--net host
@@ -1543,38 +1759,63 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
 
   如果镜像没有这个tag，则在push之前需要：docker tag {镜像} abc.com/b/c:test_image   然后再push
 
-//不确定
-
-网上有些文章说，要让docker 的容器自动在开机启动，是写脚本，比如在 rc.local 中写。
-
-其实完全没必要这么麻烦，docker 有相关指令，docker run 指令中加入 --restart=always 就行。
-
-sudo docker run --restart=always .....
-
-
-如果创建时未指定 --restart=always ,可通过update 命令设置
-
-docker update --restart=always xxx
-
-//不确定
-
 - 更改docker存储位置（centos7）：
 
   查看存储位置：docker info | grep Root
 
-  修改：vim /lib/systemd/system/docker.service    （或者是/usr/lib/systemd/system/docker.service，反正我改了前者后者也立刻自动同步了）
+  对于dockerd方式启动的docker，例如进程名为：/usr/bin/dockerd -H unix:///var/run/docker.sock...
 
-  ![image-20201222220338244](etc/pic/image-20201222220338244.png)
+  则核心为在其后增加--graph={path}(也可-g {path})或者--data-root={path}参数，区别是前者较老的命令，后者是新命令参数
+
+  方法一：修改：vim /lib/systemd/system/docker.service    （或者是/usr/lib/systemd/system/docker.service，反正我改了前者后者也立刻自动同步了）
+
+  <img src="etc/pic/image-20201222220338244.png" alt="image-20201222220338244" style="zoom: 33%;" />
+
+  方法二：修改  /etc/docker/daemon.json：
+
+  <img src="etc/pic/image-20210718165933770.png" alt="image-20210718165933770" style="zoom:50%;" />
+
+  方法三：修改/etc/default/docker：DOCKER_OPTS="--data-root=/home/docker_file"
+
+  如果没有该文件或者改了重启没生效，则查看/lib/systemd/system/docker.service 或 /usr/lib/systemd/system/docker.service，在里面：1）加载的配置文件：EnvironmentFile=-/etc/default/docker  2）在ExecStart末尾增加 $DOCKER_OPTS
 
   重启：
-  
+
   ​	systemctl  daemon-reload
-  
+
   ​	systemctl restart docker 
+
+  然后查看是否启动成功，主要是后边参数是否增加了上述两者之一：
+
+  <img src="etc/pic/image-20210718171048298.png" alt="image-20210718171048298" style="zoom:50%;" />
+
   
-  然后查看是否启动成功，主要是后边参数是否改变：![image-20201223110821726](etc/pic/image-20201223110821726.png)
+
+- 正常退出不关闭容器：Ctrl + p + q
+
+**docker file/Dockerfile相关**
+
+- 示例Dockerfile
+
+  ```dockerfile
+  FROM test.com/second_dir:test_image
   
+  MAINTAINER author@mail.com
   
+  COPY --chown=work:work test_dir /home/abc/test_dir
+  
+  RUN  mkdir -p /home/deploy_tmp_dir && \
+  		 chown -R work:work /home/
+  ```
+
+  
+
+- 在有Dockerfile的文件夹运行docker build [-t {tag_name}] .
+
+- 对于COPY命令：
+
+  1）对于Dockerfile文件夹下的文件夹COPY，默认只复制里面的子文件（夹）到目的地址。所以若希望复制是带有文件夹本身，需在目的地址尾部写上该文件夹
+
 
 
 ## photoshop相关/PS相关
@@ -1715,6 +1956,7 @@ tar –xvf file.tar //解压 tar包
 tar -xzvf file.tar.gz -C ~/test_for_all //将tar.gz或者tar.tgz解压到指定目录
 tar -xjvf file.tar.bz2   //解压 tar.bz2
 tar –xZvf file.tar.Z   //解压tar.Z
+tar -xf file.tar.xz    //解压tar.xz
 unrar e file.rar //解压rar
 unzip file.zip //解压zip
 
@@ -1722,7 +1964,7 @@ unzip file.zip //解压zip
 加压解压都可以加v参数看中间过程
 1、*.tar 用 tar –xvf 解压
 2、*.gz 用 gzip -d或者gunzip 解压
-3、*.tar.gz和*.tgz 用 tar –xzf 解压（参数几位“香樟房”，散开的叶子这么多，也就是解压缩）
+3、*.tar.gz和*.tgz 用 tar –xzf 解压（参数记为“香樟房”，散开的叶子这么多，也就是解压缩）
 4、*.bz2 用 bzip2 -d或者用bunzip2 解压
 5、*.tar.bz2用tar –xjf 解压
 6、*.Z 用 uncompress 解压
@@ -1749,7 +1991,17 @@ unzip file.zip //解压zip
 
 
   4. 在同时安装了python2和python3时使用pip安装第三方库会产生歧义，要指定具体哪个python的pip安装可以用一下方法`{python版本:python2或python3} -m pip install {第三方库名}`
+
   5. 在Python的string前面加上‘r’， 是为了告诉编译器这个string是个raw string，不要转意backslash '\' 。 例如，\n 在raw string中，是两个字符，\和n， 而不会转意为换行符。由于正则表达式和 \ 会有冲突，因此，当一个字符串使用了正则表达式后，最好在前面加上'r'
+
+  6. 能够注释中文，需在文件头写这两行：
+
+     ```
+     #!/usr/bin/env python
+     # -*- coding: utf-8 -*-
+     ```
+
+  7. 
 
 
 
@@ -1757,8 +2009,19 @@ unzip file.zip //解压zip
 
   1. 单引号和双引号效果一样，三引号里可以放前两者，让他们显示出来
 
-  2. 格式化
+  2. 经典数据结构
 
+     ```python
+     #########字典
+     #get()方法,返回指定键的值,不存在时，返回默认值
+     dict.get(key, default=None)    
+     dict.get('uuid', ['abc','def'])[1] #查找uuid的值，没有则返回输入list的第2个对象def
+     #转json
+     res = json.dumps(dict)
+     ```
+     
+  3. 格式化
+  
      ```python
      age = 20
      name = 'Swaroop'
@@ -1793,24 +2056,211 @@ unzip file.zip //解压zip
 
      返回该模块/对象内部的对象，也就是变量，函数，类，类的对象等等
 
-  8. del {对象名}
+  8. list、tuple、字典与set的相关api
+
+     ```python
+     #list#
+     l = [1,2]  #初始化
+     len(l)  #计算长度
+     
+     #dict#
+     d['a'] = 1  #新增/赋值
+     d.get('a')  #判断
+     d.pop('a')  #删除
+     
+     ##可迭代对象##
+     能够被for..in遍历的对象
+     
+     ##列表生成式##
+     顾名思义，生成列表的1个表达式，需要用中括号括起来，举例：
+     >>> L = ['Hello', 'World', 'IBM', 'Apple']
+     >>> [s.lower() for s in L]
+     ['hello', 'world', 'ibm', 'apple']
+     
+     >>> [x if x > 5 else -x for x in range(1,11) if x % 2 == 1]
+     [-1, -3, -5, 7, 9]
+     注意上方例子其中左边的if为表达式，必须给数据1个出路，所以必须跟else
+     右边的if是过滤条件，不能带else
+     
+     ##生成器##
+     1个算法对象，不能直接知道所有值，每次通过next(算法对象)或者for循环得到下一个值
+     表现上有两种：1）列表生成式改小括号，如：
+     >>> a = (x for x in range(1,11))
+     >>> next(a)
+     1
+     >>> next(a)
+     2
+     >>> next(a)
+     3
+     
+     2）普通函数魔改，如：
+     def fib(max):
+         n, a, b = 0, 0, 1
+         while n < max:
+             yield b
+             a, b = b, a + b
+             n = n + 1
+         return 'done'
+     如果一个函数定义中包含yield关键字，那么这个函数就不再是一个普通函数，而是一个generator
+     每次调用next()的时候执行（for..in也是调用next），遇到yield语句返回，再次执行时从上次返回的yield语句处继续执行
+     ```
+
+  9. del {对象名}
 
      可理解为调用了该对象析构函数，后续不能使用该对象
 
-  9. 类
+  10. 类
 
      @classmethod和@staticmethod一个是类方法，一个叫静态方法。其实都可以理解为c++的类静态函数。这两者的区别是前者第一个参数声明为cls，意为类本身，实际调用不需要带上它。
-
+    
      从c++的角度来看，直接声明和定义在类里面的成员变量是static变量（也叫类变量），声明和定义在`__init__(self[,其余可选参数])`内部的形如`self.{成员变量名}`是对象变量
-
+    
      - 静态变量（类变量）和成员变量
-
-       直接在类里面声明的是静态变量，注意每次调用都用`{类名}.{成员名}`来指定调用，而对象成员
+    
+       直接在类里面声明的是静态变量，注意每次调用都用`{类名}.{成员名}`来指定调用，而对象成员定义于\_\_init\_\_函数或其调用的函数中，以self.XXX表示。注意对于对象的类变量，其初始化是在第一次通过对象调用该类变量的时候。
 
   
 
 
-​     
+
+
+
+
+
+
+
+
+python小小知识：
+
+1. 打印类型：type(a)    判断类型：isinstance(a, int)
+
+2. python2安装protobuf
+
+   ```python
+   python -m pip install protobuf==3.17.3   
+     
+   #如果安装3.18.0，会出现类似报错
+   #class DescriptorBase(metaclass=DescriptorMetaclass):
+   #SyntaxError: invalid syntax
+   #原因为：Drops support for 2.7 and 3.5.
+   ```
+
+   
+
+
+
+
+python小轮子：
+
+1. 字符串替换：
+
+   ```python
+   str = '''1
+   2
+   3'''
+   
+   out = str.replace('\n', ' ')
+   print(out)
+   print(out.count(' '))
+   ```
+
+2. 利用ftfy库解决转换乱码字符串
+
+   ```python
+   from ftfy import fix_text
+   
+   while(1):
+       str = input("input:")
+       print(fix_text(str))
+   ```
+
+3. 字符串
+
+   ```python
+   str1 = 'abcde'
+   str2 = 'a b c d   e'
+   str3 = 'a, b, c, d, e'
+   result1 = list(str1)
+   result2 = str2.split()
+   result3 = str3.split(', ')
+   print(result1)
+   print(result2)
+   print(result3)
+   #结果都为['a', 'b', 'c', 'd', 'e']
+   ```
+
+4. 对logging的日志封装
+
+   ```python
+   import os
+   import logging
+   import logging.handlers
+   
+   def init_log(log_path, level=logging.INFO, when="D", backup=7,
+                format="%(levelname)s: %(asctime)s: %(filename)s:%(lineno)d * %(thread)d %(message)s",
+                datefmt="%m-%d %H:%M:%S"):
+       """
+       init_log - initialize log module
+   
+       Args:
+         log_path      - Log file path prefix.
+                         Log data will go to two files: log_path.log and log_path.log.wf
+                         Any non-exist parent directories will be created automatically
+         level         - msg above the level will be displayed
+                         DEBUG < INFO < WARNING < ERROR < CRITICAL
+                         the default value is logging.INFO
+         when          - how to split the log file by time interval
+                         'S' : Seconds
+                         'M' : Minutes
+                         'H' : Hours
+                         'D' : Days
+                         'W' : Week day
+                         default value: 'D'
+         format        - format of the log
+                         default format:
+                         %(levelname)s: %(asctime)s: %(filename)s:%(lineno)d * %(thread)d %(message)s
+                         INFO: 12-09 18:02:42: log.py:40 * 139814749787872 HELLO WORLD
+         backup        - how many backup file to keep
+                         default value: 7
+   
+       Raises:
+           OSError: fail to create log directories
+           IOError: fail to open log file
+       """
+       formatter = logging.Formatter(format, datefmt)
+       logger = logging.getLogger()
+       logger.setLevel(level)
+   
+       dir = os.path.dirname(log_path)
+       if not os.path.isdir(dir):
+           os.makedirs(dir)
+   
+       handler = logging.handlers.TimedRotatingFileHandler(log_path + ".log",
+                                                           when=when,
+                                                           backupCount=backup)
+       handler.setLevel(level)
+       handler.setFormatter(formatter)
+       logger.addHandler(handler)
+   
+       handler = logging.handlers.TimedRotatingFileHandler(log_path + ".log.wf",
+                                                           when=when,
+                                                           backupCount=backup)
+       handler.setLevel(logging.WARNING)
+       handler.setFormatter(formatter)
+       logger.addHandler(handler)
+   
+       console_handler = logging.StreamHandler()
+       console_handler.setFormatter(formatter)
+       console_handler.setLevel(level)
+       logger.addHandler(console_handler)
+       
+    ##使用示例##
+   import log
+   log.init_log("log_dir/log_file") #必须包含一个文件夹
+   log.logging.info("HELLO WORLD")
+   ```
+
+   
 
 - 多线程
 
@@ -1821,6 +2271,10 @@ unzip file.zip //解压zip
      [不错的讲解](http://c.biancheng.net/view/2627.html)
 
 - conf处理库：configparser
+
+- 安装matplotlib timeout：
+
+  清华源pip安装命令：pip install -i https://pypi.tuna.tsinghua.edu.cn/simple matplotlib
 
 ## expect脚本
 
@@ -1850,7 +2304,7 @@ trap {
 
 
 
-## 厨房/厨艺
+## 厨房/厨艺相关
 
 **油焖大虾**
 
@@ -1893,7 +2347,7 @@ trap {
 
 - 准备
 
-  醋(总酸3.5)，酱油，老姜
+  醋(总酸<=3.5)，酱油，老姜
 
 - 实操
 
@@ -2036,13 +2490,17 @@ ate 和 binary 模式可用于任何类型的文件流对象，且可以与其�
 
 6. gdb调试core文件：
 
-   1）设置core文件位置，如echo "/corefile/core-%e-%p-%t" > /proc/sys/kernel/core_pattern，
+   1) 在终端中输入ulimit -c 如果结果为0，说明当程序崩溃时，系统并不能生成core dump。
 
-   ​	则core文件会生成在/corefile文件夹下
+   2) 使用ulimit -c unlimited命令，开启core dump功能，并且不限制生成core dump文件的大小。如果需要限制，加数字限制即可。ulimit - c 1024
 
-   2）gdb {程序路径} {core文件路径}
+   3) 默认情况下，core dump生成的文件名为core，而且就在程序当前目录下。新的core会覆盖已存在的core。通过修改/proc/sys/kernel/core_uses_pid文件，可以将进程的pid作为作为扩展名，生成的core文件格式为core.xxx，其中xxx即为pid
 
-   3）bt
+   4) 通过修改/proc/sys/kernel/core_pattern可以控制core文件保存位置和文件格式。例如：将所有的core文件生成到/corefile目录下，文件名的格式为core-命令名-pid-时间戳. echo "/corefile/core-%e-%p-%t" > /proc/sys/kernel/core_pattern
+   
+   5）gdb {程序路径} {core文件路径}
+   
+   6）bt
 
 
 
@@ -2206,3 +2664,116 @@ gcc -o hello hello.cpp -L/home/test -lboost_system
   ![image-20210615230550039](etc/pic/image-20210615230550039.png)
 
   输入参数优先级高于DEFINE_XXX，两个输入参数优先级后输入者高
+
+
+
+
+
+## nodejs相关/node相关
+
+- 导出模块module.exports
+
+  ```javascript
+  //app.js
+  //引入同一目录下的name.js
+  var name = require('./name');
+   
+  //使用name.js中的变量
+  console.log(name.name1);
+  //调用name.js中的函数
+  name.getName();
+  ```
+
+  ```javascript
+  //变量
+  var name1 = "Jack";
+  //函数
+  function getName() {
+      console.log("Mary");
+  }
+  
+  //如果require该文件，则会打印
+  console.log("Running name.js");
+  
+  //分别导出变量和函数第一种方式，注意这两种互斥
+  module.exports.name1 = name1;
+  module.exports.getName = getName;
+  
+  
+  //第二种方式
+  module.exports = {
+      name1: name1,
+      getName: getName
+  };
+  ```
+
+  
+
+- 起一个http服务
+
+  ```javascript
+  var http = require("http");
+  var url = require("url");
+  
+  function start(route) {
+    function onRequest(request, response) {
+      var pathname = url.parse(request.url).pathname;
+      console.log("Request for " + pathname + " received.");
+  
+      route(pathname);//根据不同的path处理不同的东西,如http://127.0.0.1:8888/get_hello/
+  
+      response.writeHead(200, {"Content-Type": "text/plain"});
+      response.write("Hello World");
+      response.end();
+    }
+  
+    http.createServer(onRequest).listen(8888);
+    console.log("Server has started.");
+  }
+  
+  function route(pathname) {
+    console.log("About to route a request for " + pathname);
+  }
+  
+  start(route);
+  ```
+  
+  
+
+- 检查文件是否存在：fs.existsSync(file_path);
+
+- 当前目录下packge.json描述了node的依赖，通过npm install可以在当前目录生成node_modules并安装依赖在其中，如果要新增依赖并放入packge.json，则可以npm install --save classnames
+
+
+
+
+
+## redis相关
+
+- Redis 有序集合
+
+  和集合一样也是 string 类型元素的集合,且不允许重复的成员。这里的成员指的是ZADD score member中的member
+
+## 专业词汇
+
+问题溯源    功能缺失
+
+
+
+## 端口相关
+
+- 测试端口连接性：telnet ip port
+
+  如果卡住，则1）ctl+] 切换; 2）输入quit退出
+
+## 接手项目相关
+
+需要知道如下信息：
+
+```
+- 输入的各个数据、文件的位置
+- 输出的各个数据、文件的位置
+- 日志位置
+
+```
+
