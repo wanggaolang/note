@@ -15,8 +15,37 @@
 - 代码注释
 
   - 新增需求备注为  //demand {id}
+  
   - debug打印用  //debug start和//debug end  在commit时记得酌情是否注释或删除里边内容
+  
   - 临时打印记得删除用  //temp start和//temp end
+  
+  - python函数注释
+  
+    ```python
+    def func(input):
+        """
+        @brief：这是例子函数，用于展示函数的注释写法
+        @param {type} input:示例函数的输入参数
+        @return {type}:示例函数的返回
+        """
+    ```
+    
+  - cpp注释
+  
+    ```cpp
+    /**
+     * @function threadpool_add
+     * @brief add a new task in the queue of a thread pool
+     * @param pool     Thread pool to which add the task.
+     * @param function Pointer to the function that will perform the task.
+     * @param argument Argument to be passed to the function.
+     * @param flags    Unused parameter.
+     * @return 0 if all goes well, negative values in case of error (@see
+     * threadpool_error_t for codes).
+     */
+    ```
+  
 - 日志打印
   - 遇到错误  get error或者get fail
   - 阶段性处理的日志打印用  step {XXX}
@@ -243,6 +272,9 @@ $ git config --global i18n.logoutputencoding utf-8  # 输出 log 编码
 -----其他-----
 git config --add core.filemode false    #忽略文件权限的改变
 git config ---global core.editor vim    #git默认编辑器更改为vim
+
+git config --global  --unset https.https://github.com.proxy #设置git代理
+git config --global  --unset http.https://github.com.proxy 
 ```
 
 - 暂存git stash
@@ -414,58 +446,47 @@ Setting	--	Keymap
 
 快捷键设置：`ctrl+k+s`
 
-  - 查找文件名：command + p
+  - 更改快捷键
 
-  - 切换最近打开文件：cmd + e（原本键为ctrl + tab）改建位时下方两个都要改
+      - 切换最近打开文件：cmd + e（原本键为ctrl + tab）改建位时下方两个都要改
 
     <img src="etc/pic/image-20210926193942209.png" alt="image-20210926193942209" style="zoom:50%;" />
 
-- 复制当前文件名  cmd + 1
+    - 复制当前文件名  cmd + 1
 
-  <img src="etc/pic/image-20210926193700535.png" alt="image-20210926193700535" style="zoom:50%;" />
+    <img src="etc/pic/image-20210926193700535.png" alt="image-20210926193700535" style="zoom:50%;" />
 
-- 复制当前文件相对路径  cmd + 2
+    - 复制当前文件相对路径  cmd + 2
 
-  <img src="etc/pic/image-20210926193532588.png" alt="image-20210926193532588" style="zoom:50%;" />
+    <img src="etc/pic/image-20210926193532588.png" alt="image-20210926193532588" style="zoom:50%;" />
 
-- 复制当前文件绝对路径  cmd + 3
+    - 复制当前文件绝对路径  cmd + 3
+
+    <img src="etc/pic/image-20211109162337311.png" alt="image-20211109162337311" style="zoom:40%;" />
+
+    - 更改文本的语言模式  cmd + m
+
+    <img src="etc/pic/image-20211109160304083.png" alt="image-20211109160304083" style="zoom:33%;" />
+
+- 常用（未改变）快捷键
+
+  ```
+  - 查找文件名：command + p
+  - 跳转到指定行：Ctrl + G
+  - 回到上一个光标：mac：`command + -`    windows：`alt + ←`
+  - 打开终端:    `control + ~`    或者 查看-终端
+  - 删除光标行：`ctrl+shift+k`
+  - 到大括号的尾端/首部:    `Ctrl + Shift+\`
+  - 批量保存文件：（改了键位的）windows：`ctrl + alt + s`    mac：`command + option + s`
+  ```
 
   
-
-- 跳转到指定行：Ctrl + G
-
-- 回到上一个光标：mac：`command + -`    windows：`alt + ←`
-
-- 打开终端:    `control + ~`    或者 查看-终端
-
-- 删除光标行：`ctrl+shift+k`
-
-- 到大括号的尾端/首部:    `Ctrl + Shift+\`
-
-- 批量保存文件：（改了键位的）windows：`ctrl + alt + s`    mac：`command + option + s`
-
-批量向左、向右缩进：``ctrl + [``   、 ``ctrl + ]``
-
-
-
-
-
-
 
 统计总代码行数：
 
 - 3个配置文件：见etc/vscode_conf
 
 - 编译：mac快捷键 command + shift + b
-- 解决ubuntu中vscode字体间距过大问题：安装适配`firacode`字体
-  1. 更新可用软件包列表: `sudo apt update`;
-  2. 通过安装/升级软件来更新系统: `sudo apt upgrade`;
-  3. 安装字体管理器: `sudo apt install font-manage`;
-  4. 安装`firacode`字体: `sudo apt install fonts-firacode`;
-  5. 在首选项-设置-字体中将`Fira Code`放最前边，重启vscode;
-
-- 解决 \#ifdef 的地方可能变灰问题：文件-首选项-设置-搜索dimInactiveRegions    取消勾选
-
 - 代码配色：.vscode/settings.json    >>    "workbench.colorTheme": "Default Dark+"
 
 - C/C++代码跳转：1）安装c/c++插件；2）在.vscode/c_cpp_properties.json中的includePath里加入查找路径，形如：
@@ -479,7 +500,7 @@ Setting	--	Keymap
 
 - 代码增加80和120字基准线：settings.json--增加一行："editor.rulers": [80,120]
 
-- 插件
+- 插件(需配和上方快捷键一起设置)
 
   ```
   能够编译运行单个文件：
@@ -491,12 +512,29 @@ Setting	--	Keymap
   	Copy file name    设置快捷键：cmd + k + s -> 搜索copy file name: with extensions并安装 -> 查找上方"复制当前文件名  "的更改操作 -> cmd + 1
   	
   c++的插件
-  选择C/C++微软开发的版本和C++ Intellisenseaustin的版本安装两个扩展.
+  选择C/C++（微软的版本）和C++ Intellisenseaustin的版本安装两个扩展.
+  
+  SQL插件
+  SQLTools
   ```
 
 - 解决include出错报错问题：设置-搜索includePath-在setting_json中配置，加入C_Cpp.default.includePath路径
 
+vscode小知识
 
+1. 解决ubuntu中vscode字体间距过大问题：安装适配`firacode`字体
+   1. 更新可用软件包列表: `sudo apt update`;
+   2. 通过安装/升级软件来更新系统: `sudo apt upgrade`;
+   3. 安装字体管理器: `sudo apt install font-manage`;
+   4. 安装`firacode`字体: `sudo apt install fonts-firacode`;
+   5. 在首选项-设置-字体中将`Fira Code`放最前边，重启vscode;
+2. 解决 \#ifdef 的地方可能变灰问题：文件-首选项-设置-搜索dimInactiveRegions    取消勾选
+
+## SQL相关
+
+查询相关
+
+1. 模糊查询：name LIKE "%福贵%"
 
 ## 进程，线程，协程
 
@@ -615,7 +653,7 @@ Setting	--	Keymap
 
 
 
-## 小小知识（一）
+## 总小小知识（一）
 
 2. 类外定义成员函数不能加上默认参数，如：``Test fun(int a = 1)``会报错，同样static声明的成员在外部定义时候，必须省去static。同时，static成员变量只有跟了const才可以在类里面的初始化列表中进行初始化，其余的都要在类的外部初始化
 
@@ -697,7 +735,22 @@ Setting	--	Keymap
     
 17. 查看具体进程的内存使用量：cat /proc/{pid}/status  VmRSS项
 
+18. linux查找目录下的所有文件中是否含有某个字符串：grep -rn "temp_a" ./
+
+    -n为显示行号
     
+19. 在开发机遇到执行ls/su等命令报错：failed to execute /bin/bash: Resource temporarily unavailable
+
+    原因为配置的限制资源不够用了，解决办法：
+
+    ```shell
+    vim /etc/security/limits.d/20-nproc.conf
+    * soft nproc 50000 #将默认值1024改为50000
+    root soft nproc unlimited
+    再次ssh登录账户，ok，回复正常。
+    
+    注：单独修改/etc/security/limits.conf 未可用！
+    ```
 
     
 
@@ -1088,11 +1141,15 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
   
   find只查找当前文件夹一层   find ./ -maxdepth 1 -type d
   
-- 权限
+- 权限&用户
 
   chmod只是改变文件的读写、执行权限，更底层的属性控制是由chattr来改变的todo lsattr
 
   让文件不可删除`chattr +i {file/folder}`  
+
+  查看用户&用户组：groups {用户名}
+
+  改变指定用户的用户组：usermod {用户名} -G {用户组1,用户组2}
 
 - 命令别名
 
@@ -1270,9 +1327,13 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
 
 - 在同一个tab（即一个页面的多个输入框）里同时输入：Shell-broadcast input-Broadcast ..in current tab
 
-**mac相关小知识**
+**mac小知识**
 
-- 在finder根目录中`command + shift + .`显示隐藏文件
+- 在finder（访达）根目录中`command + shift + .`显示隐藏文件
+
+  显示路径：显示-显示路径栏
+
+  在左边创建快捷访问：拖动文件到左侧即可
 
 - 录屏：QuickTime player
 
@@ -1291,7 +1352,11 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
   	4.选择你要改变的默认打开程序，并点击下方的”全部更改…“(Change All)
   ```
 
-  
+- exchange邮箱根据规则过滤至不同邮箱
+
+  1）邮箱->新建邮箱->新建“示例邮箱”
+
+  2）邮件->偏好设置->规则->添加规则->根据一定规则将邮件导入到"示例邮箱"
 
 
 
@@ -1518,8 +1583,11 @@ a$表示以a结尾
        FILE=$0
    fi
     
-   #当前文件的上层文件夹
+   #获取当前shell所在文件夹
    BASE_DIR=$(cd $(dirname ${FILE})/..; pwd)
+   
+   #获取软连接绝对路径
+   basepath=$(cd dirname $(readlink $0); pwd)
    ```
 
 - 获取当前时间：time=$(date "+%Y-%m-%d %H:%M:%S")
@@ -1561,7 +1629,7 @@ a$表示以a结尾
    ```shell
    docker ps -a > docker_log
    mapfile < docker_log ARRAY
-   for i in ${ARRAY}
+   for i in ${ARRAY[@]}
    do
        echo $i
    done
@@ -1657,12 +1725,14 @@ a$表示以a结尾
   set paste                       " 粘贴时防止乱缩进
   ```
   
-  
+- 常用快捷键
+
+  1. 普通模式在当前行下插入一行并进入插入模式：用o或者O命令
 
 
 ## ssh rsa key
 
-通过`ssh-keygen -t rsa`生成rsa密钥对
+生成rsa密钥对：ssh-keygen -t rsa
 
 在Linux体系存储位置为`~/.ssh`
 
@@ -1759,6 +1829,8 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
 
   如果镜像没有这个tag，则在push之前需要：docker tag {镜像} abc.com/b/c:test_image   然后再push
 
+- nohup /usr/bin/dockerd -H unix:///var/run/docker.sock --data-root /home/work/docker --insecure-registry XXX.com &
+
 - 更改docker存储位置（centos7）：
 
   查看存储位置：docker info | grep Root
@@ -1801,6 +1873,10 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
   FROM test.com/second_dir:test_image
   
   MAINTAINER author@mail.com
+  
+  USER work
+  #使用bash
+  SHELL ["/bin/bash", "-c"]
   
   COPY --chown=work:work test_dir /home/abc/test_dir
   
@@ -1979,8 +2055,6 @@ unzip file.zip //解压zip
 
 - 常规
 
-  1. 教程看的
-
   2. python中所有都可看做对象，如变量，函数，类，类的对象
 
   3. 一句话起http服务    ``python2 -m SimpleHTTPServer [端口，默认8000]``    or
@@ -2009,15 +2083,139 @@ unzip file.zip //解压zip
 
   1. 单引号和双引号效果一样，三引号里可以放前两者，让他们显示出来
 
-  2. 经典数据结构
+  2. 经典数据结构 list、tuple、字典与set的相关api
 
      ```python
-     #########字典
+     #list#
+     l = [1,2]  #初始化
+     len(l)  #计算长度
+     
+     #迭代改变其值
+     list_obj = [0,0,0,0]
+     for idx, item in enumerate(list_obj): #变为变成下标-元素对
+         list_obj[idx] = item + idx
+     print list_obj  #[0,1,2,3]
+     
+     #dict#
+     d['a'] = 1  #新增/赋值
+     d.get('a', -1)  #判断key是否存在，存在则返回value，反之返回参数2，参数2默认值为None
      #get()方法,返回指定键的值,不存在时，返回默认值
      dict.get(key, default=None)    
-     dict.get('uuid', ['abc','def'])[1] #查找uuid的值，没有则返回输入list的第2个对象def
-     #转json
-     res = json.dumps(dict)
+     if 'a' in dict: #也可以用这种方法判断
+     res = json.dumps(dict) ##dict转json
+     d.pop('a')  #删除
+     #dict的遍历
+     #1）遍历key值
+     >>> a
+     {'a': '1', 'b': '2', 'c': '3'}
+     >>> for key in a:
+     print(key+':'+a[key])
+     a:1
+     b:2
+     c:3
+     >>> for key in a.keys():
+     print(key+':'+a[key])
+     a:1
+     b:2
+     c:3
+     在使用上，for key in a和 for key in a.keys():完全等价。
+     
+     #2）遍历value值
+     >>> for value in a.values():
+     print(value)
+     1
+     2
+     3
+     
+     #3）遍历字典项
+     >>> for kv in a.items():
+     print(kv)
+     ('a', '1')
+     ('b', '2')
+     ('c', '3')
+     
+     #4）遍历字典健值
+     >>> for key,value in a.items():
+     print(key+':'+value)
+     a:1
+     b:2
+     c:3
+     >>> for (key,value) in a.items():
+     print(key+':'+value)
+     a:1
+     b:2
+     c:3
+     
+     ##可迭代对象（Iterable）##
+     能够被for..in遍历的对象
+     代码判断方法：可用isinstance()判断是否为可迭代对象
+     >>> from collections.abc import Iterable
+     >>> isinstance([], Iterable)
+     True
+     
+     ##迭代器（Iterator）##
+     可以被next()函数调用并不断返回下一个值的对象称为迭代器：Iterator。
+     可以使用isinstance()判断一个对象是否是Iterator对象：
+     >>> from collections.abc import Iterator
+     >>> isinstance((x for x in range(10)), Iterator)
+     True
+     >>> isinstance([], Iterator)
+     False
+     >>> isinstance({}, Iterator)
+     False
+     >>> isinstance('abc', Iterator)
+     False
+     生成器都是Iterator对象，但tuple、list、dict、str虽然是Iterable，却不是Iterator。
+     把list、dict、str等Iterable变成Iterator可以使用iter()函数：
+     
+     ##列表生成式##
+     顾名思义，生成列表的1个表达式，需要用中括号括起来，举例：
+     >>> L = ['Hello', 'World', 'IBM', 'Apple']
+     >>> [s.lower() for s in L]
+     ['hello', 'world', 'ibm', 'apple']
+     
+     >>> [x if x > 5 else -x for x in range(1,11) if x % 2 == 1]
+     [-1, -3, -5, 7, 9]
+     注意上方例子其中左边的if为表达式，必须给数据1个出路，所以必须跟else
+     右边的if是过滤条件，不能带else
+     
+     ##生成器（Iterator）##
+     1个算法对象，不能直接知道所有值，每次通过next(算法对象)或者for循环得到下一个值
+     代码判断方法：可用isinstance()判断是否为生成器
+     >>> from collections.abc import Iterator
+     >>> isinstance((x for x in range(10)), Iterator)
+     True
+     
+     生成器有两种：1）列表生成式改小括号，如：
+     >>> a = (x for x in range(1,11))
+     >>> next(a)
+     1
+     >>> next(a)
+     2
+     >>> next(a)
+     3
+     
+     2）普通函数魔改，如：
+     def fib(max):
+         n, a, b = 0, 0, 1
+         while n < max:
+             yield b
+             a, b = b, a + b
+             n = n + 1
+         return 'done'
+     如果一个函数定义中包含yield关键字，那么这个函数就不再是一个普通函数，而是一个generator
+     每次调用next()的时候执行（for..in也是调用next），遇到yield语句返回，再次执行时从上次返回的yield语句处继续执行
+     
+     生成器都是Iterator对象，但tuple、list、dict、str虽然是Iterable，却不是Iterator。
+     把list、dict、str等Iterable变成Iterator可以使用iter()函数：
+     >>>from typing import Iterator
+     >>> isinstance([], Iterator)
+     False
+     >>> isinstance(iter('abc'), Iterator)
+     True
+     
+     
+     
      ```
      
   3. 格式化
@@ -2056,60 +2254,65 @@ unzip file.zip //解压zip
 
      返回该模块/对象内部的对象，也就是变量，函数，类，类的对象等等
 
-  8. list、tuple、字典与set的相关api
+  8. 函数参数
 
      ```python
-     #list#
-     l = [1,2]  #初始化
-     len(l)  #计算长度
+     #位置参数，即普通参数
+     def fun(x)
      
-     #dict#
-     d['a'] = 1  #新增/赋值
-     d.get('a')  #判断
-     d.pop('a')  #删除
+     #默认参数,原则是要放在位置参数之后
+     def fun(x, y=0, z=1)
      
-     ##可迭代对象##
-     能够被for..in遍历的对象
+     """可通过指定形参名并赋值的方式跨过默认调用的顺序"""
+     fun(1,z=2)  #跨过需先给y值，再给到z的规则
      
-     ##列表生成式##
-     顾名思义，生成列表的1个表达式，需要用中括号括起来，举例：
-     >>> L = ['Hello', 'World', 'IBM', 'Apple']
-     >>> [s.lower() for s in L]
-     ['hello', 'world', 'ibm', 'apple']
+     """默认参数必须指向不变对象，原因可理解为Python函数在定义的时候，默认参数L的值就被计算出来了，每次调用默认参数时会将这个值的地址与L绑定，因为默认参数L也是一个变量，它指向对象[]，每次调用该函数，如果改变了L的内容，则下次调用时，默认参数的内容就变了，不再是函数定义时的[]了；如果是不变对象，即使在函数体对L重新赋值，其实改变的是L指向的地址，初始值及其对应的地址并未改变"""
+     >>> def add_end(L=[]):
+     ...     L.append('END')
+     ...     return L
+     ...
+     >>> add_end()
+     ['END']
+     >>> add_end()
+     ['END', 'END']#因为默认参数为可变参数，导致的结果不符合预期
      
-     >>> [x if x > 5 else -x for x in range(1,11) if x % 2 == 1]
-     [-1, -3, -5, 7, 9]
-     注意上方例子其中左边的if为表达式，必须给数据1个出路，所以必须跟else
-     右边的if是过滤条件，不能带else
+     #可变参数
+     def fun(*numbers) #numbers在函数内部是一个tuple
      
-     ##生成器##
-     1个算法对象，不能直接知道所有值，每次通过next(算法对象)或者for循环得到下一个值
-     表现上有两种：1）列表生成式改小括号，如：
-     >>> a = (x for x in range(1,11))
-     >>> next(a)
-     1
-     >>> next(a)
-     2
-     >>> next(a)
-     3
+     """如果已经有一个list或者tuple，要调用一个可变参数即在实参前加一个*"""
+     list_obj = [1,2,3]
+     fun(*list_obj)
      
-     2）普通函数魔改，如：
-     def fib(max):
-         n, a, b = 0, 0, 1
-         while n < max:
-             yield b
-             a, b = b, a + b
-             n = n + 1
-         return 'done'
-     如果一个函数定义中包含yield关键字，那么这个函数就不再是一个普通函数，而是一个generator
-     每次调用next()的时候执行（for..in也是调用next），遇到yield语句返回，再次执行时从上次返回的yield语句处继续执行
+     
+     #关键字参数
+     #可变参数允许你传入0个或任意个参数，这些可变参数在函数调用时自动组装为一个tuple。而关键字参数允许你传入0个或任意个含参数名的参数，这些关键字参数在函数内部自动组装为一个dict
+     def person(name, age, **kw):
+         print('name:', name, 'age:', age, 'other:', kw)
+     
+     """实际调用"""
+     >>> extra = {'city': 'Beijing', 'job': 'Engineer'}
+     >>> person('Jack', 24, **extra)
+     
+     #命名关键字参数【仅在python3】  限制输入的关键字参数为形参指的的那些参数，不能增加或减少
+     def person(name, age, *args, city, job)#在可变参数后的即认为是命名关键字参数
+     def person(name, age, *, city, job)#如果没有可变参数，命名关键字参数需要一个特殊分隔符*
+     def person(name, age, *, city='北京', job)#命名关键字参数可以有缺省值,这样在调用时就可以不附带该参数
+     
+     person('张三',18,job='work')#对命名关键字参数实例化时，【必须传入参数名】
+     
+     #参数组合
+     #在Python中定义函数，可以用位置参数、默认参数、可变参数、关键字参数和命名关键字参数，这5种参数都可以组合使用。但是请注意，参数定义的顺序必须是：必选参数、默认参数、可变参数、【命名关键字参数和关键字参数】。
+     
+     """经典用法举例"""
+     def printOrder(coffee, *args, coffee_order="Espresso", **kwargs):#接收coffee名和配料，默认为浓咖啡，后还可跟其他
+     
+     
+     
      ```
 
-  9. del {对象名}
+  10. del {对象名}   可理解为调用了该对象析构函数，后续不能使用该对象
 
-     可理解为调用了该对象析构函数，后续不能使用该对象
-
-  10. 类
+  11. 类
 
      @classmethod和@staticmethod一个是类方法，一个叫静态方法。其实都可以理解为c++的类静态函数。这两者的区别是前者第一个参数声明为cls，意为类本身，实际调用不需要带上它。
     
@@ -2130,7 +2333,24 @@ unzip file.zip //解压zip
 
 
 
-python小小知识：
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+python小知识：
 
 1. 打印类型：type(a)    判断类型：isinstance(a, int)
 
@@ -2143,6 +2363,25 @@ python小小知识：
    #class DescriptorBase(metaclass=DescriptorMetaclass):
    #SyntaxError: invalid syntax
    #原因为：Drops support for 2.7 and 3.5.
+   ```
+
+3. 对于打印中文但是编码形如：\xe8\xbd\xa6\xe5\x9e\x8b的转译
+
+   ```python
+   >>> stuff = '\xe8\xbd\xa6\xe5\x9e\x8b'
+   >>> unicode(stuff,"utf8", errors="ignore")
+   u'\u8f66\u578b'   #再将其在线Unicode => 中文
+   ```
+
+4. 显示模块路径/模块位置
+
+   ```python
+   import a_module
+   print a_module.__file__
+   
+   #如果需要跨平台解决方案，可用下面代码：
+   import os
+   path =os.path.dirname(amodule.__file__)
    ```
 
    
@@ -2189,78 +2428,59 @@ python小轮子：
    #结果都为['a', 'b', 'c', 'd', 'e']
    ```
 
-4. 对logging的日志封装
+4. 对logging的日志封装：详见etc/log.py
+
+5. 耗时统计
 
    ```python
-   import os
-   import logging
-   import logging.handlers
-   
-   def init_log(log_path, level=logging.INFO, when="D", backup=7,
-                format="%(levelname)s: %(asctime)s: %(filename)s:%(lineno)d * %(thread)d %(message)s",
-                datefmt="%m-%d %H:%M:%S"):
-       """
-       init_log - initialize log module
-   
-       Args:
-         log_path      - Log file path prefix.
-                         Log data will go to two files: log_path.log and log_path.log.wf
-                         Any non-exist parent directories will be created automatically
-         level         - msg above the level will be displayed
-                         DEBUG < INFO < WARNING < ERROR < CRITICAL
-                         the default value is logging.INFO
-         when          - how to split the log file by time interval
-                         'S' : Seconds
-                         'M' : Minutes
-                         'H' : Hours
-                         'D' : Days
-                         'W' : Week day
-                         default value: 'D'
-         format        - format of the log
-                         default format:
-                         %(levelname)s: %(asctime)s: %(filename)s:%(lineno)d * %(thread)d %(message)s
-                         INFO: 12-09 18:02:42: log.py:40 * 139814749787872 HELLO WORLD
-         backup        - how many backup file to keep
-                         default value: 7
-   
-       Raises:
-           OSError: fail to create log directories
-           IOError: fail to open log file
-       """
-       formatter = logging.Formatter(format, datefmt)
-       logger = logging.getLogger()
-       logger.setLevel(level)
-   
-       dir = os.path.dirname(log_path)
-       if not os.path.isdir(dir):
-           os.makedirs(dir)
-   
-       handler = logging.handlers.TimedRotatingFileHandler(log_path + ".log",
-                                                           when=when,
-                                                           backupCount=backup)
-       handler.setLevel(level)
-       handler.setFormatter(formatter)
-       logger.addHandler(handler)
-   
-       handler = logging.handlers.TimedRotatingFileHandler(log_path + ".log.wf",
-                                                           when=when,
-                                                           backupCount=backup)
-       handler.setLevel(logging.WARNING)
-       handler.setFormatter(formatter)
-       logger.addHandler(handler)
-   
-       console_handler = logging.StreamHandler()
-       console_handler.setFormatter(formatter)
-       console_handler.setLevel(level)
-       logger.addHandler(console_handler)
-       
-    ##使用示例##
-   import log
-   log.init_log("log_dir/log_file") #必须包含一个文件夹
-   log.logging.info("HELLO WORLD")
+   start_ts = int(time.time() * 1000)
+   #业务代码
+   end_ts = int(time.time() * 1000)
+   cost = end_ts - start_ts #单位ms
    ```
 
+6. 打印中文dict
+
+   ```
+   #!/usr/bin/python
+   #-*-coding:utf-8 -*-
    
+   import json
+   b={'name': '丰收'}
+   print(json.dumps(b, encoding='UTF-8', ensure_ascii=False))
+   ```
+
+7. 转换map4为图片
+
+   ```python
+    #/usr/bin/python3
+   import cv2 as cv2
+   
+   cap = cv2.VideoCapture('record.mp4')
+   fps = cap.get(cv2.CAP_PROP_FPS)
+   base_time = 1632356427.27
+   
+   timestamps = [cap.get(cv2.CAP_PROP_POS_MSEC)]
+   print('origin ts: ',timestamps, 'fps:', fps)
+   calc_timestamps = [0.0]
+   
+   while(cap.isOpened()):
+       frame_exists, curr_frame = cap.read()
+       if frame_exists:
+           timestamps.append(cap.get(cv2.CAP_PROP_POS_MSEC))
+           calc_timestamps.append(calc_timestamps[-1] + 1000/fps)
+           temp_num = calc_timestamps[-2]
+           cv2.imwrite("image"+str(base_time + temp_num/1000.0)+".jpg", curr_frame)
+       else:
+           break
+   
+   cap.release()
+   
+   for i, (ts, cts) in enumerate(zip(timestamps, calc_timestamps)):
+       print('Frame %d difference:'%i, abs(ts - cts), base_time + ts/1000.0, '-', base_time + cts/1000.0)
+   ```
+
+
 
 - 多线程
 
@@ -2651,7 +2871,7 @@ gcc -o hello hello.cpp -L/home/test -lboost_system
   }
   ```
 
-  vim gflag_file：
+  vim gflag_file（Note that many errors are silently suppressed in flagfiles. In particular, unrecognized flagnames are silently ignored（e.g., --unrecognized=XXX）, as are flags that are missing a required value (e.g., a flagfile that just says --languages).）：
 
   ```
   --languages=chinese
@@ -2744,6 +2964,8 @@ gcc -o hello hello.cpp -L/home/test -lboost_system
 
 - 当前目录下packge.json描述了node的依赖，通过npm install可以在当前目录生成node_modules并安装依赖在其中，如果要新增依赖并放入packge.json，则可以npm install --save classnames
 
+- 可以通过nvm管理node版本
+
 
 
 
@@ -2777,3 +2999,6 @@ gcc -o hello hello.cpp -L/home/test -lboost_system
 
 ```
 
+## curl相关
+
+禁止缓存参数：-H 'Cache-Control: no-cache'
