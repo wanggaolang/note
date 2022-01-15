@@ -449,6 +449,8 @@ Setting	--	Keymap
   - 更改快捷键
 
       - 切换最近打开文件：cmd + e（原本键为ctrl + tab）改建位时下方两个都要改
+        View: Quick Open Previous Recently Used Editor
+	workbench.action.quickOpenNavigateNextInFilePicker
 
     <img src="etc/pic/image-20210926193942209.png" alt="image-20210926193942209" style="zoom:50%;" />
 
