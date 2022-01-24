@@ -126,23 +126,17 @@ ssh -T git@github.com    //测试与github联通性
 
 **仓库间之间和仓库内部版本的回滚**
 
-- 从`git本地仓库`回滚某次提交（commit）到`暂存区`和`工作区`
+- 将`git本地仓库`的某次提交（commit）做回滚：git reset
 
-  `git reset --hard {某次commit}`    该命令使工作区回滚到指定的一次commit，这个参数可以是sha值（不用写全），
-
-  也可以是:`HEAD~{数字}`，表示回到相对当前版本之前上多少个版本
-
-  git log将显示git仓库中各个版本，就像查看游戏中的所有存档，HEAD指向当前版本
+  1. 仅将该改动回滚到`git本地仓库`（保留工作区和暂存区）：git reset --soft {commit id}
+  2. 将该改动回滚到git本地仓库和暂存区（保留工作区）：git reset {commit id}
+  3. 将该改动回滚到git本地仓库、暂存区、工作区：git reset --hard {commit id}
 
   在回退后再查看git log发现退回来后的已看不到先进版本，好比从21世纪坐时光机来到了19世纪，想再回去已经回不去了
 
   `git reflog`能够解决这个问题，显示所有的版本
 
-- 从`git本地仓库`回滚某次提交（commit）到`暂存区`（即对git add的撤销）：git reset
-
-  git reset HEAD XXX可以将git仓库当前版本某个文件回滚到暂存区。举例，有一个bug版本已经在本地写好并提交到暂存区，就可以先git reset HEAD bug.file将本地仓库数据回流到暂存区，再用git checkout -- XXX将暂存区数据回流到工作区，让这个bug.file回到最开始的状态。（git reset --hard更合适，这只是举例子）
-
-- 暂存区回滚/覆盖到工作区:    `git checkout -- {文件名，用.表示所有。注意文件名前有空格} `
+- 将`暂存区`回滚/覆盖到工作区:    `git checkout -- {文件名，用.表示所有。注意文件名前有空格} `
 
 - 清除当前目录下所有没add的修改：git clean -df [文件]   如果不加路径，则是所有未add文件都被清除
 
@@ -448,10 +442,11 @@ Setting	--	Keymap
 
   - 更改快捷键
 
-      - 切换最近打开文件：cmd + e（原本键为ctrl + tab）改建位时下方两个都要改
-        
-	View: Quick Open Previous Recently Used Editor
-	workbench.action.quickOpenNavigateNextInFilePicker
+    - 切换最近打开文件：cmd + e（原本键为ctrl + tab）改建位时下方两个都要改
+      
+
+    View: Quick Open Previous Recently Used Editor
+    workbench.action.quickOpenNavigateNextInFilePicker
 
     <img src="etc/pic/image-20210926193942209.png" alt="image-20210926193942209" style="zoom:50%;" />
 
@@ -2326,6 +2321,7 @@ unzip file.zip //解压zip
        直接在类里面声明的是静态变量，注意每次调用都用`{类名}.{成员名}`来指定调用，而对象成员定义于\_\_init\_\_函数或其调用的函数中，以self.XXX表示。注意对于对象的类变量，其初始化是在第一次通过对象调用该类变量的时候。
 
   
+
 
 
 
