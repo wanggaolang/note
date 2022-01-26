@@ -126,7 +126,7 @@ ssh -T git@github.com    //测试与github联通性
 
 **仓库间之间和仓库内部版本的回滚**
 
-- 从`git本地仓库`回滚某次提交（commit）到`暂存区`和`工作区`
+- 从`git本地仓库`回滚某次提交（commit）到`本地仓库`、`暂存区`和`工作区`
 
   `git reset --hard {某次commit}`    该命令使工作区回滚到指定的一次commit，这个参数可以是sha值（不用写全），
 
@@ -138,7 +138,7 @@ ssh -T git@github.com    //测试与github联通性
 
   `git reflog`能够解决这个问题，显示所有的版本
 
-- 从`git本地仓库`回滚某次提交（commit）到`暂存区`（即对git add的撤销）：git reset
+- 从`git本地仓库`回滚某次提交（commit）到`本地仓库`和`暂存区`（即对git add的撤销）：git reset
 
   git reset HEAD XXX可以将git仓库当前版本某个文件回滚到暂存区。举例，有一个bug版本已经在本地写好并提交到暂存区，就可以先git reset HEAD bug.file将本地仓库数据回流到暂存区，再用git checkout -- XXX将暂存区数据回流到工作区，让这个bug.file回到最开始的状态。（git reset --hard更合适，这只是举例子）
 
@@ -228,18 +228,15 @@ git fetch todo
 ​	新建分支并与当前分支某个commit关联`git checkout -b {新分支名} {commit_id}`
 
 - 删除分支``git branch -d {要删分支}``
-
 - 查看所以分支``git branch -a``    不加``- a``为显示本地分支
-
 - 添加远程分支：git push origin {本地分支}:{远程分支}
-
 - 删除远程分支：git push origin {空格}:{远程分支}		or		 git push origin --delete {远程分支}
-
 - 在当前分支合并（并入）指定分支：git merge {指定分支名}   如果有冲突需要解决冲突再add，commit。若无冲突会自动commit
-
 - 将另一分支某次提交合并到本分支：git cherry-pick {commitHash}，注意这只会合并这次提交的相关改变，如某个值和本分支不一样，但是并非这次提交才不一样，合并不会让本分支冲突。
-
 - 可以用``git log --graph``看到分支合并图
+- 跨分支拷贝合并指定文件
+  - 复制目标支合文件到当前分支：git checkout {文件所在分支} -- {文件名}
+  - 合并目标支合文件到当前分支：git checkout --patch {目标分支} {文件名}
 
 ---
 
@@ -489,7 +486,7 @@ Setting	--	Keymap
 - 编译：mac快捷键 command + shift + b
 - 代码配色：.vscode/settings.json    >>    "workbench.colorTheme": "Default Dark+"
 
-- C/C++代码跳转：1）安装c/c++插件；2）在.vscode/c_cpp_properties.json中的includePath里加入查找路径，形如：
+- C/C++代码跳转：1）安装c/c++插件（详见下方c++的插件）；2）在.vscode/c_cpp_properties.json中的includePath里加入查找路径，形如：
 
 ```json
 "includePath": [
@@ -512,7 +509,11 @@ Setting	--	Keymap
   	Copy file name    设置快捷键：cmd + k + s -> 搜索copy file name: with extensions并安装 -> 查找上方"复制当前文件名  "的更改操作 -> cmd + 1
   	
   c++的插件
-  选择C/C++（微软的版本）和C++ Intellisenseaustin的版本安装两个扩展.
+  选择C/C++（微软的版本）和C++ Intellisense的版本安装两个扩展.
+  
+  git的插件
+  1)git history
+  2)GitLens
   
   SQL插件
   SQLTools
@@ -520,7 +521,7 @@ Setting	--	Keymap
 
 - 解决include出错报错问题：设置-搜索includePath-在setting_json中配置，加入C_Cpp.default.includePath路径
 
-vscode小知识
+vscode小小知识
 
 1. 解决ubuntu中vscode字体间距过大问题：安装适配`firacode`字体
    1. 更新可用软件包列表: `sudo apt update`;
@@ -528,7 +529,22 @@ vscode小知识
    3. 安装字体管理器: `sudo apt install font-manage`;
    4. 安装`firacode`字体: `sudo apt install fonts-firacode`;
    5. 在首选项-设置-字体中将`Fira Code`放最前边，重启vscode;
+   
 2. 解决 \#ifdef 的地方可能变灰问题：文件-首选项-设置-搜索dimInactiveRegions    取消勾选
+
+3. 解决 VSCode 编写 C++11 代码报红问题，settings.json增加以下内容
+
+   ```json
+   "C_Cpp.default.compilerArgs": [
+           "-g",
+           "${file}",
+           "-std=c++11",
+           "-o",
+           "${fileDirname}/${fileBasenameNoExtension}"
+       ]
+   ```
+
+   
 
 ## SQL相关
 
@@ -1781,7 +1797,7 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
 
 - 启动某个容器    ``doeker start {containerID}``
 
-- docker run相关
+- docker run相关/将镜像转为容器
 
   通过镜像起新容器：docker run --name {容器名} -it --privileged=true --entrypoint /bin/bash {镜像名或id}
 
@@ -1790,6 +1806,10 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
   指定disk大小：--storage-opt size=30G
 
   端口映射： -p {主机端口}:{容器端口}
+
+  文件夹映射：-v {主机文件夹}:{容器文件夹}
+
+- 将容器转为镜像：docker commit {container_id} {image_name}
 
 - 进入某个容器中    ``docker exec -it {containerID} /bin/bash``
 
@@ -1815,13 +1835,11 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
 
     然后再docker run -it containr:v1 bash
 
-- 将容器转为镜像：docker commit {container_id} {image_name}
-
-- 将镜像转为容器：
-
 - 让容器内支持中文输入：docker exec -it cdee10f86126 env LANG=en_US.utf8 /bin/bash
 
 - 指定网络类型：--net host
+
+- Docker 查看容器映射路径：docker inspect {容器名}  查看
 
 - docker push
 
@@ -1910,15 +1928,13 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
 
 - 限定修饰符包含 required\optional\repeated 
 
-  Required: 表示是一个必须字段，必须相对于发送方，在发送消息之前必须设置该字段的值，对于接收方，必须能够识别该字段的意思。发送之前没有设置required字段或者无法识别required字段都会引发编解码异常，导致消息被丢弃。
+  - Required: 表示是一个必须字段，必须相对于发送方，在发送消息之前必须设置该字段的值，对于接收方，必须能够识别该字段的意思。发送之前没有设置required字段或者无法识别required字段都会引发编解码异常，导致消息被丢弃。
 
-  Optional：表示是一个可选字段，可选对于发送方，在发送消息时，可以有选择性的设置或者不设置该字段的值。对于接收方，如果能够识别可选字段就进行相应的处理，如果无法识别，则忽略该字段，消息中的其它字段正常处理。---因为optional字段的特性，很多接口在升级版本中都把后来添加的字段都统一的设置为optional字段，这样老的版本无需升级程序也可以正常的与新的软件进行通信，只不过新的字段无法识别而已，因为并不是每个节点都需要新的功能，因此可以做到按需升级和平滑过渡。
+  - Optional：表示是一个可选字段，可选对于发送方，在发送消息时，可以有选择性的设置或者不设置该字段的值。对于接收方，如果能够识别可选字段就进行相应的处理，如果无法识别，则忽略该字段，消息中的其它字段正常处理。---因为optional字段的特性，很多接口在升级版本中都把后来添加的字段都统一的设置为optional字段，这样老的版本无需升级程序也可以正常的与新的软件进行通信，只不过新的字段无法识别而已，因为并不是每个节点都需要新的功能，因此可以做到按需升级和平滑过渡。
 
-  Repeated：表示该字段可以包含0~N个元素。其特性和optional一样，但是每一次可以包含多个值。可以看作是在传递一个数组的值。N 表示打包的字节并不是固定。而是根据数据的大小或者长度。对于结构体的repeated字段，会生成
+  - Repeated：表示该字段可以包含0~N个元素。其特性和optional一样，但是每一次可以包含多个值。可以看作是在传递一个数组的值。N 表示打包的字节并不是固定。而是根据数据的大小或者长度。对于结构体的repeated字段，会生成``{结构体对象名}.{repeated对象名}_size()``，函数返回int。如果想取出某个index对应的单位:   `{结构体对象名}.{repeated对象名}({index})`
 
-  ``{结构体对象名}.{repeated对象名}_size()``，函数返回int。如果想取出某个index对应的单位:   
-
-   `{结构体对象名}.{repeated对象名}({index})`
+    添加新成员：add_{成员名}()  repeated后边分为2类，基础数据结构和后生成数据结构（也就是自定义的message），对于基础数据结构，其add方法为：void add_XXX(value);  对于后生成数据结构，其add方法为：{定义结构}* add_XXX();
 
 - 可以将message理解为一个结构体，每个结构体有一定的 required\optional\repeated，对于某结构体的可选字段（Optional），会生成`{结构体对象名}.has_{Optional成员名字}`，函数返回bool；
 
@@ -2350,6 +2366,9 @@ unzip file.zip //解压zip
 
 
 
+
+
+
 python小知识：
 
 1. 打印类型：type(a)    判断类型：isinstance(a, int)
@@ -2363,6 +2382,11 @@ python小知识：
    #class DescriptorBase(metaclass=DescriptorMetaclass):
    #SyntaxError: invalid syntax
    #原因为：Drops support for 2.7 and 3.5.
+   
+   #python运行带protobuf代码的文件报错
+   #Couldn't build proto file into descriptor pool
+   pip uninstall protobuf
+   pip install --no-binary=protobuf protobuf==3.17.3   
    ```
 
 3. 对于打印中文但是编码形如：\xe8\xbd\xa6\xe5\x9e\x8b的转译
@@ -2666,6 +2690,10 @@ ios::binary	二进制方式
 ate 和 binary 模式可用于任何类型的文件流对象，且可以与其他任何文件模式组合使用
 每个文件流类型都定义了默认的文件模式，当未指定文件模式时，便使用默认模式。如与 ifstream 关联的文件默认以 in 模式打开；与 ofstream 关联的文件默认以 out 模式打开；与 fstream 关联的文件默认以 in 和 out 模式打开。
 ```
+
+
+
+## nginx相关
 
 
 
