@@ -444,7 +444,7 @@ Setting	--	Keymap
 
     View: Quick Open Previous Recently Used Editor
     
-    workbench.action.quickOpenNavigateNextInEditorPicker
+    workbench.action.quickOpenNavigateNextInEditorPicker    inEditorsPicker && inQuickOpen
 
     <img src="etc/pic/image-20210926193942209.png" alt="image-20210926193942209" style="zoom:50%;" />
 
