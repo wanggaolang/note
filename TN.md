@@ -516,6 +516,7 @@ Setting	--	Keymap
   
   SQL插件
   SQLTools
+  SQL formatter
   ```
 
 - 解决include出错报错问题：设置-搜索includePath-在setting_json中配置，加入C_Cpp.default.includePath路径
@@ -2366,6 +2367,7 @@ unzip file.zip //解压zip
 
 
 
+
 python小知识：
 
 1. 打印类型：type(a)    判断类型：isinstance(a, int)
@@ -3027,3 +3029,22 @@ gcc -o hello hello.cpp -L/home/test -lboost_system
 ## curl相关
 
 禁止缓存参数：-H 'Cache-Control: no-cache'
+
+
+
+## sql相关 
+
+sql小知识
+
+1. case函数
+
+   CAST()函数，把一个字段转成另一个字段。其语法为：Cast(字段名 as 转换的类型 )，其中类型可以为：
+
+   CHAR[(N)] 字符型 
+   DATE  日期型
+   DATETIME  日期和时间型
+   DECIMAL  float型
+   SIGNED  int （如果是double转，是四舍五入）
+   TIME  时间型
+
+   实例：SELECT cast(1.6 AS signed) as value
