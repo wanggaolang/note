@@ -517,6 +517,9 @@ Setting	--	Keymap
   SQL插件
   SQLTools
   SQL formatter
+  
+  绘制流程图
+  Draw.io Integration  （需要创建XXX.drawio文件，文件模式为draw.io）
   ```
 
 - 解决include出错报错问题：设置-搜索includePath-在setting_json中配置，加入C_Cpp.default.includePath路径
@@ -645,7 +648,13 @@ vscode小小知识
    }
    ```
 
-   
+8. map相关
+
+   - lower_bound与upper_bound
+
+     lower_bound返回第一个大于等于输入对象的迭代器，upper_bound返回第一个大于输入对象的迭代器
+
+     记忆方式为在顺序排列的key中，要在key_n周围插入一个值，那么会分为在key_n的左边和右边插入，即分别对应了lower_bound和upper_bound的位置
 
 **cpp小轮子**
 
@@ -2063,6 +2072,9 @@ unzip file.zip //解压zip
 7、*.tar.Z 用tar –xZf 解压
 8、*.rar 用 unrar e解压
 9、*.zip 用 unzip 解压
+
+tar经典示例
+10、tar zcf all.tgz ./* --exclude=a_dir --exclude=b_file  #压缩当前的所有内容，除了a_dir、b_file
 ```
 
 
@@ -2368,6 +2380,8 @@ unzip file.zip //解压zip
 
 
 
+
+
 python小知识：
 
 1. 打印类型：type(a)    判断类型：isinstance(a, int)
@@ -2387,6 +2401,8 @@ python小知识：
    pip uninstall protobuf
    pip install --no-binary=protobuf protobuf==3.17.3   
    ```
+
+3. python2安装合适的kafka：python -m pip install  confluent_kafka==1.5.0
 
 3. 对于打印中文但是编码形如：\xe8\xbd\xa6\xe5\x9e\x8b的转译
 
@@ -2606,6 +2622,31 @@ jsoncpp是cpp处理json的库，可以直接在github上拉取，然后找到ama
 - 删除Json对象    `root.removeMember("key");`
 - 产生value为null的对象：` root["abc"];`    //root["abc"] = null
 - 判断json对象是否为空：`bool Json::Value::isNull () const`
+
+**json小知识**
+
+1. 通过jsoncpp打开文件：
+
+   ```cpp
+   #include<iostream>
+   #include<fstream>
+   #include"json.h"
+   using namespace std;
+   int main() {
+       Json::Value root;
+       std::ifstream infile;
+       infile.open("/Users/tmp.json", std::ios::in);
+       try {
+           infile >> root;
+       } catch (std::exception& e) {
+           root = Json::objectValue;
+           cout << "exception:" << e.what();
+       }
+       cout << "root: " << root << endl;
+   }
+   ```
+
+   
 
 ## 时间戳相关
 
@@ -2991,7 +3032,9 @@ gcc -o hello hello.cpp -L/home/test -lboost_system
 
 - 当前目录下packge.json描述了node的依赖，通过npm install可以在当前目录生成node_modules并安装依赖在其中，如果要新增依赖并放入packge.json，则可以npm install --save classnames
 
-- 可以通过nvm管理node版本
+- 可以通过nvm管理node版本 nvm相关
+
+  - 设置默认node版本：nvm alias default v10.14.2
 
 
 
