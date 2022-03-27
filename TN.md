@@ -2246,31 +2246,33 @@ tar经典示例
      
      ```
      
-  3. 格式化
-  
-     ```python
-     age = 20
-     name = 'Swaroop'
-     print('{0} was {1} years old when he wrote this book'.format(name, age))
-     
-     # 对于浮点数 '0.333' 保留小数点(.)后三位
-      print('{0:.3f}'.format(1.0/3))
-     # 使用下划线填充文本，并保持文字处于中间位置
-     # 使用 (^) 定义 '___hello___'字符串长度为 11
-     print('{0:_^11}'.format('hello'))
-     # 基于关键词输出 'Swaroop wrote A Byte of Python'  并去除最后的换行
-     print('{name} wrote {book}'.format(name='Swaroop', book='A Byte of Python'), end = '')
-     
-     ```
 
 
-  3. 转义字符，与c类似，核心的有：``\t``    ``\n``    ``\"``    注意单纯的\会将上下两行代码拼接
+3. 格式化
 
-  4. 整除`//`    且`and`    或`or`    非`not`
+```python
+age = 20
+name = 'Swaroop'
+print('{0} was {1} years old when he wrote this book'.format(name, age))
 
-  5. 可以在while后面接else
+# 对于浮点数 '0.333' 保留小数点(.)后三位
+ print('{0:.3f}'.format(1.0/3))
+# 使用下划线填充文本，并保持文字处于中间位置
+# 使用 (^) 定义 '___hello___'字符串长度为 11
+print('{0:_^11}'.format('hello'))
+# 基于关键词输出 'Swaroop wrote A Byte of Python'  并去除最后的换行
+print('{name} wrote {book}'.format(name='Swaroop', book='A Byte of Python'), end = '')
 
-  6. **imoport 模块**
+```
+
+
+  4. 转义字符，与c类似，核心的有：``\t``    ``\n``    ``\"``    注意单纯的\会将上下两行代码拼接
+
+  5. 整除`//`    且`and`    或`or`    非`not`
+
+  6. 可以在while后面接else
+
+  7. **imoport 模块**
 
      将模块理解为一个.py的文件，每次导入该文件都是原地执行了一次该文件
 
@@ -2350,7 +2352,47 @@ tar经典示例
     
        直接在类里面声明的是静态变量，注意每次调用都用`{类名}.{成员名}`来指定调用，而对象成员定义于\_\_init\_\_函数或其调用的函数中，以self.XXX表示。注意对于对象的类变量，其初始化是在第一次通过对象调用该类变量的时候。
 
-  
+12. 高级
+
+13. 装饰器相关
+
+    ​	对于装饰器函数的定义，首先看输入，然后是输出，然后再看中间的函数体。装饰器即在代码运行期间动态增加功能的方式，称之为“装饰器”（Decorator）。那么说到底就是要装饰一个函数。整个的输入是一个函数，输出也是一个函数，中间的函数体其实就是在定义这个输出的函数。
+
+    ​	举例：函数对象有一个`__name__`属性，可以拿到函数的名字：now.\_\_name\_\_  =>  now  假设我们要增强`now()`函数的功能，比如，在函数调用前后自动打印日志，但又不希望修改`now()`函数的定义:
+
+    ```python
+    def log(func):
+        def wrapper(*args, **kw):
+            print('call %s():' % func.__name__)
+            return func(*args, **kw)
+        return wrapper
+    ```
+
+    借助Python的@语法，把decorator置于函数的定义处：
+
+    ```python
+    @log
+    def now():
+        print('2015-3-25')
+        
+    以后每次调用就会先打印call now():
+    ```
+
+    **注意**为何不定义一个函数，先打印函数名，再直接执行函数并返回呢，即：
+
+    ```python
+    def log(func, *args, **kw):
+      print('call %s():' % func.__name__)
+      return func(*args, **kw)
+    ```
+
+    首先要明白，我们的目标是封装函数，绝不是执行函数。也就是说，我们不是想在每次知道参数时，才执行一遍log并传入相应变化的参数args和kw，而是说我们希望类似：func_obj = decorator(func_obj)，然后以后每次调用原来的func_obj，其实就是调用封装好的函数。因此，才有最开始说的，装饰器函数的输入是函数，输出也是函数
+
+    
+
+
+
+
 
 
 
