@@ -296,7 +296,11 @@ git config --global  --unset http.https://github.com.proxy
 
     1）废弃掉这次push；2）修改文件a；3）git add a；4）git commit ----amend；（如果遇到编辑器是nano，则git config --global core.editor "vim"）
 
-- 忽略当前git仓库下某些文件夹：在git仓库根目录的`.gitignore`文件写入这些文件夹名字，注意是以git仓库根目录作为基础目录的相对路径，如ABC就是./ABC
+- git .gitignore相关
+
+  - 对于在.gitignore文件中新增项，分为2类：1）对于之前从未trace的文件，直接修改.gitignore，就会生效，然后add .gitignore文件并提交；2）对于已经trace的文件（即已经git add的文件），需要1）修改.gitignore文件；2）git rm -rf --cached .  3）git add .  4）git commit   之后该文件的更改忽略才会生效
+
+  - 忽略当前git仓库下某些文件夹：在git仓库根目录的`.gitignore`文件写入这些文件夹名字，注意是以git仓库当前.gitignore目录作为基础目录的相对路径，最好不要带./，如当前文件夹下tmp_file就直接写入.gitignore中为tmp_file
 
 - 修改当前仓库用户和邮箱：
 
