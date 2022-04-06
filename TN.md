@@ -2356,7 +2356,39 @@ print('{name} wrote {book}'.format(name='Swaroop', book='A Byte of Python'), end
     
        直接在类里面声明的是静态变量，注意每次调用都用`{类名}.{成员名}`来指定调用，而对象成员定义于\_\_init\_\_函数或其调用的函数中，以self.XXX表示。注意对于对象的类变量，其初始化是在第一次通过对象调用该类变量的时候。
 
-12. 高级
+12. 高阶函数
+
+    ```python
+    ##map
+    map()传入的第一个参数是f，即函数对象本身。由于结果r是一个Iterator，Iterator是惰性序列，因此通过list()函数让它把整个序列都计算出来并返回一个list。
+    >>> def f(x):
+    ...     return x * x
+    ...
+    >>> r = map(f, [1, 2, 3, 4, 5, 6, 7, 8, 9])
+    >>> list(r)
+    [1, 4, 9, 16, 25, 36, 49, 64, 81]
+    
+    ##reduce
+    reduce把一个函数作用在一个序列[x1, x2, x3, ...]上，这个函数必须接收两个参数，reduce把结果继续和序列的下一个元素做累积计算，其效果就是：
+    reduce(f, [x1, x2, x3, x4]) = f(f(f(x1, x2), x3), x4)
+    >>> from functools import reduce
+    >>> def add(x, y):
+    ...     return x + y
+    ...
+    >>> reduce(add, [1, 3, 5, 7, 9])
+    25
+    
+    ##filter
+    filter()函数用于过滤序列.其接收一个函数和一个序列。和map()不同的是，filter()把传入的函数依次作用于每个元素，然后根据返回值是True还是False决定保留还是丢弃该元素。
+    def is_odd(n):
+        return n % 2 == 1
+    list(filter(is_odd, [1, 2, 4, 5, 6, 9, 10, 15]))
+    # 结果: [1, 5, 9, 15]
+    
+    
+    
+    
+    ```
 
 13. 装饰器相关
 
@@ -2400,6 +2432,10 @@ print('{name} wrote {book}'.format(name='Swaroop', book='A Byte of Python'), end
 
 
 
+    
+
+
+
 
 
 
@@ -2433,9 +2469,10 @@ python小知识：
 
 1. 打印类型：type(a)    判断类型：isinstance(a, int)
 
-2. python2安装protobuf
+2. python安装模块相关
 
    ```python
+   python2安装protobuf
    python -m pip install protobuf==3.17.3   
      
    #如果安装3.18.0，会出现类似报错
