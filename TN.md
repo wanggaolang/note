@@ -52,6 +52,36 @@
 
 
 
+## 项目相关
+
+- 重点关注：
+
+  1）指标设计与建设；
+
+  2）未来规划方向；
+
+- 接手老项目需把握重点：
+
+  1）设计文档；
+  
+  2）输入输出（输入即外部依赖和外部输入，如兄弟模块的数据接口；输出即该项目的产出或者功能呈现，如房地产项目的输出即房子，电脑设计项目的产出即电脑本身等）；
+  
+  3）内部逻辑；（大多需要自己看，先要把控整体逻辑，如文件结构，设计思想等）
+  
+  4）日志位置；
+  
+  5）单机环境；
+  
+  6）部署上线方法；
+  
+  7）端口，资源（包括单机占用资源、所有线上可用资源等）占用情况；
+  
+  8）指标建设与统计方法；
+  
+- 项目小知识
+
+  1. 在上线新策略前，一定要做好新老策略的指标指定和指标统计，才能确定新策略所带来的收益
+
 
 ## typora相关
 
@@ -59,9 +89,18 @@
   1. 如果想调到指定标题名去，可用[任意内容]\(#标题名，注意带左边的#号\)
   2. 如果想跳到任意文本处：1）要先在该文本处加上”锚点“，\<a name=锚点名>指定文本（也可以空白）\</a>    2）[任意内容]\(#锚点名，注意带左边的#号\)
   
-- 关闭首字母大写
+- <a name=关闭首字母大写>关闭首字母大写</a>
 
   选择“编辑”-“拼写和语法检查”-“自动纠正拼写”
+  
+- <a name=设置typora图片存储位置>设置typora图片存储位置</a>：
+
+  <img src="etc//image-20220406203621884.png" alt="image-20220406203621884" style="zoom:50%;" />
+
+**typora初始化相关**：
+
+1. [关闭首字母大写](#关闭首字母大写)
+2. [设置typora图片存储位置](#设置typora图片存储位置)
 
 ##  git相关及github相关
 
@@ -443,11 +482,13 @@ Setting	--	Keymap
 
   - 更改快捷键
 
+    注意，在etc/vscode_conf文件夹中有*keybindings.json文件，将其替换到对应的keybindings.json位置即可
+
     - 切换最近打开文件：cmd + e（原本键为ctrl + tab）改建位时下方两个都要改
       
 
     View: Quick Open Previous Recently Used Editor
-    
+
     workbench.action.quickOpenNavigateNextInEditorPicker                **when:** inEditorsPicker && inQuickOpen
 
     <img src="etc/pic/image-20210926193942209.png" alt="image-20210926193942209" style="zoom:50%;" />
@@ -472,6 +513,7 @@ Setting	--	Keymap
 
   ```
   - 查找文件名：command + p
+  - vscode相关命令：cmd + shift + p
   - 跳转到指定行：Ctrl + G
   - 回到上一个光标：mac：`command + -`    windows：`alt + ←`
   - 打开终端:    `control + ~`    或者 查看-终端
@@ -479,7 +521,7 @@ Setting	--	Keymap
   - 到大括号的尾端/首部:    `Ctrl + Shift+\`
   - 批量保存文件：（改了键位的）windows：`ctrl + alt + s`    mac：`command + option + s`
   ```
-
+  
   
 
 统计总代码行数：
@@ -507,6 +549,8 @@ Setting	--	Keymap
   	1. 安装Code Runner
   	2. 设置-> code-runner:Run in Terminal
   	3. 重启后编译运行，press F1 and then select/type Run Code    在mac为control + option + n
+  	注意事项：
+  		1.对于python，如果文件开头有类似#!/usr/bin/python2指定解释器路径的，可能导致运行失败，因为实际路径与其不符，需要将该行注释掉
   	
   复制文件名：
   	Copy file name    设置快捷键：cmd + k + s -> 搜索copy file name: with extensions并安装 -> 查找上方"复制当前文件名  "的更改操作 -> cmd + 1
@@ -2348,13 +2392,154 @@ print('{name} wrote {book}'.format(name='Swaroop', book='A Byte of Python'), end
 
   11. 类
 
-     @classmethod和@staticmethod一个是类方法，一个叫静态方法。其实都可以理解为c++的类静态函数。这两者的区别是前者第一个参数声明为cls，意为类本身，实际调用不需要带上它。
+```python
+##类成员
+@classmethod和@staticmethod一个是类方法，一个叫静态方法。其实都可以理解为c++的类静态函数。这两者的区别是前者第一个参数声明为cls，意为类本身，实际调用不需要带上它。
+
+ 从c++的角度来看，直接声明和定义在类里面的成员变量是static变量（也叫类变量），声明和定义在__init__(self[,其余可选参数])内部的形如self.{成员变量名}是对象变量
+
+##静态变量（类变量）和成员变量
+
+   直接在类里面声明的是静态变量，注意每次调用都用`{类名}.{成员名}`来指定调用，而对象成员定义于__init__函数或其调用的函数中，以self.XXX表示。注意对于对象的类变量，其初始化是在第一次通过对象调用该类变量的时候。
+  
+##权限控制
+通过双下划线__开头的成员即私有成员，无法直接访问；但其只是将变量做了重命名，如__var时间变为了__classname__var，不过习惯和建议上禁止通过这种访问的方式去改变成员变量
+要注意以下错误：
+class People(object):
+    """测试类"""
+    def __init__(self, name):
+        self.__name = name
+    def self_introduction(self):
+        print('my name is {}'.format(self.__name))
+
+people_obj = People('wanggaolang')
+people_obj.self_introduction()#打印wanggaolang
+
+people_obj.__name = "other"  #错误！！！预期访问的私有变量已被重命名，这会让该对象产生一个新的成员
+people_obj.self_introduction()  #实际访问的还是原有值"wanggaolang"
+
+##获取对象信息
+获取类型：type({变量名})
+	>>> type(123)
+	<class 'int'>
+  >>> type(123)==type(456)
+  True
+  >>> type(123)==int
+  True
+  >>> type('abc')==type('123')
+  True
+  >>> type('abc')==str
+  True
+  >>> type('abc')==type(123)
+  False
+
+type扩展types模块：
+  >>> import types
+  >>> def fn():
+  ...     pass
+  ...
+  >>> type(fn)==types.FunctionType
+  True
+  >>> type(abs)==types.BuiltinFunctionType
+  True
+  >>> type(lambda x: x)==types.LambdaType
+  True
+  >>> type((x for x in range(10)))==types.GeneratorType
+  True
+
+判断类型：isinstance({变量名})
+	>>> isinstance(123, int)
+  True
+  >>> isinstance(123.1, float)
+  True
+  >>> dog_obj = Dog()
+  >>> animal_obj = Animal()
+  >>> isinstance(dog_obj, Dog)
+  True
+  >>> isinstance(dog_obj, Animal)#子类对象判断类型时，也属于父类
+  True
+  >>> isinstance(animal_obj, Animal)
+  True
+  >>> isinstance(animal_obj, Dog)#父类对象不属于子类
+  False
+  
+获取对象所有属性和方法：dir({变量名})
+  >>> class Animal():
+  ...     pass
+  ...
+  >>> animal_obj = Animal()
+  >>> dir(animal_obj)#获取所有属性和方法
+  ['__class__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__']
+
+配合getattr()、setattr()以及hasattr()，我们可以直接操作一个对象的状态：
+	>>> class MyObject(object):
+  ...     def __init__(self):
+  ...         self.x = 9
+  ...     def power(self):
+  ...         return self.x * self.x
+  ...
+  >>> obj = MyObject()
+  
+  紧接着，可以测试该对象的属性：
+  >>> hasattr(obj, 'x') # 有属性'x'吗？
+  True
+  >>> obj.x
+  9
+  >>> hasattr(obj, 'y') # 有属性'y'吗？
+  False
+  >>> setattr(obj, 'y', 19) # 设置一个属性'y'
+  >>> hasattr(obj, 'y') # 有属性'y'吗？
+  True
+  >>> getattr(obj, 'y') # 获取属性'y'
+  19
+  >>> obj.y # 获取属性'y'
+  19
+  
+  如果试图获取不存在的属性，会抛出AttributeError的错误：
+  >>> getattr(obj, 'z') # 获取属性'z'
+  Traceback (most recent call last):
+    File "<stdin>", line 1, in <module>
+  AttributeError: 'MyObject' object has no attribute 'z'
+  
+  可以传入一个default参数，如果属性不存在，就返回默认值：
+  >>> getattr(obj, 'z', 404) # 获取属性'z'，如果不存在，返回默认值404
+	404
+  
+  也可以获得对象的方法：
+  >>> hasattr(obj, 'power') # 有属性'power'吗？
+  True
+  >>> getattr(obj, 'power') # 获取属性'power'
+  <bound method MyObject.power of <__main__.MyObject object at 0x10077a6a0>>
+  >>> fn = getattr(obj, 'power') # 获取属性'power'并赋值到变量fn
+  >>> fn # fn指向obj.power
+  <bound method MyObject.power of <__main__.MyObject object at 0x10077a6a0>>
+  >>> fn() # 调用fn()与调用obj.power()是一样的
+  81
+  
+#实例属性和类属性
+由于Python是动态语言，根据类创建的实例可以任意绑定属性。给实例绑定属性的方法是通过实例变量，或者通过self变量。即类似obj.att = xx或者self.att = xx。如果类本身需要绑定一个属性，可以直接在class中定义属性，这种属性是类属性，归类所有：
+class Student(object):
+    name = 'Student'
     
-     从c++的角度来看，直接声明和定义在类里面的成员变量是static变量（也叫类变量），声明和定义在`__init__(self[,其余可选参数])`内部的形如`self.{成员变量名}`是对象变量
-    
-     - 静态变量（类变量）和成员变量
-    
-       直接在类里面声明的是静态变量，注意每次调用都用`{类名}.{成员名}`来指定调用，而对象成员定义于\_\_init\_\_函数或其调用的函数中，以self.XXX表示。注意对于对象的类变量，其初始化是在第一次通过对象调用该类变量的时候。
+当我们定义了一个类属性后，这个属性虽然归类所有，但类的所有实例都可以访问到：
+  >>> class Student(object):
+  ...     name = 'Student'
+  ...
+  >>> s = Student() # 创建实例s
+  >>> print(s.name) # 打印name属性，因为实例并没有name属性，所以会继续查找class的name属性
+  Student
+  >>> print(Student.name) # 打印类的name属性
+  Student
+  >>> s.name = 'Michael' # 给实例绑定name属性
+  >>> print(s.name) # 由于实例属性优先级比类属性高，因此，它会屏蔽掉类的name属性
+  Michael
+  >>> print(Student.name) # 但是类属性并未消失，用Student.name仍然可以访问
+  Student
+  >>> del s.name # 如果删除实例的name属性
+  >>> print(s.name) # 再次调用s.name，由于实例的name属性没有找到，类的name属性就显示出来了
+  Student
+在编写程序的时候，千万不要对实例属性和类属性使用相同的名字，因为相同名称的实例属性将屏蔽掉类属性，但是当你删除实例属性后，再使用相同的名称，访问到的将是类属性。
+```
 
 12. 高阶函数
 
@@ -2429,42 +2614,6 @@ print('{name} wrote {book}'.format(name='Swaroop', book='A Byte of Python'), end
 
 
 
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 python小知识：
 
 1. 打印类型：type(a)    判断类型：isinstance(a, int)
@@ -2483,10 +2632,11 @@ python小知识：
    #python运行带protobuf代码的文件报错
    #Couldn't build proto file into descriptor pool
    pip uninstall protobuf
-   pip install --no-binary=protobuf protobuf==3.17.3   
+   pip install --no-binary=protobuf protobuf==3.17.3 
+   
+   python2安装合适的kafka
+   python -m pip install  confluent_kafka==1.5.0
    ```
-
-3. python2安装合适的kafka：python -m pip install  confluent_kafka==1.5.0
 
 3. 对于打印中文但是编码形如：\xe8\xbd\xa6\xe5\x9e\x8b的转译
 
@@ -2644,6 +2794,47 @@ trap {
 `set timeout 1`设置超时时间，目前知道的作用是来计时`expect`的
 
 `expect "*bash-xxxx-ssl*" {send "ssh $host \r"}` 如果匹配到对应字符，则发送ssh数据。在timeout时间后还没匹配到这些字符，自动跳过
+
+
+
+
+
+## 网络相关
+
+- <a name=测试终端的网络是否使用代理>测试终端的网络是否使用代理</a>
+
+```shell
+# 方式1：输入如下命令,看看显示的运行商是什么，如果是国外那么就ok
+curl cip.cc
+
+# 方式2：通过google测试，有结果，说明Ok
+curl -i https://google.com
+```
+
+
+
+网络小知识：
+
+1. 即使挂了代理并设置为全局模式，浏览器能够正常访问外网，但是用iterm2等终端进行wget或curl还是失效。这是因为代理的原理为在本地某个端口启动代理服务，各软件将数据发送到本地端口，代理服务转发后将得到的数据返回给相应软件。在mac上，可以通过：系统偏好设置 -> 网络 -> 高级 -> 代理 查看代理服务所起端口
+
+   <img src="etc//image-20220406204801856.png" alt="image-20220406204801856" style="zoom:30%;" />
+
+   但是iterm2等并没有设置相应的系统代理，也就是不会将数据发送到代理服务上。解决办法为更改环境变量http_proxy和https_proxy，将它们可以写死到bashrc或者zshrc中：
+
+   ```shell
+   # 打开配置文件
+   vim ~/.zshrc
+   # 如果用了bash 那么修改`~/.bashrc`
+   # 在后面新增配置
+   export http_proxy=http://127.0.0.1:7890
+   export https_proxy=$http_proxy
+   # 同理，可能执行` source ~/.zshrc`
+   source ~/.zshrc
+   ```
+
+   最后通过[测试终端的网络是否使用代理](#测试终端的网络是否使用代理)验证配置是否成功
+
+
 
 
 
