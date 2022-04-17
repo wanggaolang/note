@@ -2426,12 +2426,8 @@ people_obj.self_introduction()  #实际访问的还是原有值"wanggaolang"
   True
   >>> type(123)==int
   True
-  >>> type('abc')==type('123')
-  True
   >>> type('abc')==str
   True
-  >>> type('abc')==type(123)
-  False
 
 type扩展types模块：
   >>> import types
@@ -2471,7 +2467,7 @@ type扩展types模块：
   >>> dir(animal_obj)#获取所有属性和方法
   ['__class__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__']
 
-配合getattr()、setattr()以及hasattr()，我们可以直接操作一个对象的状态：
+	配合getattr()、setattr()以及hasattr()，我们可以直接操作一个对象的状态：
 	>>> class MyObject(object):
   ...     def __init__(self):
   ...         self.x = 9
@@ -2539,6 +2535,31 @@ class Student(object):
   >>> print(s.name) # 再次调用s.name，由于实例的name属性没有找到，类的name属性就显示出来了
   Student
 在编写程序的时候，千万不要对实例属性和类属性使用相同的名字，因为相同名称的实例属性将屏蔽掉类属性，但是当你删除实例属性后，再使用相同的名称，访问到的将是类属性。
+
+#@property
+#其广泛应用在类的定义中，可以让调用者写出简短的代码，同时保证对参数进行必要的检查，这样，程序运行时就减少了出错的可能性。
+class Student(object):
+
+    @property  #作用就是1）调用不用加括号；2）返回一个右值
+    def score(self):
+        return self._score
+
+    @score.setter  #作用就是：1）调用不用加括号；2）可以进行赋值
+    def score(self, value):
+        if not isinstance(value, int):
+            raise ValueError('score must be an integer!')
+        if value < 0 or value > 100:
+            raise ValueError('score must between 0 ~ 100!')
+        self._score = value
+        
+>>> s = Student()
+>>> s.score = 60 # OK，实际转化为s.set_score(60)
+>>> s.score # OK，实际转化为s.get_score()
+60
+>>> s.score = 9999
+Traceback (most recent call last):
+  ...
+ValueError: score must between 0 ~ 100!
 ```
 
 12. 高阶函数
@@ -2850,6 +2871,40 @@ curl -i https://google.com
     放油放虾，多炒下炸酥脆炒出虾油，放入葱姜蒜，翻炒下放入汁，再大火收汁
 
 
+
+**平菇肉片汤**
+
+- 准备
+
+  平菇 小里脊
+
+  葱姜蒜、白胡椒粉、淀粉、料酒
+
+- 实操
+
+  里脊肉切片，放盐、白胡椒粉、料酒、淀粉腌制
+
+  起锅烧油，放入葱姜蒜，放平菇并加盐，炒出水分，加水烧开，适量时间后放入肉片，出锅前放鸡精，最后放葱花
+
+
+
+**炒猪肝**
+
+- 准备
+
+  猪肝 青椒
+
+  姜蒜、白胡椒粉、淀粉、料酒、辣椒、火锅底料
+
+- 实操
+
+  猪肝切片，放盐、白胡椒粉、料酒、淀粉、油腌制
+
+  青椒放锅中加盐，炒糊拿出
+
+  锅中加火锅底料，炒猪肝和青椒，注意时间，起锅前放鸡精
+
+  
 
 **大盘鸡**
 
