@@ -169,6 +169,8 @@ ssh -T git@github.com    //测试与github联通性
 
   1. 仅将该改动回滚到`git本地仓库`（保留工作区和暂存区）：git reset --soft {commit id}
   2. 将该改动回滚到git本地仓库和暂存区（保留工作区）：git reset {commit id}
+
+     git reset {commit id}  {file_name} 将指定版本的指定文件回滚到暂存区（保留工作区和本地仓库）
   3. 将该改动回滚到git本地仓库、暂存区、工作区：git reset --hard {commit id}
 
   在回退后再查看git log发现退回来后的已看不到先进版本，好比从21世纪坐时光机来到了19世纪，想再回去已经回不去了
@@ -236,9 +238,11 @@ ssh -T git@github.com    //测试与github联通性
 
 git fetch todo
 
-- 在使用git提交代码的时，`git commit -m "内容"` 如果内容编写错误：
+- 在使用git提交代码的时，`git commit -m "内容"` 
 
-  使用`git commit --amend` 对上次提交的内容进行修改
+  如果内容编写错误：使用`git commit --amend` 对上次提交的内容进行修改
+  
+  如果需要用编辑器进行多行编辑commit message：git commit -a
 
 **分支相关**
 
