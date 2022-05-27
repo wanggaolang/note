@@ -1976,6 +1976,14 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
 
 - 让容器内支持中文输入：docker exec -it cdee10f86126 env LANG=en_US.utf8 /bin/bash
 
+  如果该方法不生效，则尝试以下方法
+
+  ```
+  1.进入docker，执行 vim ~/.bashrc 打开profile文件
+  2.将export LANG="C.UTF-8"命令添加在profile文件最后,保存退出
+  3.执行source ~/.bashrc ，即可正常显示中文
+  ```
+
 - 指定网络类型：--net host
 
 - Docker 查看容器映射路径：docker inspect {容器名}  查看
@@ -2060,13 +2068,7 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
    chmod 666 /var/run/docker.sock
    ```
 
-2. 解决进入docker乱码问题
-
-   ```
-   1.进入docker，执行 vim /etc/profile 打开profile文件
-   2.将export LANG="C.UTF-8"命令添加在profile文件最后,保存退出
-   3.执行source /etc/profile ，即可正常显示中文
-   ```
+2. 
 
 
 
