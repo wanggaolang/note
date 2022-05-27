@@ -147,7 +147,6 @@ ssh -T git@github.com    //测试与github联通性
 - pull操作
 
 1. 将远程指定分支拉取到本地指定分支上    `git pull origin {远程分支名}[:{本地分支名}，如果不要就是拉取到本地当前分支]`
-
 2. 将与本地当前分支同名的远程分支 拉取到 本地当前分支上(需先关联远程分支，方法见文章末尾)    `git pull`
 
 - push操作
@@ -180,6 +179,14 @@ ssh -T git@github.com    //测试与github联通性
 - 将`暂存区`回滚/覆盖到工作区:    `git checkout -- {文件名，用.表示所有。注意文件名前有空格} `
 
 - 清除当前目录下所有没add的修改：git clean -df [文件]   如果不加路径，则是所有未add文件都被清除
+
+- git放弃修改，强制覆盖本地代码
+
+  1）git fetch --all
+
+  2）git reset --hard origin/master
+
+  3）git pull
 
 - 回滚云端仓库  
 
@@ -366,6 +373,14 @@ git commit --amend --reset-author
 - 更改某次提交的message：1） git rebase -i {该次提交之前的一次提交} 2)在该提交前改pick为r并保存退出 3）自动跳到另一个vim，更改message并保存退出
 
 - 融合几次相连commit：1） git rebase -i {其中最旧提交之前的一次提交} 2）在最旧前改pick为r，其他都改pick为s，保存退出 3）自动跳到另一个vim，更改message并保存退出
+
+- 将不关联且有提交的远程代码库关联本地代码库并做合并&push
+
+  1）关联远程代码库：git remote set-url --add origin ssh:XXX   检查是否添加成功：cat .git/config，查看[remote "origin"]项
+
+  2）拉取远程代码库：git pull --allow-unrelated-histories  对于冲突部分做合并&commit
+
+  3）git push
 
 ## 内存操作的小技巧 
 
@@ -572,11 +587,17 @@ Setting	--	Keymap
   
   绘制流程图
   Draw.io Integration  （需要创建XXX.drawio文件，文件模式为draw.io）
+  
+  ---
+  vscode插件小知识
+  1. 手动安装插件
+    1）下载插件：进入vscode插件市场（https://marketplace.visualstudio.com/），搜索并选择插件-Download Extension
+    2）进入vsocde - 点击左侧插件时长 - 点击三个点的菜单 - Install from VSIX - 选择刚才下载的路径
   ```
 
 - 解决include出错报错问题：设置-搜索includePath-在setting_json中配置，加入C_Cpp.default.includePath路径
 
-vscode小小知识
+vscode小知识
 
 1. 解决ubuntu中vscode字体间距过大问题：安装适配`firacode`字体
    1. 更新可用软件包列表: `sudo apt update`;
@@ -622,19 +643,23 @@ vscode小小知识
    构造函数顺序：基类构造函数、对象成员构造函数、派生类本身的构造函数 
 
    析构函数顺序：派生类本身的析构函数、对象成员析构函数、基类析构函数（与构造顺序正好相反）
-   
+
 2. lambda表达式
 
    - [{捕获列表}]\({参数列表})->{返回值}{{函数体}}    举例: `auto add_1 = [](int a)->int {return a+1;};`
-   
+
    - 该表达式一般定义在函数内部，也就是函数中定义函数
    - 捕获列表用于传入lambda所在函数的非static变量，对于除上述以外变量或者函数，只要lambda所在函数能调用它便能使用。捕获列表默认为const值传递而非地址传递。如[v_1, v_2]在内部改变他们值并不会改变lambda所在函数里他们的值。地址传递需要在其前面加上&，如[&v_1, &v_2]。如果传入值很多可以隐式传递，编译器会根据函数体内部的调用情况推断传入了哪些值。[=]为值传递，[&]为地址传递，如果两者皆有，则第一个参数必须为&或=，表示默认传递方式，在其后面跟上另外的参数，如[=, &v_2, &v_3]
-   
+
    - 可以省略掉参数列表和返回值，如: `auto get_1 = []{return 1;};`
 
-3. 打印格式化：#include <iomanip>  std::fixed << std::setprecision(8) << _double    前者表示以非科学计数法打印，后者表示显示８位小数。
+3. 打印格式化：
 
+   ```cpp
+   #include <iomanip>
+   std::fixed << std::setprecision(8) << _double    #前者表示以非科学计数法打印，后者表示显示８位小数。
    永久作用：    std::cout.unsetf(std::ios::scientific);std::cout.precision(8);
+   ```
 
 4. 类模板的成员函数在类外定义以及类模板的函数特例化
 
@@ -708,6 +733,16 @@ vscode小小知识
 
      记忆方式为在顺序排列的key中，要在key_n周围插入一个值，那么会分为在key_n的左边和右边插入，即分别对应了lower_bound和upper_bound的位置
 
+9. 类外定义成员函数不能加上默认参数，如：``Test fun(int a = 1)``会报错，同样static声明的成员在外部定义时候，必须省去static。同时，static成员变量只有跟了const才可以在类里面的初始化列表中进行初始化，其余的都要在类的外部初始化
+
+   
+
+10. string.find()和map.find()以及set.find()如果找不到目标，则结果为x.end()
+
+11. volatile关键词影响编译器编译的结果，用volatile声明的变量表示该变量随时可能发生变化，与该变量有关的运算，不再编译优化，以免出错
+
+12. 在linux中，默认c++的include位置为`/usr/include`
+
 **cpp小轮子**
 
 1. 计算耗时
@@ -732,23 +767,15 @@ vscode小小知识
 
 ## 总小小知识（一）
 
-2. 类外定义成员函数不能加上默认参数，如：``Test fun(int a = 1)``会报错，同样static声明的成员在外部定义时候，必须省去static。同时，static成员变量只有跟了const才可以在类里面的初始化列表中进行初始化，其余的都要在类的外部初始化
-
-3. string.find()和map.find()以及set.find()如果找不到目标，则结果为x.end()
-
-4. volatile关键词影响编译器编译的结果，用volatile声明的变量表示该变量随时可能发生变化，与该变量有关的运算，不再编译优化，以免出错
-
-5. 在linux中，默认c++的include位置为`/usr/include`
-
-6. `LD_LIBRARY_PATH`是Linux环境变量名，该环境变量主要用于指定查找共享库（动态链接库）时除了默认路径之外的其他路径
+2. `LD_LIBRARY_PATH`是Linux环境变量名，该环境变量主要用于指定查找共享库（动态链接库）时除了默认路径之外的其他路径
 
    一般的用法为`export LD_LIBRARY_PATH={新添加地址}:$LD_LIBRARY_PATH`，放冒号左边表示先搜索。这是临时性的，退出shell再进就没了
-   
-   动态链接库默认导入路径在linux中查看配置`/etc/ld.so.conf`，可以将路径写入配置，再用`ldconfig`载入，永久生效。
-   
-7. scp 从本地复制到远程    `scp [-r] {本地文件/夹} {remote_username@remote_ip:文件/夹} `
 
-8. 在同一文件夹下多个文件中查找某个关键字：
+   动态链接库默认导入路径在linux中查看配置`/etc/ld.so.conf`，可以将路径写入配置，再用`ldconfig`载入，永久生效。
+
+3. scp 从本地复制到远程    `scp [-r] {本地文件/夹} {remote_username@remote_ip:文件/夹} `
+
+4. 在同一文件夹下多个文件中查找某个关键字：
 
    1）通过`cat ./* | grep {查找内容}`确认文件中是否有这个关键字
 
@@ -757,18 +784,18 @@ vscode小小知识
    - type f 意思是只找文件
 
    - name "\*.c"  表示只找C语言写的代码，从而避免去查binary；也可以不写，表示找所有文件
-   
-9. 查看linux发行版本：`cat /etc/issue`
-   
-10. linux命令行`2>&1`    标准错误重定向到标准输出
 
-11. 罗技鼠标驱动软件：官网－下载－Logitech G HUB
+5. 查看linux发行版本：`cat /etc/issue`
 
-12. 查看当前目录下，每个文件夹大小：du -h --max-depth=1   mac下：du -hd1
+6. linux命令行`2>&1`    标准错误重定向到标准输出
 
-13. 用md5sum计算文件的消息摘要
+7. 罗技鼠标驱动软件：官网－下载－Logitech G HUB
 
-14. 求余和求模运算区别：
+8. 查看当前目录下，每个文件夹大小：du -h --max-depth=1   mac下：du -hd1
+
+9. 用md5sum计算文件的消息摘要
+
+10. 求余和求模运算区别：
 
     对于正数与正数之间的两种运算，没区别。对于含有负数的运算，区别在于：对于整型数a，b来说，取模运算或者求余运算的方法都是：
     求整数商： c = a/b;
@@ -788,8 +815,8 @@ vscode小小知识
     经过测试，在C/C++, C#, JAVA, PHP这几门主流语言中，%运算符都是做取余运算，而在python中的%是做取模运算。
 
     ​	说下我对求余的理解：求余即相对被除数的剩余，如果被除数是负数，负号理解为另一个世界的标志，值还是越大表明越富有。比如-5/3的余数，商-2已经没有那个世界的剩余值了，只有商-1，还留下-2。所以求余的值的正负号应该牢跟被除数的正负号（价值观）。
-    
-15. 对于浮点数，比较时不要直接用等于号：
+
+11. 对于浮点数，比较时不要直接用等于号：
 
     ```c++
     if (double_a == double_b) 错误用法
@@ -807,31 +834,48 @@ vscode小小知识
     if (fabs(y - y0) < 1e-8 && fabs(x - x0) < 1e-8)
       continue;
     ```
-    
-16. 代码共享网页：https://paste.ubuntu.com/
-    
-17. 查看具体进程的内存使用量：cat /proc/{pid}/status  VmRSS项
 
-18. linux查找目录下的所有文件中是否含有某个字符串：grep -rn "temp_a" ./
+12. 代码共享网页：https://paste.ubuntu.com/
+
+13. 查看具体进程的内存使用量：cat /proc/{pid}/status  VmRSS项
+
+14. linux查找目录下的所有文件中是否含有某个字符串：grep -rn "temp_a" ./
 
     -n为显示行号
-    
-19. 在开发机遇到执行ls/su等命令报错：failed to execute /bin/bash: Resource temporarily unavailable
 
-    原因为配置的限制资源不够用了，解决办法：
+15. 
 
-    ```shell
-    vim /etc/security/limits.d/20-nproc.conf
-    * soft nproc 50000 #将默认值1024改为50000
-    root soft nproc unlimited
-    再次ssh登录账户，ok，回复正常。
-    
-    注：单独修改/etc/security/limits.conf 未可用！
-    ```
+## ssh相关
 
-    
+- 多terminal共享单次输入的密码
+
+  ```shell
+  $ cat ~/.ssh/config
+  Host *
+  ControlMaster auto
+  ControlPath ~/.ssh/master-%r@%h:%p
+  ControlPersist yes
+  ServerAliveInterval 60
+  ```
 
 
+
+**ssh小知识**
+
+1. 在开发机遇到执行ls/su等命令报错：failed to execute /bin/bash: Resource temporarily unavailable
+
+   原因为配置的限制资源不够用了，解决办法：
+
+   ```shell
+   vim /etc/security/limits.d/20-nproc.conf
+   * soft nproc 50000 #将默认值1024改为50000
+   root soft nproc unlimited
+   再次ssh登录账户，ok，回复正常。
+   
+   注：单独修改/etc/security/limits.conf 未可用！
+   ```
+
+   
 
 ## chrome相关
 
@@ -1554,7 +1598,7 @@ function<int(int, int> add_2_num = bind(add_3_num, _1, _2, 0);
 
 
 
-## 终端shell相关
+## 终端terminal相关
 
 ctrl + u 剪切一行命令，放入”命令行剪切板“
 
@@ -1650,7 +1694,7 @@ a$表示以a结尾
 
 
 
-## shell编程相关/shell脚本相关/shell脚本编程
+## shell编程相关/shell脚本相关/shell脚本编程/shell相关
 
 1. $0 是shell脚本本身名字，$1是shell脚本第一个参数，以此类推。注意c语言的int main(int argc, char *argv[])与此类似，argv[0]是程序本身名字，然后就是参数，argc是包含程序本身名的参数数量(>=1)，但是$#不包含程序本身名的参数个数
 
@@ -1732,6 +1776,20 @@ a$表示以a结尾
    done
    ```
 
+- 检查进程是否存在并kill
+
+   ```shell
+   function get_exampleprocess_pids() {
+       local pids=`ps aux |grep exampleprocess|grep -v grep |awk '{print $2}'`
+       if [[ -z "$pids" ]];then
+           echo "exampleprocess not exist"
+       else
+           echo "begin kill exampleprocess pids: $pids"
+           kill -9 $pids
+       fi
+   }
+   ```
+   
    
 
 
@@ -2002,7 +2060,13 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
    chmod 666 /var/run/docker.sock
    ```
 
-2. 
+2. 解决进入docker乱码问题
+
+   ```
+   1.进入docker，执行 vim /etc/profile 打开profile文件
+   2.将export LANG="C.UTF-8"命令添加在profile文件最后,保存退出
+   3.执行source /etc/profile ，即可正常显示中文
+   ```
 
 
 
@@ -2779,6 +2843,8 @@ True
 True
 >>> callable([1, 2, 3])
 False
+
+
 ```
 
 12. 高阶函数
@@ -2812,7 +2878,53 @@ False
     
     
     
-    
+    #定义使用枚举类
+    2种定义方法：
+    from enum import Enum, unique
+    ##方法一，这种方法value默认从1开始，也就是Month.Jan.value为1
+    Month = Enum('month', ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'))
+    ##方法2
+    @unique  #@unique装饰器可以帮助我们检查保证没有重复值。
+    class Weekday(Enum):
+        Sun = 0 # Sun的value被设定为0
+        Mon = 1
+        Tue = 2
+        Wed = 3
+        Thu = 4
+        Fri = 5
+        Sat = 6
+    ##常用使用方法
+    >>> day1 = Weekday.Mon
+    >>> print(day1)
+    Weekday.Mon
+    >>> print(Weekday.Tue)
+    Weekday.Tue
+    >>> print(Weekday['Tue'])
+    Weekday.Tue
+    >>> print(Weekday.Tue.value)
+    2
+    >>> print(day1 == Weekday.Mon)
+    True
+    >>> print(day1 == Weekday.Tue)
+    False
+    >>> print(Weekday(1))
+    Weekday.Mon
+    >>> print(day1 == Weekday(1))
+    True
+    >>> Weekday(7)
+    Traceback (most recent call last):
+      ...
+    ValueError: 7 is not a valid Weekday
+    >>> for name, member in Weekday.__members__.items():
+    ...     print(name, '=>', member)
+    ...
+    Sun => Weekday.Sun
+    Mon => Weekday.Mon
+    Tue => Weekday.Tue
+    Wed => Weekday.Wed
+    Thu => Weekday.Thu
+    Fri => Weekday.Fri
+    Sat => Weekday.Sat
     ```
 
 13. 装饰器相关
@@ -3630,7 +3742,7 @@ gcc -o hello hello.cpp -L/home/test -lboost_system
 
 sql小知识
 
-1. case函数
+1. cast函数
 
    CAST()函数，把一个字段转成另一个字段。其语法为：Cast(字段名 as 转换的类型 )，其中类型可以为：
 
@@ -3642,12 +3754,49 @@ sql小知识
    TIME  时间型
 
    实例：SELECT cast(1.6 AS signed) as value
-   
+
 1. 常用函数
 
    ```sql
    FROM_UNIXTIME()  UNIX时间戳转换为日期(类似2022-04-30 09:54:47)用函数
    UNIX_TIMESTAMP()  日期转换为UNIX时间戳用函数
    ```
+
+1. 语法
+
+   ```sql
+   --删除数据
+   DELETE FROM {table_name} [WHERE Clause]
    
+   --更新数据
+   UPDATE {table_name} SET `status` = '9' [WHERE Clause]
    
+   --新增列
+   ALTER TABLE table_name ADD [COLUMN] column_name data_type [constraint];
+   如：
+   ALTER TABLE `test_table` ADD `test_column` TINYINT(4) NOT NULL DEFAULT '0' COMMENT '-1 左边 0 默认 1 右边' AFTER `left_column`;
+   
+   ```
+
+   
+
+## php相关
+
+- php语法
+
+  ```php
+  #输出到请求接口上：
+  var_dump($a);
+  
+  #输出到文件上：
+  file_put_contents('/home/work/1.txt',var_export($this->_params, true), FILE_APPEND);
+  
+  #判断元素是否在某个数组中
+  $my_array = ['a', 'b', 'c'];
+  $element = 'a';
+  if (in_array($element, $my_array)) {
+    continue;
+  }
+  ```
+
+  

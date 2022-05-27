@@ -85,6 +85,9 @@ fi
 alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
+alias cdtmp='cd ~/test_for_all/20once'
+alias cleantmp='rm -rf ~/test_for_all/20once/*'
+alias gst='git status'
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like
