@@ -858,7 +858,9 @@ vscode小知识
   ServerAliveInterval 60
   ```
 
+- ssh执行命令
 
+  ssh -o StrictHostKeyChecking=no work@{机器名} "{命令}"
 
 **ssh小知识**
 
@@ -1412,6 +1414,14 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
 
 - 安装iterm2：brew install iterm2    卸载：brew uninstall iterm2
 
+- iterm2初始化相关
+
+  1. 安装常用工具
+
+     1. 安装md5sum、realpath等小工具：brew install coreutils
+
+     
+
 - 需要配置的东西：
 
   ```
@@ -1467,6 +1477,21 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
 - 设置光标在shell逐word移动：设置-Profiles-Keys-修改option+←和option+→的映射，选择Action为“Send Escape Sequence”，然后输入“b”和“f”即可
 
 - 在同一个tab（即一个页面的多个输入框）里同时输入：Shell-broadcast input-Broadcast ..in current tab
+
+
+
+iterm2小知识
+
+1. 解决secure keyboard entry disable paste
+
+   ```
+   1）关闭Secure Keyboard Entry
+   	iTerm2 - Secure Keyboard Entry
+   2）打开下方开关
+   	setting - 搜索 save to paste history when secure keyboard - 改为yes
+   ```
+
+   
 
 **mac小知识**
 
@@ -1696,9 +1721,55 @@ a$表示以a结尾
 
 ## shell编程相关/shell脚本相关/shell脚本编程/shell相关
 
-1. $0 是shell脚本本身名字，$1是shell脚本第一个参数，以此类推。注意c语言的int main(int argc, char *argv[])与此类似，argv[0]是程序本身名字，然后就是参数，argc是包含程序本身名的参数数量(>=1)，但是$#不包含程序本身名的参数个数
+1. $0 是shell脚本本身名字，$1是shell脚本/函数第一个参数，以此类推。注意c语言的int main(int argc, char *argv[])与此类似，argv[0]是程序本身名字，然后就是参数，argc是包含程序本身名的参数数量(>=1)，但是$#不包含程序本身名的参数个数
 
    ![image-20201103165334785](./etc/pic/image-20201103165334785.png)
+   
+   ```
+   $*和$@区别：当 $* 和 $@ 不被双引号" "包围时无区别，当附带双引号时：
+   - "$*"会将所有的参数从整体上看做一份数据，而不是把每个参数都看做一份数据。
+   - "$@"仍然将每个参数都看作一份数据，彼此之间是独立的。
+   ```
+
+**shell语法**
+
+```shell
+#shell变量
+variable=value
+variable='value'
+variable="value"
+##等号左右不能空格，变量在shell都是字符串，建议写法是内容是数字，那么可以不加引号；除非要特殊原样输出用单引号，否则都用双引号
+##单双引号区别
+name=abc
+echo 'name ${name} path: `pwd`' #内容中有变量和命令（命令需要反引起来）被忽略，原样输出
+echo "name ${name}, path: `pwd`" #双引号会执行变量和命令
+
+readonly variable#只读变量
+unset variable_name#删除变量，unset 命令不能删除只读变量
+
+#shell执行命令
+`command`
+$(command)
+##2种写法无区别，推荐第2种，第1种容易和单引号混淆
+
+#shell 函数
+function name() {
+    statements
+    [return value]
+}
+##Shell 函数在定义时不能指明参数，但是在调用时却可以传递参数，并且给它传递什么参数它就接收什么参数
+
+#for循环
+for(([exp1]; [exp2]; [exp3]))#c语言风格
+do
+    statements
+done
+
+for variable in value_list#python风格
+do
+    statements
+done
+```
 
 - 将多行，每行带有空格的转为数组：
 
@@ -1754,7 +1825,7 @@ a$表示以a结尾
        }
    check "$1"
    ```
-   
+
 - 注意：对于类似$1等可能带有空格的参数，作实参需要加上引号。错误示例：
 
   <img src="./etc/pic/image-20210208200005642.png" alt="image-20210208200005642" style="zoom:50%;" />
@@ -1762,9 +1833,9 @@ a$表示以a结尾
 - 脚本中curl带变量：
 
   To insert a variable in the middle of a single quoted text, you have to end the single quote, then concatenate with the double quoted variable, and re-open the single quote to continue the text: ‘foo bar’“$variable”‘more foo’.
-  
+
   例子：
-  
+
 - 将多行文本转为数组：
 
    ```shell
@@ -1789,7 +1860,7 @@ a$表示以a结尾
        fi
    }
    ```
-   
+
    
 
 
@@ -1798,24 +1869,35 @@ a$表示以a结尾
 - vim的3种模式
 
   1. 正常(Normal)模式，也就是vim file进去时的模式
-2. 编辑模式，可以输入文本到文件
-  3. 命令行模式，输入【:/?】，光标移动到最下面一行的模式
-
+  
+  2. 编辑模式，可以输入文本到文件
+  2. 命令行模式，输入【:/?】，光标移动到最下面一行的模式
+  
 - 正常(Normal)模式
 
+  常规快捷键
+
+  ```shell
+  #切换为编辑-光标到当前行首：shift + i
+  #切换为编辑-光标到下一行首并回车：o
+  #切换为编辑-光标向当前右移一格：a
+  ```
+  
+  
+  
   全选:    `ggVG`    一行行选择`V`，一个个光标单位选择`v`
-
+  
   将选择的复制`y`，粘贴`p`
-
+  
   - 光标移动
     1. 到行尾:`$`    到下一行行尾:`2$`    到从当前行算起第n行行尾:`n$`
     
     2. 到行首:`0`
     
   - 撤销：命令模式下按u    撤销的撤销：ctrl + r
-
+  
   - 查看关键字出现次数：%s/{关键字}//gn  
-
+  
   - 插入列
     	插入操作的话知识稍有区别。例如我们在每一行前都插入"() "：
     	1.光标定位到要操作的地方。
@@ -1929,7 +2011,9 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
 
 
 
+- 安装docker
 
+  mac安装docker：brew install --cask --appdir=/Applications docker
 
 
 - 查看镜像    ``docker image ls``或者`docker images`
@@ -1938,7 +2022,9 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
 
 - docker run相关/将镜像转为容器
 
-  通过镜像起新容器：docker run --name {容器名} -it --privileged=true --entrypoint /bin/bash {镜像名或id}
+  通过镜像起新容器：docker run --name {容器名} -itd --privileged=true --entrypoint /bin/bash {镜像名或id}
+
+  -d  挂起运行
 
   注意 --entrypoint /bin/bash是一起的
 
@@ -1950,7 +2036,11 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
 
 - 将容器转为镜像：docker commit {container_id} {image_name}
 
-- 进入某个容器中    ``docker exec -it {containerID} /bin/bash``
+- docker exec
+
+  进入某个容器中    ``docker exec -it {containerID} /bin/bash``
+
+  挂起执行命令：docker exec {container_id}  bash -c "{param}"
 
 - 主机和容器间文件的拷贝
 
@@ -1984,7 +2074,15 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
   3.执行source ~/.bashrc ，即可正常显示中文
   ```
 
-- 指定网络类型：--net host
+- 指定网络类型
+
+  ```shell
+  可以在 docker run 的时候通过 --net 参数来指定容器的网络配置，有4个可选值：
+  --net=bridge 这个是默认值，连接到默认的网桥。
+  --net=host 告诉 Docker 不要将容器网络放到隔离的命名空间中，即不要容器化容器内的网络。此时容器使用本地主机的网络，它拥有完全的本地主机接口访问权限。容器进程可以跟主机其它 root 进程一样可以打开低范围的端口，可以访问本地网络服务比如 D-bus，还可以让容器做一些影响整个主机系统的事情，比如重启主机。因此使用这个选项的时候要非常小心。如果进一步的使用 --privileged=true，容器会被允许直接配置主机的网络堆栈。
+  --net=container:NAME_or_ID 让 Docker 将新建容器的进程放到一个已存在容器的网络栈中，新容器进程有自己的文件系统、进程列表和资源限制，但会和已存在的容器共享 IP 地址和端口等网络资源，两者进程可以直接通过 lo 环回接口通信。
+  --net=none 让 Docker 将新容器放到隔离的网络栈中，但是不进行网络配置。之后，用户可以自己进行配置。
+  ```
 
 - Docker 查看容器映射路径：docker inspect {容器名}  查看
 
@@ -2213,6 +2311,8 @@ tar –cjf jpg.tar.bz2 *.jpg //将目录里所有jpg文件打包成jpg.tar后，
 tar –cZf jpg.tar.Z *.jpg   //将目录里所有jpg文件打包成jpg.tar后，并且将其用compress压缩，生成一个umcompress压缩过的包，命名为jpg.tar.Z
 rar a jpg.rar *.jpg //rar格式的压缩，需要先下载rar for linux
 zip jpg.zip *.jpg //zip格式的压缩，需要先下载zip for linux
+//让压缩后的文件不带有相对路径，如正常压缩：tar zcvf test.tgz home/work/file 在解压后是附带有home/work/路径的
+tar zcvf all.tgz -C ~/test_for_all/20once/2_dir 2_file -C ~/test_for_all/20once/1_dir 1_file
 
 解压
 tar –xvf file.tar //解压 tar包
@@ -2236,38 +2336,12 @@ unzip file.zip //解压zip
 9、*.zip 用 unzip 解压
 
 tar经典示例
-10、tar zcf all.tgz ./* --exclude=a_dir --exclude=b_file  #压缩当前的所有内容，除了a_dir、b_file
+10、tar --exclude=a_dir --exclude=b_file -zcf all.tgz ./*   #压缩当前的所有内容，除了a_dir、b_file,注意a_dir右边禁止加/
 ```
 
 
 
 ## python相关
-
-- 常规
-
-  2. python中所有都可看做对象，如变量，函数，类，类的对象
-
-  3. 一句话起http服务    ``python2 -m SimpleHTTPServer [端口，默认8000]``    or
-
-     `python3 -m http.server [端口，默认8000]`
-     
-     如果需要带有上传服务的http服务，运行`python ./SimpleHTTPServerWithUpload.py 1234`，SimpleHTTPServerWithUpload.py见./etc里
-
-
-  4. 在同时安装了python2和python3时使用pip安装第三方库会产生歧义，要指定具体哪个python的pip安装可以用一下方法`{python版本:python2或python3} -m pip install {第三方库名}`
-
-  5. 在Python的string前面加上‘r’， 是为了告诉编译器这个string是个raw string，不要转意backslash '\' 。 例如，\n 在raw string中，是两个字符，\和n， 而不会转意为换行符。由于正则表达式和 \ 会有冲突，因此，当一个字符串使用了正则表达式后，最好在前面加上'r'
-
-  6. 能够注释中文，需在文件头写这两行：
-
-     ```
-     #!/usr/bin/env python
-     # -*- coding: utf-8 -*-
-     ```
-
-  7. 
-
-
 
 - **语法**
 
@@ -2311,6 +2385,10 @@ tar经典示例
      for idx, item in enumerate(list_obj): #变为变成下标-元素对
          list_obj[idx] = item + idx
      print list_obj  #[0,1,2,3]
+     
+     #tuple#
+     #tuple可以看做指向不可变的list
+     
      
      #dict#
      d['a'] = 1  #新增/赋值
@@ -2975,7 +3053,7 @@ python小知识：
 2. python安装模块相关
 
    ```python
-   python2安装protobuf
+   #python2安装protobuf
    python -m pip install protobuf==3.17.3   
      
    #如果安装3.18.0，会出现类似报错
@@ -2988,8 +3066,12 @@ python小知识：
    pip uninstall protobuf
    pip install --no-binary=protobuf protobuf==3.17.3 
    
-   python2安装合适的kafka
+   #python2安装合适的kafka
    python -m pip install  confluent_kafka==1.5.0
+   
+   #ubuntu18.04安装python2和pip2
+   apt-get install python-minimal
+   apt-get install python-pip
    ```
 
 3. 对于打印中文但是编码形如：\xe8\xbd\xa6\xe5\x9e\x8b的转译
@@ -3014,6 +3096,29 @@ python小知识：
 5. python pip安装报错[SSL: CERTIFICATE_VERIFY_FAILED]
 
    类似方法：python -m pip --trusted-host pypi.tuna.tsinghua.edu.cn install tornado
+
+6. python中所有都可看做对象，如变量，函数，类，类的对象
+7. 一句话起http服务    ``python2 -m SimpleHTTPServer [端口，默认8000]``    or`python3 -m http.server [端口，默认8000]`
+
+​	如果需要带有上传服务的http服务，运行`python ./SimpleHTTPServerWithUpload.py 1234`，SimpleHTTPServerWithUpload.py见./etc里
+
+8. 在同时安装了python2和python3时使用pip安装第三方库会产生歧义，要指定具体哪个python的pip安装可以用一下方法`{python版本:python2或python3} -m pip install {第三方库名}`
+
+9. 在Python的string前面加上‘r’， 是为了告诉编译器这个string是个raw string，不要转意backslash '\' 。 例如，\n 在raw string中，是两个字符，\和n， 而不会转意为换行符。由于正则表达式和 \ 会有冲突，因此，当一个字符串使用了正则表达式后，最好在前面加上'r'
+
+10. 能够注释中文，需在文件头写这两行：
+
+    ```
+    #!/usr/bin/env python
+    # -*- coding: utf-8 -*-
+    ```
+
+11. python打印时，一行太长做格式上的换行
+
+    ```python
+    print("abc{}" \
+            "ef{}".format("d", "g"))#会打印abcdefg
+    ```
 
 
 
@@ -3108,6 +3213,8 @@ python小轮子：
    for i, (ts, cts) in enumerate(zip(timestamps, calc_timestamps)):
        print('Frame %d difference:'%i, abs(ts - cts), base_time + ts/1000.0, '-', base_time + cts/1000.0)
    ```
+   
+8. 
 
 
 
@@ -3400,7 +3507,9 @@ ate 和 binary 模式可用于任何类型的文件流对象，且可以与其�
 
 ## nginx相关
 
+**nginx小知识**
 
+1. 检查配置文件语法：nginx -t -c {文件路径}
 
 ## gcc相关
 - gdb相关
@@ -3624,6 +3733,22 @@ gcc -o hello hello.cpp -L/home/test -lboost_system
 
 ## nodejs相关/node相关
 
+node语法
+
+```javascript
+//对于对象的属性，可以访问1层未定义属性，不能访问2层未定义属性
+const obj = {
+  name: 'nordon',
+  age: 18
+};
+console.log(obj.length);//可以读取已定义对象的一层未定义属性，即此处打印undefined
+console.log(obj.length.num);//错误，不能读取未定义对象的未定义属性。（此处会报错：TypeError: Cannot read property 'num' of undefined）
+
+
+```
+
+
+
 - 导出模块module.exports
 
   ```javascript
@@ -3690,7 +3815,7 @@ gcc -o hello hello.cpp -L/home/test -lboost_system
   
   start(route);
   ```
-  
+
   
 
 - 检查文件是否存在：fs.existsSync(file_path);
