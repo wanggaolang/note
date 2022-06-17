@@ -95,7 +95,7 @@
   
 - <a name=设置typora图片存储位置>设置typora图片存储位置</a>：
 
-  <img src="etc//image-20220406203621884.png" alt="image-20220406203621884" style="zoom:50%;" />
+  <img src="etc/pic/image-20220617191237854.png" alt="image-20220617191237854" style="zoom:50%;" />
 
 **typora初始化相关**：
 
@@ -1725,7 +1725,7 @@ a$表示以a结尾
 
 1. $0 是shell脚本本身名字，$1是shell脚本/函数第一个参数，以此类推。注意c语言的int main(int argc, char *argv[])与此类似，argv[0]是程序本身名字，然后就是参数，argc是包含程序本身名的参数数量(>=1)，但是$#不包含程序本身名的参数个数
 
-   ![image-20201103165334785](etc/pic/image-20201103165334785.png)
+   <img src="./etc/pic/image-20201103165334785.png" alt="image-20201103165334785" style="zoom:90%;" />
    
    ```
    $*和$@区别：当 $* 和 $@ 不被双引号" "包围时无区别，当附带双引号时：
@@ -2049,6 +2049,12 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
   主机拷贝文件到容器    `docker cp {主机路径} {容器hash，如96f7f14e99ab}:{容器路径，末尾有/}`
   
   将容器文件拷贝到主机，如:    `docker cp 96f7f14e99ab:/www /tmp/`
+  
+  注意，对于拷贝文件夹到容器中，末尾加/与不加是不同意义
+  
+  docker cp tmp_dir/ 96f7f14e99ab:/www  将形成/www/tmp_dir的文件夹
+  
+  docker cp tmp_dir 96f7f14e99ab:/www  将tmp_dir下内容拷贝到www中
   
 - 删除容器：`docker rm {containerID}`
 
