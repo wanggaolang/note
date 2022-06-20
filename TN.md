@@ -1323,7 +1323,7 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
   # 让配置立即生效
   ```
 
-- shell相关小知识
+- shell相关小知识/shell小知识
 
   1. top解决程序名被截断问题：top -c
   
@@ -1364,9 +1364,15 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
      #新增一行{username} ALL=(ALL)       ALL
      ```
   
-     
-
-
+  8. 注意：对于类似$1等可能带有空格的参数，作实参需要加上引号。错误示例：
+  
+     <img src="./etc/pic/image-20210208200005642.png" alt="image-20210208200005642" style="zoom:50%;" />
+  
+  9. 脚本中curl带变量：
+  
+     To insert a variable in the middle of a single quoted text, you have to end the single quote, then concatenate with the double quoted variable, and re-open the single quote to continue the text: ‘foo bar’“$variable”‘more foo’.
+  
+     例子：
 
 
 
@@ -1773,6 +1779,8 @@ do
 done
 ```
 
+**shell小轮子**
+
 - 将多行，每行带有空格的转为数组：
 
    ```shell
@@ -1810,6 +1818,38 @@ done
 
    拿到时间戳：date -d '20210901 00:00:00' +'%s.%N'
 
+- 日志记录函数
+
+   ```shell
+   # 日志打印函数
+   VERBOSELY=1
+   LOG_FILE=/home/work/run_log/shell_log
+   function logging() {
+       local timestamp=$(date)
+       if [[ ${VERBOSELY} -eq 1 ]];then
+           # output to the standard error
+           echo "[${timestamp}]$@" >&2
+       fi
+       echo "[${timestamp}]$@" >> ${LOG_FILE}
+   }
+   #error 日志
+   function error() {
+       logging "ERROR: $@"
+   }
+   # warning 日志
+   function warning() {
+       logging "WARNING: $@"
+   }
+    # info 日志
+   function info() {
+       logging "INFO: $@"
+   }
+   #####main####
+   info "enter main"
+   ```
+
+   
+
 - 检查程序是否存在：
 
    ```shell
@@ -1827,16 +1867,6 @@ done
        }
    check "$1"
    ```
-
-- 注意：对于类似$1等可能带有空格的参数，作实参需要加上引号。错误示例：
-
-  <img src="./etc/pic/image-20210208200005642.png" alt="image-20210208200005642" style="zoom:50%;" />
-
-- 脚本中curl带变量：
-
-  To insert a variable in the middle of a single quoted text, you have to end the single quote, then concatenate with the double quoted variable, and re-open the single quote to continue the text: ‘foo bar’“$variable”‘more foo’.
-
-  例子：
 
 - 将多行文本转为数组：
 
@@ -1860,6 +1890,20 @@ done
            echo "begin kill exampleprocess pids: $pids"
            kill -9 $pids
        fi
+   }
+   ```
+
+- 获取当前机器总线程数
+
+   ```shell
+   #获取当前机器总线程数，失败直接退出，成功在标准输出打印线程数量
+   function get_total_threads_num() {
+       re='^[0-9]+$'
+       total_threads_num=$(ps -efT | wc -l|sed 's/^[ \t]*//g')
+       if ! [[ $total_threads_num =~ $re ]] ; then
+           error "get threas num fail,res not num";exit 1
+       fi
+       echo $total_threads_num
    }
    ```
 

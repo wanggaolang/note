@@ -9,7 +9,7 @@ set number                      " show line numbers
 set ruler                       " show cursor position all the time
 
 " UI
-set laststatus=2                " always show status line.
+set laststatus=2                " always show status line.显示文件名
 set showcmd                     " display an incomplete command in statusline
 set showmode                    " display the current mode
 set wildmenu                    " show list instead of just completing
