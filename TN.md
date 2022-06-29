@@ -883,13 +883,17 @@ vscode小知识
 
 ## chrome相关
 
-- 插件：
+- chrome插件相关：
 
-  ```
-  书签搜索插件：Neater Bookmarks和Holmes，前者貌似速度更快 快捷键为cmd + b
-  广告过滤插件：adblock
-  快速切换2tab之间：Toggle Tabs 快捷键为cmd + e
-  ```
+  1. 书签搜索插件：Neater Bookmarks和Holmes，前者貌似速度更快 快捷键为cmd + b
+
+  2. 广告过滤插件：adblock
+
+  3. 快速切换2tab之间：Toggle Tabs 注意貌似为俄罗斯的，被谷歌禁用了，需要git clone[其github地址](https://github.com/dakiesse/toggle-tabs-chrome-extension)进行安装
+
+     需设置快捷键为cmd + e
+
+     
 
 - chrome快捷键
 
@@ -2254,11 +2258,26 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
 
   而对于Repeated成员，需要通过{message，对象承接的名字}.{成员名字}(index，int类型)获取
   
-- 通用常识
+- protobuf相关语法/通用常识
 
   1. 输出到文件：SerializeToOstream    输出到终端：
+  
   2. 赋值：a=b;    或者下方的CopyFrom函数
-  3. 
+  
+  3. enum元素与cpp
+  
+     ```protobuf
+     syntax = "proto2";
+     package world.animal;
+     message People {
+         enum Gender {
+             MALE = 1;  //对应cpp元素为 world::animal::People_Gender_MALE
+             FEMALE = 2;  //对应cpp元素为 world::animal::People_Gender_FEMALE
+             OTHER = 3;  //对应cpp元素为 world::animal::People_Gender_OTHER
+         };
+         optional Gender gender = 1;
+     }
+     ```
 
 
 - Standard Message Methods
@@ -2317,7 +2336,9 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
   tobuf
   ```
   
-  
+- 安装protobuf cpp的include路径
+
+  - mac为：/opt/homebrew/Cellar/protobuf/3.19.4/include/
 
 ## tar相关/压缩/解压文件
 
@@ -3440,7 +3461,7 @@ curl -i https://google.com
 
 ## json相关
 
-jsoncpp是cpp处理json的库，可以直接在github上拉取，然后找到amalgamate.py文件，执行`python amalgamate.py`命令，会在`dist`目录下生成两个头文件和一个源文件`json-forwards.h` 、`json.h`和`jsoncpp.cpp`。之后就直接`include "jsoncpp.cpp"`便可以使用了。
+jsoncpp是cpp处理json的库，可以直接在github上拉取，然后找到amalgamate.py文件，执行`python amalgamate.py`命令，会在`dist`目录下生成两个头文件和一个源文件`json-forwards.h` 、`json.h`和`jsoncpp.cpp`。之后就直接`include "jsoncpp.cpp"`便可以使用了，编译类似：g++ -std=c++11 test.cpp -I/code/jsoncpp/dist/
 
 因为每次使用json会先声明一个json对象，如果不考虑重复使用对象，则每一个大括号就是一个对象，而`”key“:{XXX}`这种值为一个大括号的又是一个新的对象，可以用`json["key"] = obj`来复制；而`”key“:[{XXX}]`也是一个对象，对于这种，可以用json["key"].append(obj)来插值。也就是说对于json的对象，在有key时其value是对象还是数组，取决于用等号还是append函数。
 
@@ -3449,7 +3470,7 @@ jsoncpp是cpp处理json的库，可以直接在github上拉取，然后找到ama
 - 产生value为null的对象：` root["abc"];`    //root["abc"] = null
 - 判断json对象是否为空：`bool Json::Value::isNull () const`
 
-**json小知识**
+**jsoncpp小知识/json小知识**
 
 1. 通过jsoncpp打开文件：
 
