@@ -2277,6 +2277,7 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
          };
          optional Gender gender = 1;
      }
+     //同时会生成world::animal::People_Gender_Name和world::animal::People.Gender_Name，用于输入枚举值，返回string
      ```
 
 
