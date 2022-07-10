@@ -3238,7 +3238,7 @@ python小轮子：
    #结果都为['a', 'b', 'c', 'd', 'e']
    ```
 
-4. 对logging的日志封装：详见etc/log.py
+4. 对logging的日志封装：详见etc/py_log_util
 
 5. 耗时统计
 
@@ -3289,8 +3289,17 @@ python小轮子：
    for i, (ts, cts) in enumerate(zip(timestamps, calc_timestamps)):
        print('Frame %d difference:'%i, abs(ts - cts), base_time + ts/1000.0, '-', base_time + cts/1000.0)
    ```
+
+8. 代码打印python版本
+
+   ```python
+   # -*- coding: utf-8 -*-
+   from sys import version_info
+   python_version = str(version_info.major) + "." + str(version_info.minor)
+   print(python_version)
+   ```
+
    
-8. 
 
 
 
@@ -3356,7 +3365,7 @@ curl -i https://google.com
 
 1. 即使挂了代理并设置为全局模式，浏览器能够正常访问外网，但是用iterm2等终端进行wget或curl还是失效。这是因为代理的原理为在本地某个端口启动代理服务，各软件将数据发送到本地端口，代理服务转发后将得到的数据返回给相应软件。在mac上，可以通过：系统偏好设置 -> 网络 -> 高级 -> 代理 查看代理服务所起端口
 
-   <img src="etc//image-20220406204801856.png" alt="image-20220406204801856" style="zoom:30%;" />
+   <img src="./etc/pic/image-20220406204801856.png" alt="image-20220406204801856" style="zoom:30%;" />
 
    但是iterm2等并没有设置相应的系统代理，也就是不会将数据发送到代理服务上。解决办法为更改环境变量http_proxy和https_proxy，将它们可以写死到bashrc或者zshrc中：
 

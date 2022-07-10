@@ -1,0 +1,1 @@
+进程安全的python日志模块，封装了logging和TimedRotatingFileHandler，测试样例见test.py
