@@ -18,7 +18,7 @@
   
   - debug打印用  //debug start和//debug end  如果只有1行，可以就用//debug  在commit时记得酌情是否注释或删除里边内容
   
-  - 临时打印记得删除用  //temp debug start和//temp debug end  如果只有1行，可以就用//tmp debug
+  - 临时打印记得删除用  //tmp debug start和//tmp debug end  如果只有1行，可以就用//tmp debug
   
   - python函数注释
   
@@ -187,6 +187,14 @@ ssh -T git@github.com    //测试与github联通性
   2）git reset --hard origin/master
 
   3）git pull
+
+- git clean去除未追踪的文件
+
+  1）git clean -nxdf（查看要删除的文件及目录，确认无误后再使用下面的命令进行删除）
+
+  2）git clean -xdf
+
+  可以配合git checkout .清除所有改动
 
 - 回滚云端仓库  
 
@@ -481,6 +489,10 @@ git commit --amend --reset-author
 
 
 
+## 音频剪辑相关
+
+mac：logic pro
+
 ##  GMP库
 
 用于大数运算的c/c++库，在linux下完美支持，windows需要用mingw和msys进行编译，或者用gmp的windows版本mpir，原生支持vs上编译
@@ -623,12 +635,6 @@ vscode小知识
    ```
 
    
-
-## SQL相关
-
-查询相关
-
-1. 模糊查询：name LIKE "%福贵%"
 
 ## 进程，线程，协程
 
@@ -1327,74 +1333,10 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
   # 让配置立即生效
   ```
 
-- shell相关小知识/shell小知识
-
-  1. top解决程序名被截断问题：top -c
-  
-  2. wc可以计算文件的Byte数(-c)、字数(-w)、或是列数(-l)
-  
-  3. 处理多行多列字符串适合awk
-  
-     ```shell
-     1）在后边跟两个单引号，里边是筛选条件
-     2）| awk '{print $1}'    #（注意是单引号）将每一行中以空格为分割符的第一个字段打印出来，$0表示整个行
-     3）操作内容要包含在大括号里，可以理解大括号类似c++的作用域。示例：
-     	awk 'BEGIN {FS=":"} $3 < 50 {print $1 "\t " $3}'
-     	BEGIN会提前设置FS，否则第一行仍然以空格分割字段，没有括号的部分是条件筛选
-     	awk 'NR>=2 {total=$1 + $2 + $3
-     	printf "%10d%10d%10d%10.2f\n" $1,$2,$3,total}'
-     	大括号有多个语句时，用回车或分号间隔，功能：对于第二行之后（NR最小为1），显示每行累加
-     ```
-     
-  4. grep相关
-  
-     ```
-     查找时排除多个文件：grep -r "abcde"  --exclude-dir="log" --exclude-dir="log2" --exclude-dir="logs"
-     ```
-  
-  5. 光标
-  
-    隐藏光标 ：  echo -e "\033[?25l"  
-  
-    显示光标 ：  echo -e "\033[?25h"
-  
-  6. ls -l的时间是修改时间，ls -ul时间是访问时间
-  
-  7. 给普通用户增加sudo权限
-  
-     ```shell
-     vim /etc/sudoers
-     #找到类似root    ALL=(ALL)       ALL
-     #新增一行{username} ALL=(ALL)       ALL
-     ```
-  
-  8. 注意：对于类似$1等可能带有空格的参数，作实参需要加上引号。错误示例：
-  
-     <img src="./etc/pic/image-20210208200005642.png" alt="image-20210208200005642" style="zoom:50%;" />
-  
-  9. 脚本中curl带变量：
-  
-     To insert a variable in the middle of a single quoted text, you have to end the single quote, then concatenate with the double quoted variable, and re-open the single quote to continue the text: ‘foo bar’“$variable”‘more foo’.
-  
-     例子：
+- 
 
 
-
-
-
-- 设置光标在shell逐word移动：iterm2-设置-Profiles-Keys-修改option+←和option+→的映射，选择Action为“Send Escape Sequence”，然后输入“b”和“f”即可
-
-- 查询进程/线程/端口/主机状态相关
-
-  1. 查看端口占用情况：
-
-     1）lsof -i:{端口号}    需要root权限
-
-  2. 查看某个执行命令对应的进程id
-
-     1）ps aux | grep {执行命令}
-
-  
+- 
 
   
 
@@ -1444,7 +1386,14 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
   4.插件配置（位于~/.zshrc）：`plugins=(git zsh-autosuggestions extract zsh-syntax-highlighting z)`
   ```
 
-  
+  - vim ~/.zshrc
+
+    ```bash
+    #让 ctrl + u 和bash打平
+    bindkey \^U backward-kill-line
+    ```
+
+    
 
 - 为了让多用户都使用同样的配置，要将`~/.zshrc`复制到每个用户下
 
@@ -1755,6 +1704,13 @@ variable="value"
 name=abc
 echo 'name ${name} path: `pwd`' #内容中有变量和命令（命令需要反引起来）被忽略，原样输出
 echo "name ${name}, path: `pwd`" #双引号会执行变量和命令
+##变量内容的裁剪
+  注意下方的4项，拆减必须匹配到开头方向的开始部分，也就是必须删除首部或者尾部
+my_path=/usr/bin:/usr/local/sbin/:/usr/sbin:/home/work:/home/work/bin
+echo ${my_path#/*bin:} #里边的#代表从左往右删最小集的匹配项，*是通配符  也就是删除了/usr/bin:
+echo ${my_path##/*bin:} #里边的##代表从左往右删最大集的匹配项，*是通配符  也就是删除了/usr/bin:/usr/local/sbin/:/usr/sbin:
+echo ${my_path%:*bin} #里边的%代表从右往左删最小集的匹配项，*是通配符 也就是删除了:/home/work/bin
+echo ${my_path%%:*bin} #里边的%%代表从右往左删最大集的匹配项，*是通配符 也就是删除了:/usr/local/sbin/:/usr/sbin:/home/work:/home/work/bin
 
 readonly variable#只读变量
 unset variable_name#删除变量，unset 命令不能删除只读变量
@@ -1782,6 +1738,94 @@ do
     statements
 done
 ```
+
+- shell小知识/bash小知识/bash相关
+
+  1. bash命令行操作小技巧
+
+     ```bash
+     ctrl + a 光标移动至命令行头
+     ctrl + e 光标移动至命令行尾
+     esc + b 光标向左移动一个word
+     esc + f 光标向右移动一个word
+     
+     ctrl + k 删除光标后字符
+     ctrl + u 删除光标前字符
+     ctrl + w 删除光标前一个word
+     alt + d 删除光标后一个word  注意在mac item里可以用这里替换：https://stackoverflow.com/questions/18923765/bash-keyboard-shortcuts-in-iterm-like-altd-and-altf
+     ctrl + d 删除光标后一个字符
+     ctrl + y 撤销/粘贴刚才的删除操作
+     
+     
+     ```
+
+     
+
+  2. top解决程序名被截断问题：top -c
+
+  3. wc可以计算文件的Byte数(-c)、字数(-w)、或是列数(-l)
+
+  4. 处理多行多列字符串适合awk
+
+     ```shell
+     1）在后边跟两个单引号，里边是筛选条件
+     2）| awk '{print $1}'    #（注意是单引号）将每一行中以空格为分割符的第一个字段打印出来，$0表示整个行
+     3）操作内容要包含在大括号里，可以理解大括号类似c++的作用域。示例：
+     	awk 'BEGIN {FS=":"} $3 < 50 {print $1 "\t " $3}'
+     	BEGIN会提前设置FS，否则第一行仍然以空格分割字段，没有括号的部分是条件筛选
+     	awk 'NR>=2 {total=$1 + $2 + $3
+     	printf "%10d%10d%10d%10.2f\n" $1,$2,$3,total}'
+     	大括号有多个语句时，用回车或分号间隔，功能：对于第二行之后（NR最小为1），显示每行累加
+     ```
+
+  5. grep相关
+
+     ```
+     查找时排除多个文件：grep -r "abcde"  --exclude-dir="log" --exclude-dir="log2" --exclude-dir="logs"
+     ```
+
+  6. 光标
+
+    隐藏光标 ：  echo -e "\033[?25l"  
+
+    显示光标 ：  echo -e "\033[?25h"
+
+  6. ls -l的时间是修改时间，ls -ul时间是访问时间
+
+  7. 给普通用户增加sudo权限
+
+     ```shell
+     vim /etc/sudoers
+     #找到类似root    ALL=(ALL)       ALL
+     #新增一行{username} ALL=(ALL)       ALL
+     ```
+
+  8. 注意：对于类似$1等可能带有空格的参数，作实参需要加上引号。错误示例：
+
+     <img src="./etc/pic/image-20210208200005642.png" alt="image-20210208200005642" style="zoom:50%;" />
+
+  9. 脚本中curl带变量：
+
+     To insert a variable in the middle of a single quoted text, you have to end the single quote, then concatenate with the double quoted variable, and re-open the single quote to continue the text: ‘foo bar’“$variable”‘more foo’.
+
+     例子：
+
+     
+
+ 10. 查询进程/线程/端口/主机状态相关
+
+     - 查看端口占用情况：lsof -i:{端口号}    需要root权限
+     - 查看某个执行命令对应的进程id：ps aux | grep {执行命令}
+
+ 11. bash的环境变量和自定义变量
+
+     - 自定义变量：不能被子进程/子shell继承的变量，没有单独命令查看，通过$ set可以查看环境变量+自定义变量
+     - 环境变量：能够被子进程/子shell继承的变量，如$PATH 通过$ export可以查看所有的环境变量
+
+     通过$ export {变量名}可以将自定义变量变为环境变量；通过$ declare +x {变量名}可以将环境变量改为自定义变量
+
+12. sed相关
+    - 解决替换时有空格问题：sed -i 's@abc def@aaa bbb@' {file_name}
 
 **shell小轮子**
 
@@ -1911,8 +1955,53 @@ done
    }
    ```
 
-   
+- 增加用户和用户组
 
+   ```shell
+   function add_work_user() {
+       user=work
+       group=work
+       passwd='work_passwd'
+   
+       #create group if not exists
+       egrep "^$group" /etc/group >& /dev/null
+       if [ $? -ne 0 ]
+       then
+           groupadd -g 501 $group
+       fi
+   
+       #create user if not exists
+       egrep "^$user" /etc/passwd >& /dev/null
+       if [ $? -ne 0 ]
+       then
+           useradd -u 500 -g $group $user
+       fi
+       echo $user:$passwd | chpasswd
+   
+   }
+   ```
+   
+- 判断命令是否存在
+
+   ```shell
+   function program_exists() {
+       local ret='0'
+       if [[ -z $1 ]]; then
+           echo "program_exists get empty process name"
+           return 1
+       fi
+       command -v $1 >/dev/null 2>&1 || { local ret='1'; }
+   
+       # fail on non-zero return value
+       if [ "$ret" -ne 0 ]; then
+           return 1
+       fi
+   
+       return 0
+   }
+   ```
+   
+   
 
 ## vim相关
 
@@ -2016,6 +2105,26 @@ done
 
   1. 普通模式在当前行下插入一行并进入插入模式：用o或者O命令
 
+**vim实战**
+
+- 在多个符合匹配的字符串尾部进行操作
+
+  ```shell
+  #示例，对下方aaabbb.*的字符，末尾加上cccddd
+  aaabbb
+  xy
+  xyaaabbb
+  aaabbbxy
+  
+  #步骤
+  - /aaabbb.*<CR> #向下搜索符合条件的字符
+  - ea #e表示移动到末尾，a进行追加内容
+  - cccddd #输入内容
+  - n. n表示下一个查找，.表示遵循上次操作，一直进行n.则替换完毕
+  ```
+
+  
+
 
 ## ssh rsa key
 
@@ -2088,7 +2197,7 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
 
 - docker exec
 
-  进入某个容器中    ``docker exec -it {containerID} /bin/bash``
+  用work用户进入某个容器中    ``docker exec -it --user work {containerID} /bin/bash``
 
   挂起执行命令：docker exec {container_id}  bash -c "{param}"
 
@@ -2110,7 +2219,7 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
 
 - 复制容器（将容器或镜像转换为文件包）
 
-  - 保存镜像：docker save {containr_id} > xxx.tar
+  - 保存镜像：docker save {image_id} > xxx.tar
 
   - 导入镜像：docker load < xxx.tar
 
@@ -2614,7 +2723,7 @@ print('{name} wrote {book}'.format(name='Swaroop', book='A Byte of Python'), end
 
   6. 可以在while后面接else
 
-  7. **imoport 模块**
+  7. imoport 模块
 
      将模块理解为一个.py的文件，每次导入该文件都是原地执行了一次该文件
 
@@ -2622,11 +2731,22 @@ print('{name} wrote {book}'.format(name='Swaroop', book='A Byte of Python'), end
 
      通过`from {模块名} import {变量名}`语句可以在当前文件直接使用变量，而不用使用`{模块名}.{变量名}`
 
-  7. dir({模块/对象名})
+  8. python路径相关
+
+     ```python
+     #导入当前执行文件的上层的上层，如当前为/home/work/module/sub_module/test.py
+     #希望导入/home/work/module路径
+     import sys, os
+     sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+     ```
+
+     
+
+  9. dir({模块/对象名})
 
      返回该模块/对象内部的对象，也就是变量，函数，类，类的对象等等
 
-  8. 函数参数
+  10. 函数参数
 
      ```python
      #位置参数，即普通参数
@@ -2654,13 +2774,14 @@ print('{name} wrote {book}'.format(name='Swaroop', book='A Byte of Python'), end
      """如果已经有一个list或者tuple，要调用一个可变参数即在实参前加一个*"""
      list_obj = [1,2,3]
      fun(*list_obj)
-     
-     
-     #关键字参数
-     #可变参数允许你传入0个或任意个参数，这些可变参数在函数调用时自动组装为一个tuple。而关键字参数允许你传入0个或任意个含参数名的参数，这些关键字参数在函数内部自动组装为一个dict
-     def person(name, age, **kw):
-         print('name:', name, 'age:', age, 'other:', kw)
-     
+
+
+​     
+​     #关键字参数
+​     #可变参数允许你传入0个或任意个参数，这些可变参数在函数调用时自动组装为一个tuple。而关键字参数允许你传入0个或任意个含参数名的参数，这些关键字参数在函数内部自动组装为一个dict
+​     def person(name, age, **kw):
+​         print('name:', name, 'age:', age, 'other:', kw)
+​     
      """实际调用"""
      >>> extra = {'city': 'Beijing', 'job': 'Engineer'}
      >>> person('Jack', 24, **extra)
@@ -2677,14 +2798,15 @@ print('{name} wrote {book}'.format(name='Swaroop', book='A Byte of Python'), end
      
      """经典用法举例"""
      def printOrder(coffee, *args, coffee_order="Espresso", **kwargs):#接收coffee名和配料，默认为浓咖啡，后还可跟其他
-     
-     
-     
-     ```
 
-  10. del {对象名}   可理解为调用了该对象析构函数，后续不能使用该对象
 
-  11. 类
+​     
+​     
+​     ```
+
+  11. del {对象名}   可理解为调用了该对象析构函数，后续不能使用该对象
+
+  12. 类
 
 ```python
 ##类成员
@@ -3142,6 +3264,15 @@ python小知识：
    pip uninstall protobuf
    pip install --no-binary=protobuf protobuf==3.17.3 
    
+   #python2安装grpc
+   python -m pip install grpcio==1.22.0
+   
+   #python2安装elasticsearch
+   python2 -m pip install elasticsearch==7.15.0
+   
+   #python2安装redis
+   python2 -m pip install redis==3.2.1
+   
    #python2安装合适的kafka
    python -m pip install  confluent_kafka==1.5.0
    
@@ -3595,6 +3726,7 @@ ate 和 binary 模式可用于任何类型的文件流对象，且可以与其�
 **nginx小知识**
 
 1. 检查配置文件语法：nginx -t -c {文件路径}
+1. nginx启动指定配置文件路径：/usr/local/nginx/sbin/nginx -c /usr/local/nginx/conf/nginx.conf
 
 ## gcc相关
 - gdb相关
@@ -4036,7 +4168,7 @@ Redis支持五种数据类型：string（字符串），hash（哈希），list�
 
 
 
-## sql相关 
+## sql相关/mysql相关
 
 sql小知识
 
@@ -4074,8 +4206,15 @@ sql小知识
    如：
    ALTER TABLE `test_table` ADD `test_column` TINYINT(4) NOT NULL DEFAULT '0' COMMENT '-1 左边 0 默认 1 右边' AFTER `left_column`;
    
+   --新增索引
+   ALTER TABLE table_name ADD INDEX index_name(column_name)
+   如：
+   ALTER TABLE `test_table` ADD INDEX idx_id(id);
+   
+   --查询相关
+   1）模糊查询：name LIKE "%福贵%"
    ```
-
+   
    
 
 ## php相关
