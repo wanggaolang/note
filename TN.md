@@ -3251,6 +3251,10 @@ python小知识：
 2. python安装模块相关
 
    ```python
+   #安装单个模块指定源
+   python2 -m pip install xxx -i http://pypi.tuna.tsinghua.edu.cn/simple/ --trusted-host \
+           pypi.tuna.tsinghua.edu.cn
+   
    #python2安装protobuf
    python -m pip install protobuf==3.17.3   
      
