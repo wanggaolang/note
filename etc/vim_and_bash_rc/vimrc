@@ -43,6 +43,7 @@ set wrap                        " 一行太长则分行显示
 set expandtab                   " convert all tabs typed to spaces
 set tabstop=4                   " indentation levels every four columns
 set shiftwidth=4                " indent/outdent by four columns
+set softtabstop=4               " todo
 set shiftround                  " indent/outdent to nearest tabstop
 set smarttab                    " be smart when using tabs ;)
 " }
@@ -120,6 +121,9 @@ set tags=./tags,tags;
 
 " 光标移动显示横线
 set cursorline
+
+" 让<C-a>和<C-x>的加减把所有数字都当成十进制，不管它们是不是以 0 开头的。
+set nrformats=
 
 " 分屏情况下光标移动控制
 nmap <C-h> <C-w>h

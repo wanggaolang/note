@@ -147,7 +147,12 @@ ssh -T git@github.com    //测试与github联通性
 - pull操作
 
 1. 将远程指定分支拉取到本地指定分支上    `git pull origin {远程分支名}[:{本地分支名}，如果不要就是拉取到本地当前分支]`
+
 2. 将与本地当前分支同名的远程分支 拉取到 本地当前分支上(需先关联远程分支，方法见文章末尾)    `git pull`
+
+3. git pull在初次拉取可能会让确认rsa秘钥的信任，如果要写入shell脚本里跳过手工确认，则需要如此写：
+
+   GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" git pull
 
 - push操作
   1、将指定分支推送到远程指定分支    ``git push origin {本地分支名}:{远程分支名}``
@@ -1711,6 +1716,8 @@ echo ${my_path#/*bin:} #里边的#代表从左往右删最小集的匹配项，*
 echo ${my_path##/*bin:} #里边的##代表从左往右删最大集的匹配项，*是通配符  也就是删除了/usr/bin:/usr/local/sbin/:/usr/sbin:
 echo ${my_path%:*bin} #里边的%代表从右往左删最小集的匹配项，*是通配符 也就是删除了:/home/work/bin
 echo ${my_path%%:*bin} #里边的%%代表从右往左删最大集的匹配项，*是通配符 也就是删除了:/usr/local/sbin/:/usr/sbin:/home/work:/home/work/bin
+##获取字符串长度：${#string_name}
+
 
 readonly variable#只读变量
 unset variable_name#删除变量，unset 命令不能删除只读变量
@@ -1726,14 +1733,16 @@ function name() {
     [return value]
 }
 ##Shell 函数在定义时不能指明参数，但是在调用时却可以传递参数，并且给它传递什么参数它就接收什么参数
+##对于函数的返回值，return仅表明函数的退出状态：返回值为 0 表示函数执行成功了，返回值为非 0 表示函数执行失败
+##真正结果应用echo输出，或者用全局变量承担
 
 #for循环
-for(([exp1]; [exp2]; [exp3]))#c语言风格
+for(([exp1]; [exp2]; [exp3]))#c语言风格,注意是双括号
 do
     statements
 done
 
-for variable in value_list#python风格
+for variable in value_list #python风格
 do
     statements
 done
@@ -1854,7 +1863,7 @@ done
    fi
     
    #获取当前shell所在文件夹
-   BASE_DIR=$(cd $(dirname ${FILE})/..; pwd)
+   BASE_DIR=$(cd $(dirname ${FILE}); pwd)
    
    #获取软连接绝对路径
    basepath=$(cd dirname $(readlink $0); pwd)
@@ -2005,38 +2014,64 @@ done
 
 ## vim相关
 
-- vim的3种模式
+- vim的3种常用模式
 
   1. 正常(Normal)模式，也就是vim file进去时的模式
   
-  2. 编辑模式，可以输入文本到文件
-  2. 命令行模式，输入【:/?】，光标移动到最下面一行的模式
+  2. 插入模式，可以输入文本到文件
+  3. 命令行模式，输入【:/?=】，光标移动到最下面一行的模式
+  
+- 使用vim的出厂模式
+
+  vim -u NONE -N
+  
+  -u NONE 标志让 Vim 不加载用户的vimrc，NONE也可以替换为指定文件。当用不加载 vimrc 文件的方式启动时，Vim 会切换到 vi 兼 容模式，这将导致很多有用的功能被禁用，而 -N 标志则会使能 ‘nocompatible’ 选 项，防止进入 vi 兼容模式。
+  
+- 命令行模式
+
+  - 让缩进变为4个空格
+
+    ➾:set shiftwidth=4 softtabstop=4 expandtab
   
 - 正常(Normal)模式
 
   常规快捷键
 
-  ```shell
-  #切换为编辑-光标到当前行首：shift + i
-  #切换为编辑-光标到下一行首并回车：o
-  #切换为编辑-光标向当前右移一格：a
-  ```
+  - 切换至插入模式的快捷键
+
+    | 复合命令 | 等效的长命令 | 备注                     |
+    | -------- | ------------ | ------------------------ |
+    | C        | c$           |                          |
+    | s        | cl           |                          |
+    | S        | ^C           | 清除当前行并进入插入模式 |
+    | I        | ^i           |                          |
+    | A        | $a           |                          |
+    | o        | C<CR>        | 当前光标下方插入一行     |
+    | O        | ko           | 当前光标上方插入一行     |
+
+  - 可重复的操作及如何回退
+
+    <img src="etc/pic/image-20221002123217162.png" alt="image-20221002123217162" style="zoom:50%;" />
+    
+  - Vim 的操作符命令
+
+    <img src="etc/pic/image-20221003131257472.png" alt="image-20221003131257472" style="zoom:40%;" />
+
   
-  
-  
-  全选:    `ggVG`    一行行选择`V`，一个个光标单位选择`v`
-  
-  将选择的复制`y`，粘贴`p`
-  
+
+  - 全选:    `ggVG`    一行行选择`V`，一个个光标单位选择`v`
+
+  - 将选择的复制`y`，粘贴`p`
+
   - 光标移动
     1. 到行尾:`$`    到下一行行尾:`2$`    到从当前行算起第n行行尾:`n$`
     
     2. 到行首:`0`
     
   - 撤销：命令模式下按u    撤销的撤销：ctrl + r
-  
+
   - 查看关键字出现次数：%s/{关键字}//gn  
-  
+
   - 插入列
     	插入操作的话知识稍有区别。例如我们在每一行前都插入"() "：
     	1.光标定位到要操作的地方。
@@ -2047,7 +2082,7 @@ done
   - 删除列
     
     在【插入列】替换第三步为输入x即可
-  
+
 - 翻页：向下：ctrl+f    向上：ctrl+b
 
 - 设置鼠标能上下滑动：
@@ -2067,9 +2102,9 @@ done
 - vim退出后终端是否显示部分vim的文本：
 
   - User1使用TERM = **xterm**，在这种情况下，当您退出vim时，它将清除终端。
-  
+
   - User2使用TERM = **vt100**，在这种情况下，退出vim不会清除终端。
-  
+
 - 展开所有折叠：一般命令行模式直接使用zi就可以展开和折叠了
 
 - 分屏
@@ -2100,10 +2135,14 @@ done
   set wrap                        " 一行太长则分行显示
   set paste                       " 粘贴时防止乱缩进
   ```
-  
+
 - 常用快捷键
 
   1. 普通模式在当前行下插入一行并进入插入模式：用o或者O命令
+
+- 可视模式相关
+
+  1. 按字符串匹配筛选段并打印    :/{字符串}/,/{字符串}/p  例如：    :/abc/,/abc/p
 
 **vim实战**
 
@@ -2333,7 +2372,7 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
    chmod 666 /var/run/docker.sock
    ```
 
-2. 
+2. docker密码存储位置：~/.docker/config.json
 
 
 
@@ -2782,22 +2821,22 @@ print('{name} wrote {book}'.format(name='Swaroop', book='A Byte of Python'), end
 ​     def person(name, age, **kw):
 ​         print('name:', name, 'age:', age, 'other:', kw)
 ​     
-     """实际调用"""
-     >>> extra = {'city': 'Beijing', 'job': 'Engineer'}
-     >>> person('Jack', 24, **extra)
-     
-     #命名关键字参数【仅在python3】  限制输入的关键字参数为形参指的的那些参数，不能增加或减少
-     def person(name, age, *args, city, job)#在可变参数后的即认为是命名关键字参数
-     def person(name, age, *, city, job)#如果没有可变参数，命名关键字参数需要一个特殊分隔符*
-     def person(name, age, *, city='北京', job)#命名关键字参数可以有缺省值,这样在调用时就可以不附带该参数
-     
-     person('张三',18,job='work')#对命名关键字参数实例化时，【必须传入参数名】
-     
-     #参数组合
-     #在Python中定义函数，可以用位置参数、默认参数、可变参数、关键字参数和命名关键字参数，这5种参数都可以组合使用。但是请注意，参数定义的顺序必须是：必选参数、默认参数、可变参数、【命名关键字参数和关键字参数】。
-     
-     """经典用法举例"""
-     def printOrder(coffee, *args, coffee_order="Espresso", **kwargs):#接收coffee名和配料，默认为浓咖啡，后还可跟其他
+​     """实际调用"""
+​     >>> extra = {'city': 'Beijing', 'job': 'Engineer'}
+​     >>> person('Jack', 24, **extra)
+​     
+​     #命名关键字参数【仅在python3】  限制输入的关键字参数为形参指的的那些参数，不能增加或减少
+​     def person(name, age, *args, city, job)#在可变参数后的即认为是命名关键字参数
+​     def person(name, age, *, city, job)#如果没有可变参数，命名关键字参数需要一个特殊分隔符*
+​     def person(name, age, *, city='北京', job)#命名关键字参数可以有缺省值,这样在调用时就可以不附带该参数
+​     
+​     person('张三',18,job='work')#对命名关键字参数实例化时，【必须传入参数名】
+​     
+​     #参数组合
+​     #在Python中定义函数，可以用位置参数、默认参数、可变参数、关键字参数和命名关键字参数，这5种参数都可以组合使用。但是请注意，参数定义的顺序必须是：必选参数、默认参数、可变参数、【命名关键字参数和关键字参数】。
+​     
+​     """经典用法举例"""
+​     def printOrder(coffee, *args, coffee_order="Espresso", **kwargs):#接收coffee名和配料，默认为浓咖啡，后还可跟其他
 
 
 ​     
@@ -3966,6 +4005,61 @@ console.log(obj.length);//可以读取已定义对象的一层未定义属性，
 console.log(obj.length.num);//错误，不能读取未定义对象的未定义属性。（此处会报错：TypeError: Cannot read property 'num' of undefined）
 
 
+```
+
+
+
+nvm相关
+
+```shell
+#为linux所有用户安装nvm
+0. 克隆nvm代码库(需要root权限)
+git clone https://github.com/nvm-sh/nvm.git /opt/nvm
+
+1. 创建nvm安装node目录（需要root权限）
+mkdir -p /usr/local/nvm && chmod 777 /usr/local/nvm
+
+2. vim /etc/profile.d/nvm.sh
+export NVM_DIR=/usr/local/nvm # 导出NVM_DIR 环境变量，让nvm 安装node到该目录
+source /opt/nvm/nvm.sh # 执行nvm 的命令, 激活nvm 到系统shell 中
+
+3. vim ~/.bashrc
+[ -f /etc/profile.d/nvm.sh ] && source /etc/profile.d/nvm.sh
+
+4. 将nvm导入执行命令中
+source ~/.bashrc
+
+5. 安装预期的node版本
+nvm install v8.11.1
+
+6. 设置默认node版本
+nvm alias default v8.11.1
+
+7. 如果跑shell脚本报错nvm not found，则需要脚本内source /opt/nvm/nvm.sh
+
+
+#nvm安装node太慢/nvm换源
+1.临时方案
+NVM_NODEJS_ORG_MIRROR=https://npm.taobao.org/mirrors/node nvm install {node版本，如v8.11.1}
+2.永久方案
+在nvm.sh或者.bashrc里: export NVM_NODEJS_ORG_MIRROR=https://npm.taobao.org/mirrors/node
+```
+
+
+
+npm相关/yarn相关
+
+```shell
+#npm换源
+1. npm永久换源
+npm config get registry  // 查看npm当前镜像源
+npm config set registry https://registry.npm.taobao.org/  // 设置npm镜像源为淘宝镜像
+2. npm临时换源
+npm install -g --registry=https://registry.npm.taobao.org/
+
+#yarn换源
+yarn config get registry  // 查看yarn当前镜像源
+yarn config set registry https://registry.npm.taobao.org/  // 设置yarn镜像源为淘宝镜像
 ```
 
 
