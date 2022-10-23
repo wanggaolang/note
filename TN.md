@@ -562,8 +562,6 @@ Setting	--	Keymap
   
   
 
-统计总代码行数：
-
 - 3个配置文件：见etc/vscode_conf
 
 - 编译：mac快捷键 command + shift + b
@@ -615,6 +613,22 @@ Setting	--	Keymap
   ```
 
 - 解决include出错报错问题：设置-搜索includePath-在setting_json中配置，加入C_Cpp.default.includePath路径
+
+- vscode-python相关
+
+  - vscode选择python2
+
+    1. enter cmd+shft+p
+
+    2. > `Python: Select Interpreter`
+
+    3. Enter your version
+
+  - vscode配置python debug环境
+
+    1. 在代码总目录下创建.vscode 文件夹
+    2. touch .vscode/launch.json
+    3. 详见 etc/vscode_conf/launch.json 的"name": "Python:XXX"部分
 
 vscode小知识
 
@@ -1706,21 +1720,32 @@ variable='value'
 variable="value"
 ##等号左右不能空格，变量在shell都是字符串，建议写法是内容是数字，那么可以不加引号；除非要特殊原样输出用单引号，否则都用双引号
 ##单双引号区别
-name=abc
-echo 'name ${name} path: `pwd`' #内容中有变量和命令（命令需要反引起来）被忽略，原样输出
-echo "name ${name}, path: `pwd`" #双引号会执行变量和命令
-##变量内容的裁剪
-  注意下方的4项，拆减必须匹配到开头方向的开始部分，也就是必须删除首部或者尾部
-my_path=/usr/bin:/usr/local/sbin/:/usr/sbin:/home/work:/home/work/bin
-echo ${my_path#/*bin:} #里边的#代表从左往右删最小集的匹配项，*是通配符  也就是删除了/usr/bin:
-echo ${my_path##/*bin:} #里边的##代表从左往右删最大集的匹配项，*是通配符  也就是删除了/usr/bin:/usr/local/sbin/:/usr/sbin:
-echo ${my_path%:*bin} #里边的%代表从右往左删最小集的匹配项，*是通配符 也就是删除了:/home/work/bin
-echo ${my_path%%:*bin} #里边的%%代表从右往左删最大集的匹配项，*是通配符 也就是删除了:/usr/local/sbin/:/usr/sbin:/home/work:/home/work/bin
-##获取字符串长度：${#string_name}
+  name=abc
+  echo 'name ${name} path: `pwd`' #内容中有变量和命令（命令需要反引起来）被忽略，原样输出
+  echo "name ${name}, path: `pwd`" #双引号会执行变量和命令
+##变量内容的裁剪/字符串裁剪
+  str=aabb
+  echo ${str#*a}  #abb #为删除左边部分字符串，小匹配删除，即从左到右遇到第一个匹配就删除完毕返回
+  echo ${str##*a}  #bb ##为大匹配删除，从左到右一直删除到最后匹配项再返回
+  echo ${str%b*}  #aab %为删除右边部分字符串，小匹配删除，即从右到左遇到第一个匹配就删除完毕返回
+  echo ${str%%b*} #aa %%为大匹配删除，从右到左一直删除到最后匹配项再返回
+  
+  str=0123456789
+  echo ${str:0:3} #012 格式为 ${str: index : len} 即从左往右数，以index开始（最左边index为0），向右截取len个字符
+  echo ${str:0-3:2} #78 格式为 {str: 0-index : len} 即从右往左数，以index开始（最右边index为1），向右截取len个字符
 
 
-readonly variable#只读变量
-unset variable_name#删除变量，unset 命令不能删除只读变量
+readonly variable #只读变量
+unset variable_name #删除变量，unset 命令不能删除只读变量
+${#string_name} #获取字符串长度
+##给变量设置兜底值/默认值
+  The syntax is ${var:-$DEFAULT}. It means if the variable is not set or is null, use the default value.
+  echo "${foo:-1}" #1
+  foo=2
+  echo "${foo:-3}" #2
+  foo=
+  echo "${foo:-4}"#4
+  echo "${1:-"abc"}"#函数入参兜底值
 
 #shell执行命令
 `command`
@@ -4022,6 +4047,8 @@ mkdir -p /usr/local/nvm && chmod 777 /usr/local/nvm
 2. vim /etc/profile.d/nvm.sh
 export NVM_DIR=/usr/local/nvm # 导出NVM_DIR 环境变量，让nvm 安装node到该目录
 source /opt/nvm/nvm.sh # 执行nvm 的命令, 激活nvm 到系统shell 中
+#可选，设置默认node版本
+nvm alias default 14
 
 3. vim ~/.bashrc
 [ -f /etc/profile.d/nvm.sh ] && source /etc/profile.d/nvm.sh

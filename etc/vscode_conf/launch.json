@@ -15,6 +15,28 @@
             "environment": [],
             "externalConsole": true,
             "MIMode": "lldb"
+        },
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "env": {
+                "PYTHONPATH": "",
+                "PATH": "",
+                "LD_LIBRARY_PATH": ""
+            },
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: Module",
+            "type": "python",
+            "request": "launch",
+            "module": "test_module",
+            "env": {
+                "PYTHONPATH": "XXX",
+                "PATH": "XXX"
+            }
         }
     ]
 }

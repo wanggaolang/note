@@ -111,3 +111,7 @@ bind '"\e[A": history-search-backward'
 bind '"\e[B": history-search-forward'
 PATH=/root/.BCloud/bin:$PATH
 export PATH
+
+# 设置系统代理
+export http_proxy=http://127.0.0.1:7890
+export https_proxy=$http_proxy

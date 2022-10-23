@@ -1,0 +1,9 @@
+# 设置系统代理
+export http_proxy=http://127.0.0.1:7890
+export https_proxy=$http_proxy
+
+#让 ctrl + u 和bash打平
+bindkey \^U backward-kill-line
+
+#让 .* 和bash打平
+setopt no_nomatch
