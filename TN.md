@@ -918,7 +918,9 @@ vscode小知识
 
      需设置快捷键为cmd + e
 
-     
+  4. toby for chrome  一次打开多个书签
+
+  
 
 - chrome快捷键
 
@@ -2247,15 +2249,25 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
 
   通过镜像起新容器：docker run --name {容器名} -itd --privileged=true --entrypoint /bin/bash {镜像名或id}
 
-  -d  挂起运行
+  - 挂起运行：-d
 
-  注意 --entrypoint /bin/bash是一起的
+  - 注意 --entrypoint /bin/bash是一起的
 
-  指定disk大小：--storage-opt size=30G
+  - 指定disk大小：--storage-opt size=30G
 
-  端口映射： -p {主机端口}:{容器端口}
+  - 指定网络类型
 
-  文件夹映射：-v {主机文件夹}:{容器文件夹}
+    ```shell
+    可以在 docker run 的时候通过 --net 参数来指定容器的网络配置，有4个可选值：
+    --net=bridge 这个是默认值，连接到默认的网桥。
+    --net=host 告诉 Docker 不要将容器网络放到隔离的命名空间中，即不要容器化容器内的网络。此时容器使用本地主机的网络，它拥有完全的本地主机接口访问权限。容器进程可以跟主机其它 root 进程一样可以打开低范围的端口，可以访问本地网络服务比如 D-bus，还可以让容器做一些影响整个主机系统的事情，比如重启主机。因此使用这个选项的时候要非常小心。如果进一步的使用 --privileged=true，容器会被允许直接配置主机的网络堆栈。
+    --net=container:NAME_or_ID 让 Docker 将新建容器的进程放到一个已存在容器的网络栈中，新容器进程有自己的文件系统、进程列表和资源限制，但会和已存在的容器共享 IP 地址和端口等网络资源，两者进程可以直接通过 lo 环回接口通信。
+    --net=none 让 Docker 将新容器放到隔离的网络栈中，但是不进行网络配置。之后，用户可以自己进行配置。
+    ```
+
+  - 端口映射： -p {主机端口}:{容器端口}  需要注意，如果指定了--net=host，则容器内会直接使用并占用宿主机的端口
+
+  - 文件夹映射：-v {主机文件夹}:{容器文件夹}
 
 - 将容器转为镜像：docker commit {container_id} {image_name}
 
@@ -2301,16 +2313,6 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
   1.进入docker，执行 vim ~/.bashrc 打开profile文件
   2.将export LANG="C.UTF-8"命令添加在profile文件最后,保存退出
   3.执行source ~/.bashrc ，即可正常显示中文
-  ```
-
-- 指定网络类型
-
-  ```shell
-  可以在 docker run 的时候通过 --net 参数来指定容器的网络配置，有4个可选值：
-  --net=bridge 这个是默认值，连接到默认的网桥。
-  --net=host 告诉 Docker 不要将容器网络放到隔离的命名空间中，即不要容器化容器内的网络。此时容器使用本地主机的网络，它拥有完全的本地主机接口访问权限。容器进程可以跟主机其它 root 进程一样可以打开低范围的端口，可以访问本地网络服务比如 D-bus，还可以让容器做一些影响整个主机系统的事情，比如重启主机。因此使用这个选项的时候要非常小心。如果进一步的使用 --privileged=true，容器会被允许直接配置主机的网络堆栈。
-  --net=container:NAME_or_ID 让 Docker 将新建容器的进程放到一个已存在容器的网络栈中，新容器进程有自己的文件系统、进程列表和资源限制，但会和已存在的容器共享 IP 地址和端口等网络资源，两者进程可以直接通过 lo 环回接口通信。
-  --net=none 让 Docker 将新容器放到隔离的网络栈中，但是不进行网络配置。之后，用户可以自己进行配置。
   ```
 
 - Docker 查看容器映射路径：docker inspect {容器名}  查看
@@ -2385,6 +2387,16 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
 - 对于COPY命令：
 
   1）对于Dockerfile文件夹下的文件夹COPY，默认只复制里面的子文件（夹）到目的地址。所以若希望复制是带有文件夹本身，需在目的地址尾部写上该文件夹
+  
+  2）注意下方这种写法，如果没有/home/work目录，则最终效果是将test.tgz重命名为/home/work文件，解决方法是work后加/
+  
+  ​	COPY test.tgz /home/work
+  
+- 查看容器大小：
+
+  - docker system df
+  - docker ps -s
+  
 
 
 
@@ -3315,6 +3327,11 @@ python小知识：
 2. python安装模块相关
 
    ```python
+   #可以指定一个文件如requirements.txt批量安装模块：python -m pip install -r requirements.txt
+   	requirements.txt内容如：
+     protobuf==3.17.3
+     tornado
+   
    #安装单个模块指定源
    python2 -m pip install xxx -i http://pypi.tuna.tsinghua.edu.cn/simple/ --trusted-host \
            pypi.tuna.tsinghua.edu.cn
@@ -3496,6 +3513,28 @@ python小轮子：
    from sys import version_info
    python_version = str(version_info.major) + "." + str(version_info.minor)
    print(python_version)
+   ```
+
+9. 随机获取指定文件夹下的文件
+
+   ```python
+   #!/usr/bin/python3
+   # -*- coding:utf-8 -*-
+   
+   import os
+   import random
+   target_num = 1000
+   target_dirs = []
+   path="/tmp/"
+   dirs=os.listdir(path)
+   for i in range(0, target_num):
+       single_dir = dirs[random.randint(0, len(dirs) - 1)]
+       target_dirs.append(single_dir)
+       dirs.remove(single_dir)
+   format_str = ''
+   for str in target_dirs:
+       format_str = format_str + str + " "
+   print("{}".format(format_str))
    ```
 
    
