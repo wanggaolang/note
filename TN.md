@@ -327,7 +327,7 @@ $ git config --global i18n.logoutputencoding utf-8  # 输出 log 编码
 
 -----其他-----
 git config --add core.filemode false    #忽略文件权限的改变
-git config ---global core.editor vim    #git默认编辑器更改为vim
+git config --global core.editor vim    #git默认编辑器更改为vim
 
 git config --global  --unset https.https://github.com.proxy #设置git代理
 git config --global  --unset http.https://github.com.proxy 
@@ -663,6 +663,16 @@ vscode小知识
 
 协程：
 
+
+
+## 手机相关
+
+- 小米手机安装或更新chrome失败/更新webview失败
+  1. 清空Google Play数据
+  1. 重启手机
+  1. 更新webview
+  1. 更新chrome
+
 ## c++相关/cpp相关
 
 1. 在有派生类时各构造函数和析构函数调用顺序
@@ -914,11 +924,13 @@ vscode小知识
 
   2. 广告过滤插件：adblock
 
-  3. 快速切换2tab之间：Toggle Tabs 注意貌似为俄罗斯的，被谷歌禁用了，需要git clone[其github地址](https://github.com/dakiesse/toggle-tabs-chrome-extension)进行安装
+  3. 下载管理器插件：Chrono下载管理器
+
+  4. 快速切换2tab之间：Toggle Tabs 注意貌似为俄罗斯的，被谷歌禁用了，需要git clone[其github地址](https://github.com/dakiesse/toggle-tabs-chrome-extension)进行安装
 
      需设置快捷键为cmd + e
 
-  4. toby for chrome  一次打开多个书签
+  5. toby for chrome  一次打开多个书签
 
   
 
@@ -1475,7 +1487,7 @@ iterm2小知识
 
    
 
-**mac小知识**
+**mac软件相关**
 
 - 在finder（访达）根目录中`command + shift + .`显示隐藏文件
 
@@ -1485,7 +1497,21 @@ iterm2小知识
 
 - 录屏：QuickTime player
 
-- 设置默认打开方式
+- 截图工具：iShot 完整版会收费
+
+- 日历工具：itsycal
+
+- 菜单栏图标整理工具：bartender4 收费
+
+- Markdown编辑工具：typora
+
+- 性能监控工具：status
+
+- 粘贴板：PasteNow 收费
+
+**mac小知识**
+
+- 设置文件默认打开方式
 
   ```shell
   只改变指定文件的默认打开方式:
@@ -1617,7 +1643,9 @@ ctrl + y 粘贴”命令行剪切板“
 
 `| xargs`    将多行合并到一行，以空格分割  具体见[这](https://www.runoob.com/linux/linux-comm-xargs.html)
 
-使用例子：find ./proto -name "*.proto" | xargs -i cp {} ./proto_tmp  将所有proto文件放入proto_tmp
+使用例子(linux)：find ./proto -name "*.proto" | xargs -i cp {} ./proto_tmp  将所有proto文件放入proto_tmp
+
+​	在mac上等价为：find ./proto -name "*.proto" | xargs -I NAME cp "NAME" ./proto_tmp
 
 查看某个端口的tcp状态：`netstat -antop | grep {portID}`
 
@@ -1701,7 +1729,7 @@ a$表示以a结尾
 
 
 
-## shell编程相关/shell脚本相关/shell脚本编程/shell相关
+## shell编程相关/shell脚本相关/bash脚本编程/bash相关
 
 1. $0 是shell脚本本身名字，$1是shell脚本/函数第一个参数，以此类推。注意c语言的int main(int argc, char *argv[])与此类似，argv[0]是程序本身名字，然后就是参数，argc是包含程序本身名的参数数量(>=1)，但是$#不包含程序本身名的参数个数
 
@@ -1763,7 +1791,7 @@ function name() {
 ##对于函数的返回值，return仅表明函数的退出状态：返回值为 0 表示函数执行成功了，返回值为非 0 表示函数执行失败
 ##真正结果应用echo输出，或者用全局变量承担
 
-#for循环
+#bash for循环
 for(([exp1]; [exp2]; [exp3]))#c语言风格,注意是双括号
 do
     statements
@@ -1773,11 +1801,69 @@ for variable in value_list #python风格
 do
     statements
 done
+
+##示例
+for i in {0..10}
+do
+    echo $i
+done
+
+#bash case in语法示例
+#!/bin/bash
+
+echo -e "Input a char"
+read -n 1 char
+case $char in
+    ?)
+        echo -e "\ninput is \"?\""
+        ;;
+    [a-zA-Z])
+        echo -e "\nletter"
+        ;;
+    [0-9])
+        echo -e "\nnunber"
+        ;;
+    [,.])
+        echo -e "\npunctuation"
+        ;;
+    *)
+        echo -e "\nother"
+esac
+
+#bash while示例
+#!/bin/bash
+sum=0
+echo "请输入您要计算的数字，按 Ctrl+D 组合键结束读取"
+while read n
+do
+    ((sum += n))
+done
+echo "The sum is: $sum"
+
+#bash select in示例
+#!/bin/bash
+
+select input in "A" "B" "C"
+do
+    case $input in
+        "A")
+            echo "select is A"
+            ;;
+        "B")
+            echo "select is B"
+            ;;
+        "C")
+            echo "select is C"
+            ;;
+        *)
+            echo "input error value"
+    esac
+done
 ```
 
-- shell小知识/bash小知识/bash相关
+- shell小知识/bash小知识/shell相关
 
-  1. bash命令行操作小技巧
+  1. shell命令行操作小技巧
 
      ```bash
      ctrl + a 光标移动至命令行头
@@ -1795,8 +1881,6 @@ done
      
      ```
 
-     
-
   2. top解决程序名被截断问题：top -c
 
   3. wc可以计算文件的Byte数(-c)、字数(-w)、或是列数(-l)
@@ -1813,13 +1897,13 @@ done
      	printf "%10d%10d%10d%10.2f\n" $1,$2,$3,total}'
      	大括号有多个语句时，用回车或分号间隔，功能：对于第二行之后（NR最小为1），显示每行累加
      ```
-
+  
   5. grep相关
 
      ```
      查找时排除多个文件：grep -r "abcde"  --exclude-dir="log" --exclude-dir="log2" --exclude-dir="logs"
      ```
-
+  
   6. 光标
 
     隐藏光标 ：  echo -e "\033[?25l"  
@@ -1835,7 +1919,7 @@ done
      #找到类似root    ALL=(ALL)       ALL
      #新增一行{username} ALL=(ALL)       ALL
      ```
-
+  
   8. 注意：对于类似$1等可能带有空格的参数，作实参需要加上引号。错误示例：
 
      <img src="./etc/pic/image-20210208200005642.png" alt="image-20210208200005642" style="zoom:50%;" />
@@ -1862,6 +1946,18 @@ done
 
 12. sed相关
     - 解决替换时有空格问题：sed -i 's@abc def@aaa bbb@' {file_name}
+
+13. 重定向小知识
+
+    ```shell
+    echo "C语言中文网" 10>log.txt >&10 10>&-  #输出到了log.txt
+    echo "C语言中文网" >&10 10>log.txt 10>&-  #还是输出到了屏幕
+    #上方这2条命令效果是不一样的，原因在于多个重定向操作时，可以看为多次操作的集合。
+    #在第1条中，文件描述符10指向了log.txt，之后标准输出（文件描述符1）重定向到10，即会重定向到log.txt
+    #在第2条中，先将文件描述符10的地址赋值给标准输出，这是10并没有指向，所以是无效赋值，之后10才重定向到了log.txt，因此未对标准输出生效
+    ```
+
+    <img src="etc/pic/image-20221102105250970.png" alt="image-20221102105250970" style="zoom:40%;" />
 
 **shell小轮子**
 
@@ -2451,6 +2547,8 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
   
   3. enum元素与cpp
   
+     people.proto
+  
      ```protobuf
      syntax = "proto2";
      package world.animal;
@@ -2463,6 +2561,7 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
          optional Gender gender = 1;
      }
      //同时会生成world::animal::People_Gender_Name和world::animal::People.Gender_Name，用于输入枚举值，返回string
+     //对于python，会生成people_pb2.People.Gender.Name，用于输入int，返回string
      ```
 
 
@@ -2513,8 +2612,10 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
 
 - protoc相关
 
-  编译pb为cpp文件：protoc --proto_path=./ --cpp_out=./ test.pb
+  编译pb为python文件：protoc -I=./ --python_out=./ ./people.proto
 
+  编译pb为cpp文件：protoc --proto_path=./ --cpp_out=./ test.pb
+  
   编译命令示例：
   
   ```shell
@@ -3361,6 +3462,9 @@ python小知识：
    #python2安装合适的kafka
    python -m pip install  confluent_kafka==1.5.0
    
+   #python2安装pymysql
+   python -m pip install pymysql==0.10.1
+   
    #ubuntu18.04安装python2和pip2
    apt-get install python-minimal
    apt-get install python-pip
@@ -3834,6 +3938,17 @@ ate 和 binary 模式可用于任何类型的文件流对象，且可以与其�
 
 1. 检查配置文件语法：nginx -t -c {文件路径}
 1. nginx启动指定配置文件路径：/usr/local/nginx/sbin/nginx -c /usr/local/nginx/conf/nginx.conf
+
+## cmake相关
+
+**常用cmake参数**
+
+```cmake
+-DCMAKE_INSTALL_PREFIX  #安装路径
+-DCMAKE_CXX_STANDARD=17  #指定cpp编译版本为17
+```
+
+
 
 ## gcc相关
 - gdb相关
