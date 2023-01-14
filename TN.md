@@ -346,9 +346,9 @@ git config --global  --unset http.https://github.com.proxy
   - 删除：git stash drop stash@{1}
 
   - 如果git stash push后不小心drop掉了，恢复方法：
-  1. git fsck --unreachable    尽量看commit的sha
+    1. git fsck --unreachable    尽量看commit的sha
     2. git show sha    看哪个是被删的那个
-  3. git stash apply sha
+    3. git stash apply sha
   - 查看某次push的文件/具体内容：git stash show [-p，显示内容] stash@{0}
 
 - 经典操作
@@ -396,6 +396,18 @@ git commit --amend --reset-author
   2）拉取远程代码库：git pull --allow-unrelated-histories  对于冲突部分做合并&commit
 
   3）git push
+  
+- 将本地代码库关联远端新建代码库
+
+  ```shell
+  git remote -v
+  git remote rm origin
+  git remote add origin ssh:XXX
+  git push -u origin --all
+  git push -u origin --tags
+  ```
+  
+  
 
 ## 内存操作的小技巧 
 
@@ -580,30 +592,33 @@ Setting	--	Keymap
 
 - vscode插件相关/vsocde插件(需配和上方快捷键一起设置)
 
-  ```
-  能够编译运行单个文件：
+  ```shell
+  #能够编译运行单个文件：
   	1. 安装Code Runner
   	2. 设置-> code-runner:Run in Terminal
   	3. 重启后编译运行，press F1 and then select/type Run Code    在mac为control + option + n
   	注意事项：
   		1.对于python，如果文件开头有类似#!/usr/bin/python2指定解释器路径的，可能导致运行失败，因为实际路径与其不符，需要将该行注释掉
   	
-  复制文件名：
+  #复制文件名：
   	Copy file name    设置快捷键：cmd + k + s -> 搜索copy file name: with extensions并安装 -> 查找上方"复制当前文件名  "的更改操作 -> cmd + 1
   	
-  c++的插件
+  #c++的插件
   选择C/C++（微软的版本）和C++ Intellisense的版本安装两个扩展.
   
-  git的插件
+  #git的插件
   1)git history
   2)GitLens
   
-  SQL插件
+  #SQL插件
   SQLTools
   SQL formatter
   
-  绘制流程图
+  #绘制流程图
   Draw.io Integration  （需要创建XXX.drawio文件，文件模式为draw.io）
+  
+  #python自动注释
+  Python Docstring Generator
   
   ---
   vscode插件小知识
@@ -698,7 +713,15 @@ vscode小知识
    永久作用：    std::cout.unsetf(std::ios::scientific);std::cout.precision(8);
    ```
 
-4. 类模板的成员函数在类外定义以及类模板的函数特例化
+4. 模板函数
+
+   ```cpp
+   template <class T> void debug(T& t_obj) {
+       std::cout << t_obj.gender();
+   }
+   ```
+
+5. 类模板的成员函数在类外定义以及类模板的函数特例化
 
    ```c++
    //类模板，但是在类外定义成员函数的时候，需要使用函数模板 
@@ -725,9 +748,9 @@ vscode小知识
    }
    ```
 
-5. vector产生二维数组： vector<vector<int> > newOne(r, vector<int>(c, 0));
+6. vector产生二维数组： vector<vector<int> > newOne(r, vector<int>(c, 0));
 
-6. 常用cpp/c的函数：
+7. 常用cpp/c的函数：
 
    ```c++
    map::lower_bound(key):返回map中第一个大于或等于key的迭代器指针
@@ -742,7 +765,7 @@ vscode小知识
        }
    ```
 
-7. 关于枚举类型
+8. 关于枚举类型
 
    ```cpp
    #include<iostream>
@@ -762,7 +785,7 @@ vscode小知识
    }
    ```
 
-8. map相关
+9. map相关
 
    - lower_bound与upper_bound
 
@@ -770,17 +793,17 @@ vscode小知识
 
      记忆方式为在顺序排列的key中，要在key_n周围插入一个值，那么会分为在key_n的左边和右边插入，即分别对应了lower_bound和upper_bound的位置
 
-9. 类外定义成员函数不能加上默认参数，如：``Test fun(int a = 1)``会报错，同样static声明的成员在外部定义时候，必须省去static。同时，static成员变量只有跟了const才可以在类里面的初始化列表中进行初始化，其余的都要在类的外部初始化
+10. 类外定义成员函数不能加上默认参数，如：``Test fun(int a = 1)``会报错，同样static声明的成员在外部定义时候，必须省去static。同时，static成员变量只有跟了const才可以在类里面的初始化列表中进行初始化，其余的都要在类的外部初始化
 
-   
+    
 
-10. string.find()和map.find()以及set.find()如果找不到目标，则结果为x.end()
+11. string.find()和map.find()以及set.find()如果找不到目标，则结果为x.end()
 
-11. volatile关键词影响编译器编译的结果，用volatile声明的变量表示该变量随时可能发生变化，与该变量有关的运算，不再编译优化，以免出错
+12. volatile关键词影响编译器编译的结果，用volatile声明的变量表示该变量随时可能发生变化，与该变量有关的运算，不再编译优化，以免出错
 
-12. 在linux中，默认c++的include位置为`/usr/include`
+13. 在linux中，默认c++的include位置为`/usr/include`
 
-**cpp小轮子**
+**cpp小轮子/c++小轮子**
 
 1. 计算耗时
 
@@ -788,6 +811,89 @@ vscode小知识
    auto start_time = std::chrono::system_clock::now();
    //do sth
    cout << "do sth cost:" << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - start_time).count() << " ms";
+   ```
+
+1. 用类成员自动增加num的demo
+
+   ```cpp
+   //test.cpp
+   #include <unistd.h>
+   #include <iostream>
+   #include <mutex>
+   #include <thread>
+   #include <csignal>
+   
+   class AutoIncreaseNum {
+       public:
+           AutoIncreaseNum();
+           int get_num();
+           void auto_increase_per_second_by_thread();
+           void wait_increase_num_thread();
+       private:
+           std::mutex _num_mutex;
+           std::shared_ptr<std::thread> increase_num_thread_ptr;
+           int num;
+           void auto_increase_per_second_base();
+   };
+   
+   AutoIncreaseNum::AutoIncreaseNum():increase_num_thread_ptr(nullptr), num(0) {}
+   
+   int AutoIncreaseNum::get_num() {
+       const std::lock_guard<std::mutex> lock(_num_mutex);
+       return num;
+   }
+   
+   void AutoIncreaseNum::auto_increase_per_second_base() {
+       while (true)
+       {
+           // Sleep for 1 second
+           std::this_thread::sleep_for(std::chrono::seconds(1));
+   
+           const std::lock_guard<std::mutex> lock(_num_mutex);
+           num++;
+       }
+   }
+   
+   void AutoIncreaseNum::wait_increase_num_thread() {
+       if(increase_num_thread_ptr) {
+           increase_num_thread_ptr->join();
+       }
+   }
+   
+   void AutoIncreaseNum::auto_increase_per_second_by_thread() {
+       increase_num_thread_ptr = std::make_shared<std::thread>(&AutoIncreaseNum::auto_increase_per_second_base, this);
+   }
+   
+   int main() {
+       AutoIncreaseNum obj;
+       obj.auto_increase_per_second_by_thread();
+       while(true) {
+           std::this_thread::sleep_for(std::chrono::seconds(1));
+           std::cout << "num is: " << obj.get_num() << std::endl;
+      }
+       obj.wait_increase_num_thread();
+       return 0;
+   }
+   ```
+   
+   Makefile:
+   
+   ```makefile
+   test:test.cpp
+   	g++ -std=c++11 -pthread test.cpp
+   ```
+   
+3. double设置not a number
+
+   ```cpp
+   #include<iostream>
+   #include<cmath>
+   #include<limits>
+   int main() {
+       double d_obj = std::numeric_limits<double>::quiet_NaN();
+       std::cout << std::isnan(d_obj) << std::endl; //1
+       std::cout << "value: " << d_obj << std::endl; //nan
+   }
    ```
 
    
@@ -799,6 +905,49 @@ vscode小知识
    ​	场景为有一个通知者和多个观察者，在通知者发生或发现某种变化时，挨个通知每个观察者。实现上说白了就是在通知者内部保存一个可调用对象的list，设置一个通知函数来依次调用每个可调用对象，该list可以动态增加减少。当然在通知者内部也可以是一个对象队列，通知函数为调用每个对象的update函数。反正核心就是有可调用对象的队列在通知者里面。由于计算机语言的限制，大部分语言实现上该可调用对象list的每一个都是有同样的参数列表和返回值，不然无法将一堆不同的可调用对象放在同一个list里面。
 
    ​	注意在多线程中如果一个线程往list添加可调用对象，一个线程负责在发生事件调用通知函数（也许这个事件只发生一次，所以希望在调用通知程序前所有可调用对象已加入），就可能涉及竞争问题。好的做法是把增加操作和调用通知程序放在同一个线程中
+   
+   观察者模式cpp实现例子：
+   
+   ```cpp
+   #include<iostream>
+   #include<vector>
+   
+   //观察者基类，实际观察者可以是其子类
+   class BaseObserver {
+       public:
+           void trigger() {
+               std::cout << "i'm trigger,name: " << base_observer_name << std::endl;
+           }
+           BaseObserver(std::string str):base_observer_name(str) {}
+       private:
+           std::string base_observer_name;
+   };
+   
+   //被观察者
+   class Observered {
+       public:
+           void add_observer(BaseObserver& new_observer) {
+               _observers.emplace_back(new_observer);
+           }
+           void notify() {
+               for(auto& obj : _observers) {
+                   obj.trigger();
+               }
+           }
+       private:
+           std::vector<BaseObserver> _observers;
+   };
+   
+   int main() {
+       Observered observered = Observered();
+       BaseObserver base_observer1 = BaseObserver("111");
+       BaseObserver base_observer2 = BaseObserver("222");
+       observered.add_observer(base_observer1);
+       observered.add_observer(base_observer2);
+       observered.notify();
+       return 0;
+   }
+   ```
 
 
 
@@ -811,16 +960,6 @@ vscode小知识
    动态链接库默认导入路径在linux中查看配置`/etc/ld.so.conf`，可以将路径写入配置，再用`ldconfig`载入，永久生效。
 
 3. scp 从本地复制到远程    `scp [-r] {本地文件/夹} {remote_username@remote_ip:文件/夹} `
-
-4. 在同一文件夹下多个文件中查找某个关键字：
-
-   1）通过`cat ./* | grep {查找内容}`确认文件中是否有这个关键字
-
-   2）find {文件夹，如果是当前文件夹可以省略} -type f -name "*.c" | xargs grep {查找的关键字}
-
-   - type f 意思是只找文件
-
-   - name "\*.c"  表示只找C语言写的代码，从而避免去查binary；也可以不写，表示找所有文件
 
 5. 查看linux发行版本：`cat /etc/issue`
 
@@ -931,6 +1070,8 @@ vscode小知识
      需设置快捷键为cmd + e
 
   5. toby for chrome  一次打开多个书签
+
+  6. Easy URL Editor 优化展示/编辑url 
 
   
 
@@ -1301,14 +1442,6 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
 
   回到桌面		ctrl + win + d
   
-- 命令
-
-  创建多级目录/文件夹    ``mkdir -p {路径}``
-  
-  查找文件``find / -name {文件名，可配合通配符} 2>/dev/null``
-  
-  find只查找当前文件夹一层   find ./ -maxdepth 1 -type d
-  
 - 权限&用户
 
   chmod只是改变文件的读写、执行权限，更底层的属性控制是由chattr来改变的todo lsattr
@@ -1424,8 +1557,23 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
     ```bash
     #让 ctrl + u 和bash打平
     bindkey \^U backward-kill-line
+    
+    #粘贴加快速度
+    # This speeds up pasting w/ autosuggest
+    # https://github.com/zsh-users/zsh-autosuggestions/issues/238
+    pasteinit() {
+      OLD_SELF_INSERT=${${(s.:.)widgets[self-insert]}[2,3]}
+      zle -N self-insert url-quote-magic # I wonder if you'd need `.url-quote-magic`?
+    }
+    
+    pastefinish() {
+      zle -N self-insert $OLD_SELF_INSERT
+    }
+    zstyle :bracketed-paste-magic paste-init pasteinit
+    zstyle :bracketed-paste-magic paste-finish pastefinish
+    
     ```
-
+    
     
 
 - 为了让多用户都使用同样的配置，要将`~/.zshrc`复制到每个用户下
@@ -1497,7 +1645,11 @@ iterm2小知识
 
 - 录屏：QuickTime player
 
-- 截图工具：iShot 完整版会收费
+- 截图工具：
+
+  - iShot 完整版会收费
+
+  - [熊猫OCR](https://github.com/miaomiaosoft/PandaOCR)，据说很好用
 
 - 日历工具：itsycal
 
@@ -1508,6 +1660,8 @@ iterm2小知识
 - 性能监控工具：status
 
 - 粘贴板：PasteNow 收费
+
+- 合盖自动关闭蓝牙：bluesnooze
 
 **mac小知识**
 
@@ -1861,7 +2015,7 @@ do
 done
 ```
 
-- shell小知识/bash小知识/shell相关
+- shell小知识/bash小知识/shell相关/shell命令行相关
 
   1. shell命令行操作小技巧
 
@@ -1897,67 +2051,85 @@ done
      	printf "%10d%10d%10d%10.2f\n" $1,$2,$3,total}'
      	大括号有多个语句时，用回车或分号间隔，功能：对于第二行之后（NR最小为1），显示每行累加
      ```
-  
+
   5. grep相关
 
      ```
      查找时排除多个文件：grep -r "abcde"  --exclude-dir="log" --exclude-dir="log2" --exclude-dir="logs"
+     排查或：grep -E "(aa bb|cc dd)" /file/path
      ```
-  
-  6. 光标
+
+  6. find相关
+
+     ```shell
+     #对当前文件夹下，仅保留release_dir，删除其余所有
+     find ./ -maxdepth 1 ! \( -wholename ./ -or -name release_dir \) -exec rm -rv {} +
+     注意其中-wholename为全匹配；-name为常规匹配（类似grep），可以加正则
+     
+     #查找最近2分钟内有改动项的文件
+     find ./ -mmin -2 -type f
+     
+     #与grep配合查找文件内字符串
+     find {文件夹，如果是当前文件夹可以省略} -type f -name "*.c" | xargs grep {查找的关键字}
+     ```
+
+     
+
+  7. 光标
 
     隐藏光标 ：  echo -e "\033[?25l"  
 
     显示光标 ：  echo -e "\033[?25h"
 
-  6. ls -l的时间是修改时间，ls -ul时间是访问时间
+  8. ls -l的时间是修改时间，ls -ul时间是访问时间
 
-  7. 给普通用户增加sudo权限
+  9. 给普通用户增加sudo权限
 
-     ```shell
-     vim /etc/sudoers
-     #找到类似root    ALL=(ALL)       ALL
-     #新增一行{username} ALL=(ALL)       ALL
-     ```
-  
-  8. 注意：对于类似$1等可能带有空格的参数，作实参需要加上引号。错误示例：
+```shell
+vim /etc/sudoers
+#找到类似root    ALL=(ALL)       ALL
+#新增一行{username} ALL=(ALL)       ALL
+```
 
-     <img src="./etc/pic/image-20210208200005642.png" alt="image-20210208200005642" style="zoom:50%;" />
+10. 注意：对于类似$1等可能带有空格的参数，作实参需要加上引号。错误示例：
 
-  9. 脚本中curl带变量：
+<img src="./etc/pic/image-20210208200005642.png" alt="image-20210208200005642" style="zoom:50%;" />
 
-     To insert a variable in the middle of a single quoted text, you have to end the single quote, then concatenate with the double quoted variable, and re-open the single quote to continue the text: ‘foo bar’“$variable”‘more foo’.
+11. 脚本中curl带变量：
 
-     例子：
+To insert a variable in the middle of a single quoted text, you have to end the single quote, then concatenate with the double quoted variable, and re-open the single quote to continue the text: ‘foo bar’“$variable”‘more foo’.
 
-     
+例子：
 
- 10. 查询进程/线程/端口/主机状态相关
 
-     - 查看端口占用情况：lsof -i:{端口号}    需要root权限
-     - 查看某个执行命令对应的进程id：ps aux | grep {执行命令}
 
- 11. bash的环境变量和自定义变量
+12. 查询进程/线程/端口/主机状态相关
 
-     - 自定义变量：不能被子进程/子shell继承的变量，没有单独命令查看，通过$ set可以查看环境变量+自定义变量
-     - 环境变量：能够被子进程/子shell继承的变量，如$PATH 通过$ export可以查看所有的环境变量
+- 查看端口占用情况：lsof -i:{端口号}    需要root权限
+- 查看某个执行命令对应的进程id：ps aux | grep {执行命令}
 
-     通过$ export {变量名}可以将自定义变量变为环境变量；通过$ declare +x {变量名}可以将环境变量改为自定义变量
+13. bash的环境变量和自定义变量
 
-12. sed相关
-    - 解决替换时有空格问题：sed -i 's@abc def@aaa bbb@' {file_name}
+- 自定义变量：不能被子进程/子shell继承的变量，没有单独命令查看，通过$ set可以查看环境变量+自定义变量
+- 环境变量：能够被子进程/子shell继承的变量，如$PATH 通过$ export可以查看所有的环境变量
 
-13. 重定向小知识
+通过$ export {变量名}可以将自定义变量变为环境变量；通过$ declare +x {变量名}可以将环境变量改为自定义变量
 
-    ```shell
-    echo "C语言中文网" 10>log.txt >&10 10>&-  #输出到了log.txt
-    echo "C语言中文网" >&10 10>log.txt 10>&-  #还是输出到了屏幕
-    #上方这2条命令效果是不一样的，原因在于多个重定向操作时，可以看为多次操作的集合。
-    #在第1条中，文件描述符10指向了log.txt，之后标准输出（文件描述符1）重定向到10，即会重定向到log.txt
-    #在第2条中，先将文件描述符10的地址赋值给标准输出，这是10并没有指向，所以是无效赋值，之后10才重定向到了log.txt，因此未对标准输出生效
-    ```
+14. sed相关
 
-    <img src="etc/pic/image-20221102105250970.png" alt="image-20221102105250970" style="zoom:40%;" />
+- 解决替换时有空格问题：sed -i 's@abc def@aaa bbb@' {file_name}
+
+15. 重定向小知识
+
+```shell
+echo "C语言中文网" 10>log.txt >&10 10>&-  #输出到了log.txt
+echo "C语言中文网" >&10 10>log.txt 10>&-  #还是输出到了屏幕
+#上方这2条命令效果是不一样的，原因在于多个重定向操作时，可以看为多次操作的集合。
+#在第1条中，文件描述符10指向了log.txt，之后标准输出（文件描述符1）重定向到10，即会重定向到log.txt
+#在第2条中，先将文件描述符10的地址赋值给标准输出，这是10并没有指向，所以是无效赋值，之后10才重定向到了log.txt，因此未对标准输出生效
+```
+
+<img src="etc/pic/image-20221102105250970.png" alt="image-20221102105250970" style="zoom:40%;" />
 
 **shell小轮子**
 
@@ -1992,11 +2164,16 @@ done
    basepath=$(cd dirname $(readlink $0); pwd)
    ```
 
-- 获取当前时间：time=$(date "+%Y-%m-%d %H:%M:%S")
+- shell获取当前时间：
 
+   ```shell
+   time=$(date "+%Y-%m-%d %H:%M:%S")  #2022-12-28 15:09:16
+   time=$(date "+%m%d%H%M")  #12281510
+   
    时间转换，拿到世界时间：date -d @{时间戳}
-
+   
    拿到时间戳：date -d '20210901 00:00:00' +'%s.%N'
+   ```
 
 - 日志记录函数
 
@@ -2517,11 +2694,54 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
 
   方法2：任务管理器--关闭ps进程下的一些怀疑对象，卡住画面恢复
 
-- 合并多个图层：ctrl+鼠标左键选中多个图层，ctrl+e合并
-- 新建透明图层：ctrl+shift+N
+- 图层相关
+
+  - 合并多个图层：ctrl+鼠标左键选中多个图层，ctrl+e合并
+  - 新建透明图层：ctrl+shift+N
+  - 对图层加边框：1）对右下角的某个图层双击或者右键-混合选项；2）对弹出菜单，勾选描边，可对其中进行编辑
+  - 复制图层样式到另一图层：1）对右下角的某个图层右键-拷贝图层样式；2）对目标图层右键-粘贴图层样式
+
 - 将背景改为透明：1）选中背景，再反向选择；2）编辑-剪切；3）新建透明图层（ctrl+shift+N）；4）编辑-粘贴；5）删除原始图层；6）保存为png格式
 
 ## protobuf相关/pb相关
+
+- 编译protoc
+
+  1. 下载源码产出，如protobuf-all-21.9.tar.gz：https://github.com/protocolbuffers/protobuf/releases
+
+     注意，适合python2的最新产出为：[protobuf-all-3.17.3.tar.gz](https://github.com/protocolbuffers/protobuf/releases/download/v3.17.3/protobuf-all-3.17.3.tar.gz)
+
+  2. 编译安装
+
+     ```shell
+     cd protobuf-21.9
+     ./configure //默认安装到/usr/local
+     make
+     sudo make install
+     ```
+
+  3. 测试安装是否成功
+
+     1. protoc --version //查看是否安装成功 libprotoc 3.21.9
+
+     2. 编写测试代码：main.cpp和[people.proto](#people)
+
+        ```cpp
+        #main.cpp
+        #include<iostream>
+        #include "people.pb.h"
+        int main() {
+            auto obj_people = world::animal::People();
+            obj_people.set_gender(world::animal::People_Gender_FEMALE);
+            std::cout << obj_people.DebugString();
+        }
+        ```
+
+     3. 获取people.proto对应cpp文件：`protoc -I=./ --cpp_out=./ ./people.proto`
+
+     4. 编译  g++ ./main.cpp people.pb.cc -std=c++11 $(pkg-config --cflags --libs protobuf)
+
+     5. 执行./a.out  结果应该为：gender: FEMALE
 
 - 限定修饰符包含 required\optional\repeated 
 
@@ -2547,14 +2767,14 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
   
   3. enum元素与cpp
   
-     people.proto
+     <a name=people>people.proto</a>
   
      ```protobuf
      syntax = "proto2";
      package world.animal;
      message People {
          enum Gender {
-             MALE = 1;  //对应cpp元素为 world::animal::People_Gender_MALE
+             MALE = 1;  //对应cpp元素为 world::animal::People_Gender_MALE,python为people_pb2.People.MALE
              FEMALE = 2;  //对应cpp元素为 world::animal::People_Gender_FEMALE
              OTHER = 3;  //对应cpp元素为 world::animal::People_Gender_OTHER
          };
@@ -2915,6 +3135,9 @@ print('{name} wrote {book}'.format(name='Swaroop', book='A Byte of Python'), end
      #希望导入/home/work/module路径
      import sys, os
      sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+     
+     #查看python各环境路径
+     $ python -m site
      ```
 
      
@@ -3641,7 +3864,36 @@ python小轮子：
    print("{}".format(format_str))
    ```
 
+10. python参数处理模块argparse示例
+
+   ```python
+   import argparse
    
+   parser = argparse.ArgumentParser()
+   parser.add_argument("-i", "--input_file", required=True, help="input file path")
+   parser.add_argument("-o", "--output_file", required=True, help="output file path")
+   args = parser.parse_args()
+   
+   input_file = args.input_file
+   output_file = args.output_file
+   
+   print("input_file: {}, output_file: {}".format(input_file, output_file))
+   ```
+
+11. 打印python异常栈
+
+    ```python
+    import traceback
+    
+    str = "2.11"
+    try:
+        int_value = int(str)
+    except Exception as e:
+        print("get except: {}".format(e))
+        traceback.print_exc()
+    ```
+
+    
 
 
 
@@ -3658,6 +3910,32 @@ python小轮子：
 - 安装matplotlib timeout：
 
   清华源pip安装命令：pip install -i https://pypi.tuna.tsinghua.edu.cn/simple matplotlib
+
+## tornado相关
+
+- 常规知识
+
+  - 获取消息头等字段
+
+  ```python
+  self.request.path
+  query = self.request.query
+  # 获取完整的 URI
+  uri = self.request.uri
+  ```
+
+  
+
+**tornado小知识**
+
+1. <a name=防止返回304>防止返回304</a>：
+
+   ```python
+   if self.request.headers.get('If-None-Match'): #防止返回304
+     del self.request.headers['If-None-Match']
+   ```
+
+   
 
 ## expect脚本
 
@@ -3726,7 +4004,11 @@ curl -i https://google.com
 
 
 
+## ipad相关
 
+- 解决ipad打游戏断触问题
+  - 方法一：设置-辅助功能-触控-触控调节-打开  不要动其他开关
+  - 方法二：设置-辅助功能-引导式访问-打开  在游戏中点3次关机键设置为引导式访问  注意和方法一互斥
 
 ## 厨房/厨艺相关
 
@@ -3738,8 +4020,6 @@ curl -i https://google.com
     虾去虾线，减掉腿、触须以及嘴角，并在背部切一刀
 - 实操
     放油放虾，多炒下炸酥脆炒出虾油，放入葱姜蒜，翻炒下放入汁，再大火收汁
-
-
 
 **平菇肉片汤**
 
@@ -3754,8 +4034,6 @@ curl -i https://google.com
   里脊肉切片，放盐、白胡椒粉、料酒、淀粉腌制
 
   起锅烧油，放入葱姜蒜，放平菇并加盐，炒出水分，加水烧开，适量时间后放入肉片，出锅前放鸡精，最后放葱花
-
-
 
 **炒猪肝**
 
@@ -3773,7 +4051,6 @@ curl -i https://google.com
 
   锅中加火锅底料，炒猪肝和青椒，注意时间，起锅前放鸡精
 
-  
 
 **大盘鸡**
 
@@ -3799,7 +4076,19 @@ curl -i https://google.com
 
   各类菜（如黄瓜、莴笋、土豆、藕片、
 
+**炝炒酸辣土豆丝**
 
+- 准备
+
+  土豆 干辣椒 大蒜 醋 生抽 盐 鸡精
+
+  土豆切丝，大蒜切碎末，干辣椒尽量切大块些，因为辣椒会糊，小了不好挑出来
+
+  用醋、生抽、盐、鸡精调半碗汁
+
+- 实操
+
+  起锅烧油到冒烟，火一定要大。放辣椒等2s炒糊、放大蒜和土豆丝翻炒，然后放调好的汁，断生尽快出锅
 
 **海鲜蘸料**
 
@@ -3810,6 +4099,12 @@ curl -i https://google.com
 - 实操
 
   老姜切碎泡在醋里1小时，吃的时候再放入酱油
+
+## rpc相关
+
+### grpc相关
+
+- grpc客户端：BloomRPC
 
 ## json相关
 
@@ -4444,6 +4739,8 @@ Redis支持五种数据类型：string（字符串），hash（哈希），list�
 ## curl相关
 
 禁止缓存参数：-H 'Cache-Control: no-cache'
+
+额外材料：[tornado防止返回304](#防止返回304)
 
 
 

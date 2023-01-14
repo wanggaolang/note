@@ -66,7 +66,7 @@
      };
      int main() {
              const A a_obj;
-             a_obj.hello();
+             a_obj.hello(); //此处会报错
      }
      ```
 
@@ -99,3 +99,7 @@
   overload是在一个类或文件中的多个函数，有相同函数名，不同参数列表（即不同的参数类型，不同的参数个数，不同的参数顺序（参数类型必须不一样））。在调用时用实参列表匹配形参列表，调用不同的函数。
 
 - 类方法的private和static：不能直接调用private和protected的static函数，可以调用pbulic的static函数，而方法内部可以调用private和protected类型的static函数
+
+- 基类、子类的初始化顺序
+
+  会先执行基类构造函数，然后才是子类构造函数
