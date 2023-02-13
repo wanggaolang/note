@@ -2805,7 +2805,7 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
 
   4. `bool ParseFromIstream(istream* input);`: parses a message from the given C++ `istream`.
   
-- pb对象的可视化和json接入
+- pb对象的可视化和json接入-cpp
 
   一般用DebugString或PrintDebugString查看，不过输出不是严格意义的json。如果要合法数据，有以下方式
 
@@ -2829,6 +2829,8 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
     return json;
   }
   ```
+
+- [pb对象与json相互转换-python](#pb对象与json相互转换)
 
 - protoc相关
 
@@ -3140,7 +3142,6 @@ print('{name} wrote {book}'.format(name='Swaroop', book='A Byte of Python'), end
      $ python -m site
      ```
 
-     
 
   9. dir({模块/对象名})
 
@@ -3148,61 +3149,56 @@ print('{name} wrote {book}'.format(name='Swaroop', book='A Byte of Python'), end
 
   10. 函数参数
 
-     ```python
-     #位置参数，即普通参数
-     def fun(x)
-     
-     #默认参数,原则是要放在位置参数之后
-     def fun(x, y=0, z=1)
-     
-     """可通过指定形参名并赋值的方式跨过默认调用的顺序"""
-     fun(1,z=2)  #跨过需先给y值，再给到z的规则
-     
-     """默认参数必须指向不变对象，原因可理解为Python函数在定义的时候，默认参数L的值就被计算出来了，每次调用默认参数时会将这个值的地址与L绑定，因为默认参数L也是一个变量，它指向对象[]，每次调用该函数，如果改变了L的内容，则下次调用时，默认参数的内容就变了，不再是函数定义时的[]了；如果是不变对象，即使在函数体对L重新赋值，其实改变的是L指向的地址，初始值及其对应的地址并未改变"""
-     >>> def add_end(L=[]):
-     ...     L.append('END')
-     ...     return L
-     ...
-     >>> add_end()
-     ['END']
-     >>> add_end()
-     ['END', 'END']#因为默认参数为可变参数，导致的结果不符合预期
-     
-     #可变参数
-     def fun(*numbers) #numbers在函数内部是一个tuple
-     
-     """如果已经有一个list或者tuple，要调用一个可变参数即在实参前加一个*"""
-     list_obj = [1,2,3]
-     fun(*list_obj)
+```python
+ #位置参数，即普通参数
+ def fun(x)
+ 
+ #默认参数,原则是要放在位置参数之后
+ def fun(x, y=0, z=1)
+ 
+ """可通过指定形参名并赋值的方式跨过默认调用的顺序"""
+ fun(1,z=2)  #跨过需先给y值，再给到z的规则
+ 
+ """默认参数必须指向不变对象，原因可理解为Python函数在定义的时候，默认参数L的值就被计算出来了，每次调用默认参数时会将这个值的地址与L绑定，因为默认参数L也是一个变量，它指向对象[]，每次调用该函数，如果改变了L的内容，则下次调用时，默认参数的内容就变了，不再是函数定义时的[]了；如果是不变对象，即使在函数体对L重新赋值，其实改变的是L指向的地址，初始值及其对应的地址并未改变"""
+ >>> def add_end(L=[]):
+ ...     L.append('END')
+ ...     return L
+ ...
+ >>> add_end()
+ ['END']
+ >>> add_end()
+ ['END', 'END']#因为默认参数为可变参数，导致的结果不符合预期
+ 
+ #可变参数
+ def fun(*numbers) #numbers在函数内部是一个tuple
+ 
+ """如果已经有一个list或者tuple，要调用一个可变参数即在实参前加一个*"""
+ list_obj = [1,2,3]
+ fun(*list_obj)
 
 
-​     
-​     #关键字参数
-​     #可变参数允许你传入0个或任意个参数，这些可变参数在函数调用时自动组装为一个tuple。而关键字参数允许你传入0个或任意个含参数名的参数，这些关键字参数在函数内部自动组装为一个dict
-​     def person(name, age, **kw):
-​         print('name:', name, 'age:', age, 'other:', kw)
-​     
-​     """实际调用"""
-​     >>> extra = {'city': 'Beijing', 'job': 'Engineer'}
-​     >>> person('Jack', 24, **extra)
-​     
-​     #命名关键字参数【仅在python3】  限制输入的关键字参数为形参指的的那些参数，不能增加或减少
-​     def person(name, age, *args, city, job)#在可变参数后的即认为是命名关键字参数
-​     def person(name, age, *, city, job)#如果没有可变参数，命名关键字参数需要一个特殊分隔符*
-​     def person(name, age, *, city='北京', job)#命名关键字参数可以有缺省值,这样在调用时就可以不附带该参数
-​     
-​     person('张三',18,job='work')#对命名关键字参数实例化时，【必须传入参数名】
-​     
-​     #参数组合
-​     #在Python中定义函数，可以用位置参数、默认参数、可变参数、关键字参数和命名关键字参数，这5种参数都可以组合使用。但是请注意，参数定义的顺序必须是：必选参数、默认参数、可变参数、【命名关键字参数和关键字参数】。
-​     
-​     """经典用法举例"""
-​     def printOrder(coffee, *args, coffee_order="Espresso", **kwargs):#接收coffee名和配料，默认为浓咖啡，后还可跟其他
-
-
-​     
-​     
-​     ```
+ #关键字参数
+ #可变参数允许你传入0个或任意个参数，这些可变参数在函数调用时自动组装为一个tuple。而关键字参数允许你传入0个或任意个含参数名的参数，这些关键字参数在函数内部自动组装为一个dict
+ def person(name, age, **kw):
+     print('name:', name, 'age:', age, 'other:', kw)
+ 
+ """实际调用"""
+ >>> extra = {'city': 'Beijing', 'job': 'Engineer'}
+ >>> person('Jack', 24, **extra)
+ http://yf.baidu-int.com/adp/issuefinder/?id=43415757
+ #命名关键字参数【仅在python3】  限制输入的关键字参数为形参指的的那些参数，不能增加或减少
+ def person(name, age, *args, city, job)#在可变参数后的即认为是命名关键字参数
+ def person(name, age, *, city, job)#如果没有可变参数，命名关键字参数需要一个特殊分隔符*
+ def person(name, age, *, city='北京', job)#命名关键字参数可以有缺省值,这样在调用时就可以不附带该参数
+ 
+ person('张三',18,job='work')#对命名关键字参数实例化时，【必须传入参数名】
+ 
+ #参数组合
+ #在Python中定义函数，可以用位置参数、默认参数、可变参数、关键字参数和命名关键字参数，这5种参数都可以组合使用。但是请注意，参数定义的顺序必须是：必选参数、默认参数、可变参数、【命名关键字参数和关键字参数】。
+ 
+ """经典用法举例"""
+def printOrder(coffee, *args, coffee_order="Espresso", **kwargs):#接收coffee名和配料，默认为浓咖啡，后还可跟其他
+```
 
   11. del {对象名}   可理解为调用了该对象析构函数，后续不能使用该对象
 
@@ -3891,6 +3887,18 @@ python小轮子：
     except Exception as e:
         print("get except: {}".format(e))
         traceback.print_exc()
+    ```
+
+12. <a name=pb对象与json相互转换>pb对象与json相互转换/pb对象与dict相互转换</a>  来自[此处](https://stackoverflow.com/questions/19734617/protobuf-to-json-in-python)
+
+    ```python
+    #I'd recommend using protobuf↔json converters from google's protobuf library:
+    from google.protobuf.json_format import MessageToJson
+    json_obj = MessageToJson(org)
+    
+    #You can also serialise the protobuf to a dictionary:
+    from google.protobuf.json_format import MessageToDict
+    dict_obj = MessageToDict(org)
     ```
 
     
