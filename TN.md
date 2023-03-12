@@ -373,8 +373,8 @@ git config --global  --unset http.https://github.com.proxy
 
 ```
 [user]
-    name = songhongshan
-    email = songhongshan@xx.com
+    name = wanggaolang
+    email = wanggaolang@xx.com
 ```
 
 git commit --amend --reset-author
