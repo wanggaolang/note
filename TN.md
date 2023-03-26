@@ -2083,7 +2083,7 @@ done
 
   8. ls -l的时间是修改时间，ls -ul时间是访问时间
 
-  9. 给普通用户增加sudo权限
+  9. 给普通用户增加sudo权限(解决无法sudo su)
 
 ```shell
 vim /etc/sudoers
@@ -3734,11 +3734,18 @@ python小知识：
     # -*- coding: utf-8 -*-
     ```
 
-11. python打印时，一行太长做格式上的换行
+11. python换行相关
 
     ```python
+    #python打印时，一行太长做格式上的换行
     print("abc{}" \
             "ef{}".format("d", "g"))#会打印abcdefg
+    
+    #python普通代码主动换行
+    a = b = 1
+    c = a \  #开始换行
+        + b
+    print(c) #打印2
     ```
 
 
@@ -3907,7 +3914,21 @@ python小轮子：
     dict_obj = MessageToDict(org)
     ```
 
-    
+13. python3操作csv文件
+
+    ```python
+    #-*- coding: utf-8-sig -*-
+    import csv
+    import re
+    import os
+    #编码格式可选，如gbk、utf-8
+    csv_reader = csv.reader(open("path/to/file.csv", encoding='gbk'))
+    for line in csv_reader:
+      if re.match(r'^[a-zA-Z]', line[1]):
+        print(line[0])
+    ```
+
+    注意可能会报错编码问题，可以将当前csv文件重新导出，更改格式为gbk或者utf-8：文件-导出为-CSV-选择编码如utf-8-导出
 
 
 
@@ -4317,8 +4338,13 @@ ate 和 binary 模式可用于任何类型的文件流对象，且可以与其�
 - gcc参数：编译时引入/usr/local/lib文件夹下的so：-L/usr/local/lib，某个头文件在/home/other：-I/home/other
 
 ```bash
-// 在gcc中可以通过-L参数指定库文件搜索路径，通过-l参数指定库文件，如下方表示在指定的文件夹下找libboost_system.so文件
+#在gcc中可以通过-L参数指定库文件搜索路径，通过-l参数指定库文件，如下方表示在指定的文件夹下找libboost_system.so文件
 gcc -o hello hello.cpp -L/home/test -lboost_system
+
+# 设置gcc版本，防止部分python库安装时gcc版本过低报错
+export PATH="/opt/compiler/gcc-8.2/bin:$PATH"
+export CFLAGS="-I/opt/compiler/gcc-8.2/include/ -I/usr/include/"
+export LDFLAGS="-L/opt/compiler/gcc-8.2/lib64/ -L/usr/lib64/"
 ```
 
 - 查看依赖的so文件是否都有：ldd {程序名或so文件}
