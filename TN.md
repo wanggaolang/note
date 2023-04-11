@@ -263,6 +263,12 @@ git fetch todo
   如果内容编写错误：使用`git commit --amend` 对上次提交的内容进行修改
   
   如果需要用编辑器进行多行编辑commit message：git commit -a
+  
+- git rebase相关
+
+  合并多个commit：1）git rebase -i {commitid}；2）将其中要融合的commit从pick改为s；3）保存退出，更改commit信息；
+  
+  注意第2步只会包含第1步commitid之后的所有commit，不包含这个commitid本身的commit
 
 **分支相关**
 
@@ -365,7 +371,7 @@ git config --global  --unset http.https://github.com.proxy
 
   - 对于在.gitignore文件中新增项，分为2类：1）对于之前从未trace的文件，直接修改.gitignore，就会生效，然后add .gitignore文件并提交；2）对于已经trace的文件（即已经git add的文件），需要1）修改.gitignore文件；2）git rm -rf --cached .  3）git add .  4）git commit   之后该文件的更改忽略才会生效
 
-  - 忽略当前git仓库下某些文件夹：在git仓库根目录的`.gitignore`文件写入这些文件夹名字，注意是以git仓库当前.gitignore目录作为基础目录的相对路径，最好不要带./，如当前文件夹下tmp_file就直接写入.gitignore中为tmp_file
+  - 忽略当前git仓库下某些文件夹：在git仓库根目录的`.gitignore`文件写入这些文件夹名字，注意是以git仓库当前.gitignore目录作为基础目录的相对路径，最好不要带./，如当前文件夹下tmp_file就直接写入.gitignore中为tmp_file；注意.gitignore类似后缀匹配的，即如果直接在git仓库当前.gitignore加入file_a，则所有*/file_a的都会被忽略，如：path_a/file_a、path_b/file_a
 
 - 修改当前仓库用户和邮箱：
 
@@ -425,7 +431,20 @@ git commit --amend --reset-author
    }
  ```
 
+## 电脑装机/电脑硬件相关
 
+1. 一般台式电脑都有集显和核显接口，在装机、进bios操作时，尽量将显示器接口插入核显，防止缺少或者不匹配显卡驱动
+
+2. ubuntu开机黑屏最初应弄清问题：尝试按键 ctrl + alt + F1-F6  一般F1为GUI界面，剩下都是CUI界面，看能否进入
+
+3. 各品牌台式机进入bios方法
+
+   ```shell
+   #dell
+   在出现标识界面后，按F2或者F12。以防万一可以一直点按按钮
+   ```
+
+   
 
 ## new和malloc的区别
 
@@ -1406,6 +1425,22 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
      ```shell
      [global_config]
        title_font = Ubuntu Mono 11[keybindings]
+     [keybindings]
+       split_horiz = <Shift><Alt>d
+       split_vert = <Alt>d
+       close_term = <Alt>w
+       paste = <Primary>v
+     [profiles]
+       [[default]]
+         background_color = "#002b36"
+         background_darkness = 0.91
+         background_type = transparent
+         cursor_color = "#e0f0f1"
+         font = Ubuntu Mono 11
+         foreground_color = "#e0f0f1"
+         show_titlebar = False
+         use_system_font = False
+         copy_on_selection = True
      [layouts]
        [[default]]
          [[[child1]]]
@@ -1415,16 +1450,6 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
            parent = ""
            type = Window
      [plugins]
-     [profiles]
-       [[default]]
-         background_color = "#002b36"
-         background_darkness = 0.91
-         background_image = None
-         background_type = transparent
-         font = Ubuntu Mono 11
-         foreground_color = "#e0f0f1"
-         use_system_font = False
-         show_titlebar = False
      ```
 3. 通过dconfig-editor将terminator设置为默认终端（自己搜）
 4. 修改`.bashrc`：https://blog.csdn.net/zhangkzz/article/details/90524066
@@ -3899,7 +3924,8 @@ python小轮子：
         int_value = int(str)
     except Exception as e:
         print("get except: {}".format(e))
-        traceback.print_exc()
+        traceback.print_exc() #等效于下方这行代码
+        print("get except detail: {}".format(traceback.format_exc()))
     ```
 
 12. <a name=pb对象与json相互转换>pb对象与json相互转换/pb对象与dict相互转换</a>  来自[此处](https://stackoverflow.com/questions/19734617/protobuf-to-json-in-python)
@@ -4134,6 +4160,33 @@ curl -i https://google.com
 - 实操
 
   老姜切碎泡在醋里1小时，吃的时候再放入酱油
+
+**蒸蛋**
+
+- 准备
+
+  鸡蛋 60度温水 保鲜膜 香油 葱 菜油（猪油更好） 味极鲜酱油
+
+- 实操
+
+  「鸡蛋」搅拌后过滤网2次，将其倒入1.5倍「60度温水」中，盖上「保鲜膜」并在上边戳洞，冷水放入蒸锅，水开6分钟后关火焖3-5分钟，出锅放「香油 葱 菜油（猪油更好） 味极鲜酱油」
+
+## 工作汇报相关
+
+- 汇报逻辑
+
+  - 目标（KR） - 主要工作 - 收益/价值
+  - 重点工作介绍
+  - 主要问题和困难
+  - 未来工作计划
+
+- 词语
+
+  ```shell
+  夯实 打磨 支撑 落地 推进解决
+  ```
+
+  
 
 ## rpc相关
 
@@ -4786,7 +4839,7 @@ Redis支持五种数据类型：string（字符串），hash（哈希），list�
 
 ## sql相关/mysql相关
 
-sql小知识
+**sql小知识**
 
 1. cast函数
 
@@ -4830,7 +4883,13 @@ sql小知识
    --查询相关
    1）模糊查询：name LIKE "%福贵%"
    ```
-   
+
+1. 实战：查询status=500的case数量
+
+   ```sql
+   SELECT COUNT(IF(status=500,1,NULL)) as status_500_requests from {table_name}
+   ```
+
    
 
 ## php相关
