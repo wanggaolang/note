@@ -29,37 +29,32 @@ public:
 class Solution {
 public:
     bool isValidBST(TreeNode* root) {
-        if (root == nullptr) return true;
-        std::vector<int> left_tree_values;
-        std::vector<int> right_tree_values;
-        getTreeValue(root->left, left_tree_values);
-        getTreeValue(root->right, right_tree_values);
-        for (const auto& i : left_tree_values) {
-            if (root->val <= i) return false;
+        if (root == nullptr) {
+            return true;
         }
-        for (const auto& i : right_tree_values) {
-            if (root->val >= i) return false;
+        std::vector<int> left_values;
+        std::vector<int> right_values;
+        getTreeValues(root->left, left_values);
+        getTreeValues(root->right, right_values);
+        for (const auto& i : left_values) {
+            if (i >= root->val) {
+                return false;
+            }
+        }
+        for (const auto& i : right_values) {
+            if (i <= root->val) {
+                return false;
+            }
         }
         return isValidBST(root->left) && isValidBST(root->right);
     }
-    void getTreeValue(TreeNode* root, std::vector<int>& res) {//中序遍历获取所有值
-        if (root == nullptr) return;
-        res.emplace_back(root->val);
-        getTreeValue(root->left, res);
-        getTreeValue(root->right, res);
-    }
-};
 
-//v2.0 看labuladuo答案：https://github.com/shichangzhi/fucking-algorithm-book/blob/main/%E7%AC%AC3%E7%AB%A0-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E7%B3%BB%E5%88%97/3.3-%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E6%93%8D%E4%BD%9C%E9%9B%86%E9%94%A6.md
-class Solution {
-public:
-    bool isValidBST(TreeNode* root) {
-        return isValidBST(root, nullptr, nullptr);
-    }
-    bool isValidBST(TreeNode* root, TreeNode* min, TreeNode* max) {
-        if (! root) return true;
-        if (min && min->val >= root->val) return false;
-        if (max && max->val <= root->val) return false;
-        return isValidBST(root->left, min, root) && isValidBST(root->right, root, max);
+    void getTreeValues(TreeNode* root, std::vector<int>& res) {
+        if (root == nullptr) {
+            return;
+        }
+        res.emplace_back(root->val);
+        getTreeValues(root->left, res);
+        getTreeValues(root->right, res);
     }
 };
