@@ -2183,7 +2183,7 @@ echo "C语言中文网" >&10 10>log.txt 10>&-  #还是输出到了屏幕
 
 <img src="etc/pic/image-20221102105250970.png" alt="image-20221102105250970" style="zoom:40%;" />
 
-**shell小轮子**
+**shell小轮子/shell脚本小轮子**
 
 - 将多行，每行带有空格的转为数组：
 
@@ -2257,26 +2257,6 @@ echo "C语言中文网" >&10 10>log.txt 10>&-  #还是输出到了屏幕
    info "enter main"
    ```
 
-   
-
-- 检查程序是否存在：
-
-   ```shell
-   function check(){
-         echo "\$1: $1"
-         ps aux |grep "$1" |grep -v "grep" |grep -v $0
-         echo $str
-         count=`ps aux |grep "$1" |grep -v "grep" |grep -v $0 |wc -l`
-         #echo $count
-         if [ 0 == $count ];then
-             echo "process not exist"
-         else
-             echo "process id: $count"
-         fi
-       }
-   check "$1"
-   ```
-
 - 将多行文本转为数组：
 
    ```shell
@@ -2291,14 +2271,38 @@ echo "C语言中文网" >&10 10>log.txt 10>&-  #还是输出到了屏幕
 - 检查进程是否存在并kill
 
    ```shell
-   function get_exampleprocess_pids() {
-       local pids=`ps aux |grep exampleprocess|grep -v grep |awk '{print $2}'`
-       if [[ -z "$pids" ]];then
-           echo "exampleprocess not exist"
-       else
-           echo "begin kill exampleprocess pids: $pids"
-           kill -9 $pids
+   function get_process_pids() {
+       if [[ $# != 1 ]];then
+           return
        fi
+       local pids=$(ps aux |grep "$1" |grep -v "grep" |grep -v $0 |awk '{print $2}' |xargs)
+       echo ${pids}
+   }
+   
+   #正常返回0，异常返回1
+   function kill_process() {
+       local res=0
+       if [[ $# != 1 ]];then
+           warning "kill_process need 1 param"
+           return 1
+       fi
+       local check_process_str="${1}"
+       local pids=$(get_process_pids "${check_process_str}")
+       if [[ -z $pids ]];then
+           echo "no process need kill"
+       else
+           echo "begin kill process: $pids"
+           kill -9 $pids
+           sleep 5
+           pids=$(get_process_pids "${check_process_str}")
+           if [[ -z $pids ]];then
+               echo "kill process success"
+           else
+               echo "kill process fail"
+               res=1
+           fi
+       fi
+       return $res
    }
    ```
 
@@ -2362,6 +2366,242 @@ echo "C语言中文网" >&10 10>log.txt 10>&-  #还是输出到了屏幕
    }
    ```
    
+- 符合archer3协议的启停脚本。即对外暴露start/stop/restart/status方法来进行服务的启停和检测，返回0为正常，非0异常
+
+   ```shell
+   #!/bin/bash
+   
+   # opera 启动脚本
+   
+   ############################# base settings start#########################
+   BASE_DIR="$(cd $(dirname $0)/../;pwd)"
+   export PYENV_ROOT="${BASE_DIR}/pyenv/2.7.14"
+   export PATH="$PYENV_ROOT/bin:$PATH"
+   export PYTHONPATH=$PYENV_ROOT:$PYTHONPATH
+   SLEEP_TIME=5 #等待时间设置为2s
+   #使用关联数组，分别表示进程名，进程关键字（ps查询方法），启动命令
+   declare -A PROCESS_INFOS_ARRAY=(
+       [0,0]="example_process_1" [0,1]="python -m example_process_1" [0,2]="python -m example_process_1"
+       [1,0]="example_process_2" [1,1]="python -m example_process_2" [1,2]="python -m example_process_2"
+   )
+   ARRAY_ROWS_SIZE=2 #进程数组行数
+   ARRAY_COLS_SIZE=3 #进程数组列数
+   
+   # 是否打印日志到标准输出
+   VERBOSELY=1
+   DATE=$(date +%Y%m%d-%H:%M:%S)
+   ROOT="$(cd $(dirname $0)/../;pwd)"
+   # 创建日志目录
+   [[ ! -d "${ROOT}/log" ]] && mkdir -p "${ROOT}/log"
+   LOG_FILE="${ROOT}/control.log"
+   ############################# base settings end#########################
+   
+   ############################### function ###########################
+   # 日志打印函数
+   logging() {
+       local timestamp=$(date)
+       if [[ ${VERBOSELY} -eq 1 ]];then
+           echo "[${timestamp}]$@" >&2
+       fi
+       echo "[${timestamp}]$@" >> ${LOG_FILE}
+   }
+   # warning 日志
+   warning() {
+       logging "WARNING: $@"
+   }
+    # info 日志
+   info() {
+       logging "INFO: $@"
+   }
+   
+   setup_env() {
+       echo "set path start..."
+       export PYENV_ROOT="${BASE_DIR}/pyenv/2.7.14"
+       export PATH="$PYENV_ROOT/bin:$PATH"
+   }
+   
+   #启动，正常返回0，异常返回1
+   start() {
+       setup_env
+   
+       for ((line_index=0; line_index<${ARRAY_ROWS_SIZE}; line_index++)); do
+           local process_name=${PROCESS_INFOS_ARRAY[$line_index,0]}
+           local check_process_str=${PROCESS_INFOS_ARRAY[$line_index,1]}
+           local start_process_cmd=${PROCESS_INFOS_ARRAY[$line_index,2]}
+           check_and_start_process "${process_name}" "${check_process_str}" "${start_process_cmd}"
+           if [[ $? -ne 0 ]];then
+               warning "check_and_start_process $process_name failed!"
+               return 1
+           fi
+       done
+       return 0
+   }
+   
+   #启动进程，成功0，失败1
+   #入参说明：$1为进程名，$2为检查进程存在关键字，$3为进程启动命令
+   check_and_start_process() {
+       if [[ $# != 3 ]];then
+           warning "check_and_start_process need 3 param"
+           return 1
+       fi
+       local process_name="${1}" 
+       local check_process_str="${2}"
+       local start_process_cmd="${3}"
+       local pids=$(get_process_pids "${check_process_str}")
+       if [[ -z $pids ]];then
+           $start_process_cmd &
+       else
+           info "$process_name alredy exist, not need start. pid: $pids"
+           return 0
+       fi
+   
+       sleep ${SLEEP_TIME}
+       pids=$(get_process_pids "${check_process_str}")
+       if [[ -z $pids ]];then
+           info "start $process_name fail"
+           return 1
+       else
+           info "start $process_name success, pid: $pids"
+           return 0
+       fi
+   
+   }
+   
+   #获取进程pids
+   #入参为需要检查的进程关键字
+   #返回值为pids，形如：223 111 95
+   get_process_pids() {
+       if [[ $# != 1 ]];then
+           return
+       fi
+       local pids=$(ps aux |grep "$1" |grep -v "grep" |grep -v $0 |awk '{print $2}' |xargs)
+       echo ${pids}
+   }
+   
+   #停止进程，成功0，失败1
+   #入参说明：$1为进程名，$2为检查进程存在关键字
+   check_and_stop_process() {
+       if [[ $# != 2 ]];then
+           warning "check_and_start_process need 3 param"
+           return 1
+       fi
+       local process_name="${1}" 
+       local check_process_str="${2}"
+       local pids=$(get_process_pids "$check_process_str")
+       if [[ -z $pids ]];then
+           info "$process_name alredy not exist, not need stop"
+           return 0
+       else
+           info "begin kill $process_name pids: $pids"
+           kill -9 $pids
+       fi
+   
+       sleep ${SLEEP_TIME}
+       pids=$(get_process_pids "${check_process_str}")
+       if [[ -z ${pids} ]];then
+           info "stop $process_name success"
+           return 0
+       else
+           info "stop $process_name failed! still exist pids: $pids"
+           return 1
+       fi
+   }
+   
+   # 停止服务，执行成功返回0，失败返回1
+   stop() {
+       for ((line_index=0; line_index<${ARRAY_ROWS_SIZE}; line_index++)); do
+           local process_name=${PROCESS_INFOS_ARRAY[$line_index,0]}
+           local check_process_str=${PROCESS_INFOS_ARRAY[$line_index,1]}
+           check_and_stop_process "${process_name}" "${check_process_str}"
+           if [[ $? -ne 0 ]];then
+               warning "check_and_stop_process $process_name failed!"
+               return 1
+           fi
+       done
+       return 0
+   }
+   
+   # 重启
+   restart() {
+       stop
+       if [[ $? -ne 0 ]];then
+           warning "Call stop failed in restart!"
+           return 1
+       fi
+       start
+       if [[ $? -ne 0 ]];then
+           warning "Call start failed in restart!"
+           return 1
+       fi
+       return 0
+   }
+   
+   # 运行状态，服务正常返回0，异常返回1
+   status() {
+       local res=0
+       #遍历检查所有进程是否存在
+       for ((line_index=0; line_index<${ARRAY_ROWS_SIZE}; line_index++)); do
+           local pids=$(get_process_pids "${PROCESS_INFOS_ARRAY[$line_index,1]}")
+           if [[ -z $pids ]];then
+               warning "process: ${PROCESS_INFOS_ARRAY[$line_index,0]} not exist"
+               res=1
+           else
+               info "get process: ${PROCESS_INFOS_ARRAY[$line_index,0]} pids: $pids"
+           fi
+       done
+       return $res
+   }
+   
+   # 帮助
+   help() {
+     echo "Usage: $0 <start|stop|status|restart>"
+     exit 0
+   }
+   
+   ################################## control #################################
+   main() {
+   
+       ACTION=$1
+       info "$0 start at ${DATE}, base_dir: ${ROOT}, action: ${ACTION}"
+       cd ${ROOT}
+   
+       case "${ACTION}" in
+           start)
+               info "Starting ..."
+               start
+               ret_val=$?
+               info "Started, ret_val=${ret_val}"
+           ;;
+           stop)
+               info "Stoping..."
+               stop
+               ret_val=$?
+               info "Stopped, ret_val=${ret_val}"
+           ;;
+           restart)
+               info "Restarting..."
+               restart
+               ret_val=$?
+               info "Restarted, ret_val=${ret_val}"
+           ;;
+           status)
+               info "Getting status..."
+               status
+               ret_val=$?
+               info "Finished getting status, ret_val=${ret_val}"
+           ;;
+           *)
+               help
+               exit 1
+           ;;
+       esac
+       info "$0 exit with value: ${ret_val}"
+       exit ${ret_val}
+   }
+   
+   main $@
+   ```
+
    
 
 ## vim相关
@@ -3241,7 +3481,7 @@ print('{name} wrote {book}'.format(name='Swaroop', book='A Byte of Python'), end
  """实际调用"""
  >>> extra = {'city': 'Beijing', 'job': 'Engineer'}
  >>> person('Jack', 24, **extra)
- http://yf.baidu-int.com/adp/issuefinder/?id=43415757
+
  #命名关键字参数【仅在python3】  限制输入的关键字参数为形参指的的那些参数，不能增加或减少
  def person(name, age, *args, city, job)#在可变参数后的即认为是命名关键字参数
  def person(name, age, *, city, job)#如果没有可变参数，命名关键字参数需要一个特殊分隔符*
