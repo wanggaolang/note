@@ -96,9 +96,10 @@
 - 词语
 
   ```shell
+  建立 完成 实现 研发 把控 头部
   夯实 打磨 支撑 落地 推进解决 高效支撑 强化 保障 攻坚战 迭代效率 验收
   持续迭代与优化 进一步 强化xx效果
-  问题溯源    功能缺失
+  问题溯源 功能缺失
   ```
   
 - 
@@ -663,6 +664,9 @@ Setting	--	Keymap
   #绘制流程图
   Draw.io Integration  （需要创建XXX.drawio文件，文件模式为draw.io）
   
+  ##python相关
+  #python自动跳转
+  Pylance #这个应该是自动安装，如不生效，更改设置中「python.languageServer」指定为Pylance
   #python自动注释
   Python Docstring Generator
   
@@ -2371,8 +2375,6 @@ echo "C语言中文网" >&10 10>log.txt 10>&-  #还是输出到了屏幕
    ```shell
    #!/bin/bash
    
-   # opera 启动脚本
-   
    ############################# base settings start#########################
    BASE_DIR="$(cd $(dirname $0)/../;pwd)"
    export PYENV_ROOT="${BASE_DIR}/pyenv/2.7.14"
@@ -2601,7 +2603,7 @@ echo "C语言中文网" >&10 10>log.txt 10>&-  #还是输出到了屏幕
    
    main $@
    ```
-
+   
    
 
 ## vim相关
@@ -2940,13 +2942,15 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
   USER work
   #工作目录
   WORKDIR /home/work
+  #设置变量
+  ARG dest_dir="/home"
   #使用bash
   SHELL ["/bin/bash", "-c"]
   
   COPY --chown=work:work test_dir /home/abc/test_dir
   
   RUN  mkdir -p /home/deploy_tmp_dir && \
-  		 chown -R work:work /home/
+  		 chown -R work:work $dest_dir
   ```
 
   
@@ -3393,6 +3397,20 @@ tar经典示例
      ```
      
 
+
+3. python-pip相关
+
+   - 安装pip与安装python
+
+     ```shell
+     #在ubuntu20安装pippython2和pip2
+     apt-get install -y python2-minimal
+     wget -O get-pip.py https://bootstrap.pypa.io/pip/2.7/get-pip.py && python2 get-pip.py -i http://pypi.douban.com/simple/ --trusted-host pypi.douban.com
+     
+     #ubuntu18.04安装python2和pip2
+     apt-get install python-minimal
+     apt-get install python-pip
+     ```
 
 3. 格式化
 
@@ -4146,15 +4164,23 @@ python小轮子：
 9. 随机获取指定文件夹下的文件
 
    ```python
-   #!/usr/bin/python3
+   #!/usr/bin/python2
    # -*- coding:utf-8 -*-
+   """随机获取指定文件夹下，指定数目的一级文件夹"""
    
    import os
    import random
-   target_num = 1000
+   
+   #################config start#################
+   target_num = 200 #目标文件夹数量
+   path="/tmp/" #目标文件夹所在路径
+   #################config end###################
+   
    target_dirs = []
-   path="/tmp/"
    dirs=os.listdir(path)
+   if target_num > len(dirs):
+       print("Warning: target_num is bigger than the number of dirs in path")
+       target_num = len(dirs)
    for i in range(0, target_num):
        single_dir = dirs[random.randint(0, len(dirs) - 1)]
        target_dirs.append(single_dir)
@@ -4833,7 +4859,7 @@ const obj = {
 };
 console.log(obj.length);//可以读取已定义对象的一层未定义属性，即此处打印undefined
 console.log(obj.length.num);//错误，不能读取未定义对象的未定义属性。（此处会报错：TypeError: Cannot read property 'num' of undefined）
-
+console.log(JSON.stringify(obj));//打印json格式内容
 
 ```
 
