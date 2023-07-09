@@ -573,9 +573,14 @@ Setting	--	Keymap
 
 ## vscode相关
 
-**快捷键**
+**快捷键/vscode快捷键**
 
 快捷键设置：`ctrl+k+s`
+
+- 常用系统自带快捷键
+  - 查找next和last
+    - 全局查找的next和last：「F4」  「shift + F4」
+    - 当前文件查找的next和last：「F3」  「shift + F3」
 
   - 更改快捷键
 
@@ -606,6 +611,23 @@ Setting	--	Keymap
 
     <img src="etc/pic/image-20211109160304083.png" alt="image-20211109160304083" style="zoom:33%;" />
 
+    - 快速切换当前文件与其git changes对比  需更改keybindings.json  快捷键使用 cmd + g
+
+      ```json
+      {
+              "key": "cmd+g",
+              "command": "git.openFile",
+              "when": "editorFocus && isInDiffEditor"
+          },
+          {
+              "key": "cmd+g",
+              "command": "git.openChange",
+              "when": "editorFocus && !isInDiffEditor"
+          }
+      ```
+
+      
+
 - 常用（未改变）快捷键
 
   ```
@@ -624,6 +646,7 @@ Setting	--	Keymap
 - 3个配置文件：见etc/vscode_conf
 
 - 编译：mac快捷键 command + shift + b
+
 - 代码配色：.vscode/settings.json    >>    "workbench.colorTheme": "Default Dark+"
 
 - C/C++代码跳转：1）安装c/c++插件（详见下方c++的插件）；2）在.vscode/c_cpp_properties.json中的includePath里加入查找路径，形如：
@@ -1555,7 +1578,7 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
   # 让配置立即生效
   ```
 
-- 
+- 安装deb文件：sudo dpkg -i xxx.deb
 
 
 - 
@@ -1583,7 +1606,18 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
      echo 'export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.ustc.edu.cn/homebrew-bottles' >> ~/.bash_profile
   ```
 
-     homebrew会将下载的软件统一安装在/usr/local/Cellar目录中
+- homebrew小知识
+
+  1. homebrew会将下载的软件统一安装在/usr/local/Cellar目录中
+
+  2. 解决brew install xxx失败报错：No such file or directory @ rb_sysopen 
+
+     ```shell
+     #使用国内镜像而该镜像未完全同步问题。临时去除镜像即可。
+     export HOMEBREW_BOTTLE_DOMAIN=''
+     ```
+
+  3. 
 
 
 **Iterm2相关 **
@@ -1721,6 +1755,12 @@ iterm2小知识
 
 **mac小知识**
 
+- Option键可以理解为"开发者模式"，如
+
+  - Option+点击wifi图标，显示更复杂内容
+  
+  - Option+点击苹果图表，显示更复杂内容
+  
 - 设置文件默认打开方式
 
   ```shell
@@ -2175,6 +2215,10 @@ To insert a variable in the middle of a single quoted text, you have to end the 
 
 - 解决替换时有空格问题：sed -i 's@abc def@aaa bbb@' {file_name}
 
+- sed处理管道后数据示例：cat tmp_file | sed 's@abc def@\n@g'  #将所有abc def字符串改为回车
+
+  等效于：cat tmp_file | sed 's/abc def/\n/g'
+
 15. 重定向小知识
 
 ```shell
@@ -2604,7 +2648,52 @@ echo "C语言中文网" >&10 10>log.txt 10>&-  #还是输出到了屏幕
    main $@
    ```
    
-   
+
+
+
+## XVIZ相关
+
+- 在mac m1芯片下跑通xviz前后端：即本地浏览器访问本地服务，将整个可视化跑起来。后端为[xviz](https://github.com/aurora-opensource/xviz)，前端为[streetscape.gl](https://github.com/aurora-opensource/streetscape.gl/tree/master)
+
+  ```shell
+  一、后端xviz
+  1. 安装xviz依赖vips
+  $ brew install vips
+  
+  2. node使用16
+  $ nvm use 16
+  
+  3. 下载xviz并编译
+  # Clone XVIZ
+  $ git clone https://github.com/uber/xviz.git
+  $ cd xviz
+  
+  # Install dependencies
+  $ CXXFLAGS="--std=c++17" npm install sharp
+  $ yarn bootstrap
+  
+  4. 下载数据并转换
+  # Download KITTI data
+  $ ./scripts/download-kitti-data.sh
+  
+  #convert data
+  $ `cd /code/xviz/examples/converters/kitti && \
+  yarn start -d /code/xviz/data/kitti/2011_09_26/2011_09_26_drive_0005_sync -o /code/xviz/data/generated/kitti/2011_09_26/2011_09_26_drive_0005_sync
+  
+  5. 启动服务
+  $ ./modules/server/bin/babel-xvizserver -d data/generated/kitti/2011_09_26/2011_09_26_drive_0005_sync --port 8081
+  
+  二、前端streetscape.gl
+  # clone the repo
+  $ git clone https://github.com/uber/streetscape.gl.git
+  $ cd streetscape.gl/examples/get-started
+  # install dependencies
+  $ yarn
+  # start the app
+  $ yarn start-streaming
+  ```
+
+  
 
 ## vim相关
 
@@ -2916,9 +3005,9 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
 
   如果没有该文件或者改了重启没生效，则查看/lib/systemd/system/docker.service 或 /usr/lib/systemd/system/docker.service，在里面：1）加载的配置文件：EnvironmentFile=-/etc/default/docker  2）在ExecStart末尾增加 $DOCKER_OPTS
 
-  重启：
+  重启docker：
 
-  ​	systemctl  daemon-reload
+  ​	systemctl daemon-reload
 
   ​	systemctl restart docker 
 
@@ -3083,6 +3172,56 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
      //同时会生成world::animal::People_Gender_Name和world::animal::People.Gender_Name，用于输入枚举值，返回string
      //对于python，会生成people_pb2.People.Gender.Name，用于输入int，返回string
      ```
+  
+  4. oneof、repeated、map元素与python
+  
+     - <a name=people>boss.proto</a>
+  
+       ```protobuf
+       syntax = "proto3";
+       message Hydra {
+           repeated string names = 1; // 九头蛇九个头的名字
+       }
+       message Godzilla {
+           string name = 1; // 哥斯拉名字
+       }
+       message Boss {
+           oneof boss_name {
+               Godzilla godzilla_name = 1; // 哥斯拉名字
+               Hydra hydra_name = 2; // 九头蛇名字
+           }
+       }
+       message BossMap {
+           map<string, Boss> boss_map = 1; // boss的名字和Boss message的映射
+       }
+       ```
+  
+     - 编译方法
+  
+       ```shell
+       mkdir -p release_py_dir && rm -rf release_py_dir/* && touch release_py_dir/__init__.py && protoc -I=./ --python_out=release_py_dir ./*.proto
+       ```
+  
+     - 示例代码/使用方法
+  
+       ```python
+       # -*- coding: utf-8 -*-
+       import release_py_dir.boss_pb2 as boss_pb2
+       
+       if __name__ == '__main__':
+           godzilla_obj = boss_pb2.Godzilla(name='mao dan') # 对message赋值
+           print("godzilla_obj: {}".format(godzilla_obj))
+       
+           hydra_obj = boss_pb2.Hydra(names=['1', '2', '3', '4', '5', '6', '7', '8', '9']) #对repeated赋值
+           print('hydra_name: {}'.format(hydra_obj))
+       
+           boss = boss_pb2.Boss(hydra_name=hydra_obj) # 对oneof赋值
+           print("boss is: {}".format(boss))
+       
+           boss_map_obj = boss_pb2.BossMap()
+           boss_map_obj.boss_map['hydra_name'].CopyFrom(boss) # 对map赋值
+           print('boss_map_obj: {}'.format(boss_map_obj))
+       ```
 
 
 - Standard Message Methods
@@ -4125,15 +4264,23 @@ python小轮子：
 7. 转换map4为图片
 
    ```python
-    #/usr/bin/python3
+   #/usr/bin/python3
    import cv2 as cv2
+   import os
    
-   cap = cv2.VideoCapture('record.mp4')
+   #############配置项#############
+   cap = cv2.VideoCapture('data.mp4')
+   base_time = 1682817060
+   output_path = '/path/to/output/folder/'  # 替换为实际的输出文件夹路径
+   #############配置项#############
+   
+   # 检查输出路径是否存在，不存在则创建
+   if not os.path.exists(output_path):
+       os.makedirs(output_path)
+   
    fps = cap.get(cv2.CAP_PROP_FPS)
-   base_time = 1632356427.27
-   
    timestamps = [cap.get(cv2.CAP_PROP_POS_MSEC)]
-   print('origin ts: ',timestamps, 'fps:', fps)
+   print('origin ts: ', timestamps, 'fps:', fps)
    calc_timestamps = [0.0]
    
    while(cap.isOpened()):
@@ -4142,13 +4289,14 @@ python小轮子：
            timestamps.append(cap.get(cv2.CAP_PROP_POS_MSEC))
            calc_timestamps.append(calc_timestamps[-1] + 1000/fps)
            temp_num = calc_timestamps[-2]
-           cv2.imwrite("image"+str(base_time + temp_num/1000.0)+".jpg", curr_frame)
+           cv2.imwrite(output_path + "image"+str(base_time + temp_num/1000.0)+".jpg", curr_frame)
        else:
            break
    
    cap.release()
    
    for i, (ts, cts) in enumerate(zip(timestamps, calc_timestamps)):
+       #print('Frame %d difference:'%i, abs(ts - cts), ts, cts)
        print('Frame %d difference:'%i, abs(ts - cts), base_time + ts/1000.0, '-', base_time + cts/1000.0)
    ```
 
@@ -4249,7 +4397,26 @@ python小轮子：
 
     注意可能会报错编码问题，可以将当前csv文件重新导出，更改格式为gbk或者utf-8：文件-导出为-CSV-选择编码如utf-8-导出
 
+14. <a name=python_tornado设置跨域>python tornado设置跨域</a>
 
+    ```python
+    #解决普通跨域
+    def set_headers()
+        self.set_header("Access-Control-Allow-Origin", self.request.headers.get("Origin", "http://localhost:8999"))
+            self.set_header("Access-Control-Allow-Headers", "*")
+            self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+            self.set_header("Access-Control-Allow-Credentials", "true")
+    
+    #解决复杂跨域
+    def options(self):
+            """处理 OPTIONS 请求，设置返回允许的请求方法和请求头等
+            """
+            self.set_headers()
+            self.set_status(204)  # No Content
+            self.finish()
+    ```
+    
+    
 
 - 多线程
 
@@ -4278,7 +4445,15 @@ python小轮子：
   uri = self.request.uri
   ```
 
+  - 设置跨域：[python tornado设置跨域](#python_tornado设置跨域)
   
+  - 约定常规返回值
+  
+    ```shell
+    {"errno": 0, "msg": "success", "data": {}}
+    ```
+  
+    
 
 **tornado小知识**
 
@@ -4287,6 +4462,20 @@ python小轮子：
    ```python
    if self.request.headers.get('If-None-Match'): #防止返回304
      del self.request.headers['If-None-Match']
+   ```
+
+2. 如果需要继承RequestHandler，且需要重写__init__函数，则需要如下操作
+
+   ```python
+   #python2
+   def __init__(self, *args, **kwargs):
+       """_summary_
+       """
+       super(RequestHandler, self).__init__(*args, **kwargs)
+       
+   #python3
+   def __init__(self, *args, **kwargs):
+       super().__init__(*args, **kwargs)
    ```
 
    
@@ -5190,6 +5379,13 @@ Redis支持五种数据类型：string（字符串），hash（哈希），list�
     continue;
   }
   ```
+
+
+
+## 工伤处理流程
+
+1. 工伤认定申请
+2. 劳动能力鉴定
 
 
 

@@ -53,6 +53,16 @@
         "command": "-actions.findWithSelection"
     },
     {
+        "key": "cmd+g",
+        "command": "git.openFile",
+        "when": "editorFocus && isInDiffEditor"
+    },
+    {
+        "key": "cmd+g",
+        "command": "git.openChange",
+        "when": "editorFocus && !isInDiffEditor"
+    },
+    {
         "key": "cmd+1",
         "command": "copy-file-name.copyFileNameWithExtension"
     },
