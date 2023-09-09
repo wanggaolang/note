@@ -115,7 +115,7 @@
 
 - 页内跳转
   1. 如果想调到指定标题名去，可用[任意内容]\(#标题名，注意带左边的#号\)
-  2. 如果想跳到任意文本处：1）要先在该文本处加上”锚点“，\<a name=锚点名>指定文本（也可以空白）\</a>    2）[任意内容]\(#锚点名，注意带左边的#号\)
+  2. 如果想跳到任意文本处：1）要先在该文本处加上”锚点“，\<a name=锚点名注意锚点名不能有空格>指定文本（也可以空白）\</a>    2）[任意内容]\(#锚点名，注意带左边的#号\)
   
 - <a name=关闭首字母大写>关闭首字母大写</a>
 
@@ -686,6 +686,9 @@ Setting	--	Keymap
   
   #绘制流程图
   Draw.io Integration  （需要创建XXX.drawio文件，文件模式为draw.io）
+  
+  #文件图标
+  vscode-icons
   
   ##python相关
   #python自动跳转
@@ -1508,10 +1511,6 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
 3. 通过dconfig-editor将terminator设置为默认终端（自己搜）
 4. 修改`.bashrc`：https://blog.csdn.net/zhangkzz/article/details/90524066
 
-- 更换为清华源
-
-
-
 
 
 
@@ -1580,12 +1579,28 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
 
 - 安装deb文件：sudo dpkg -i xxx.deb
 
+### centos相关
 
-- 
+- yum相关
+
+  ```shell
+  #安装rpm格式软件
+  ## 通过url安装
+  rpm -Uvh http://dev.mysql.com/get/mysql-community-release-el7-5.noarch.rpm
+  ## 通过文件安装
+  rpm -ivh MySQL-server-5.6.34-1.el7.x86_64.rpm
+  
+  #卸载软件
+  
+  ```
 
   
 
-  
+
+
+
+
+
 
 ## mac相关
 
@@ -2218,6 +2233,8 @@ To insert a variable in the middle of a single quoted text, you have to end the 
 - sed处理管道后数据示例：cat tmp_file | sed 's@abc def@\n@g'  #将所有abc def字符串改为回车
 
   等效于：cat tmp_file | sed 's/abc def/\n/g'
+  
+- 将回车替换为逗号+空格：cat xxx.file |sed 's@$@, @'
 
 15. 重定向小知识
 
@@ -2693,6 +2710,27 @@ echo "C语言中文网" >&10 10>log.txt 10>&-  #还是输出到了屏幕
   $ yarn start-streaming
   ```
 
+- 入参获取getopt
+
+  ```shell
+  while getopts ":i:o:" o; do
+      case "${o}" in
+          i)
+              in_file=${OPTARG}
+              ;;
+          o)
+              out_file=${OPTARG}
+              ;;
+          *)
+              usage
+              ;;
+      esac
+  done
+  shift $((OPTIND-1))
+  
+  echo "in_file: $in_file, out_file: $out_file"
+  ```
+
   
 
 ## vim相关
@@ -3154,7 +3192,20 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
   
   2. 赋值：a=b;    或者下方的CopyFrom函数
   
-  3. enum元素与cpp
+  3. 对于enum元素，会从第0个开始设置，默认也是0，同时该数据也不会有实际数据量，如在网络传输时不会进行传输，应在解析端没有数据时认为值为第0个；
+  
+     ```protobuf
+     enum LogLevel {
+             UNKNOWN = 0; // enum类型必须从0开始设置，同时其也为默认值
+             DEBUG = 1;
+             INFO = 2;
+             WARN = 3;
+             ERROR = 4;
+             FATAL = 5;
+     }
+     ```
+  
+  4. enum元素与cpp
   
      <a name=people>people.proto</a>
   
@@ -3173,7 +3224,7 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
      //对于python，会生成people_pb2.People.Gender.Name，用于输入int，返回string
      ```
   
-  4. oneof、repeated、map元素与python
+  5. oneof、repeated、map元素与python
   
      - <a name=people>boss.proto</a>
   
@@ -3270,6 +3321,8 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
   ```
 
 - [pb对象与json相互转换-python](#pb对象与json相互转换)
+
+- [pb对象与文件相互转换](#pb对象与文件相互转换)
 
 - protoc相关
 
@@ -4381,7 +4434,41 @@ python小轮子：
     dict_obj = MessageToDict(org)
     ```
 
-13. python3操作csv文件
+13. <a name=pb对象与文件相互转换>pb对象与文件相互转换</a>
+
+    ```python
+    from google.protobuf import text_format
+    def load_pbt(proto_path, proto):
+        """ load protobuf from text
+        """
+        with open(proto_path, 'r') as fp:
+            text_format.Parse(fp.read(), proto, allow_unknown_field=True)
+        fp.close()
+    
+    def load_pbb(proto_path, proto):
+        """ load protobuf from binary
+        """
+        with open(proto_path, 'rb') as fp:
+            proto.ParseFromString(fp.read())
+        fp.close()
+        
+    def save_pbt(proto_path, proto):
+        """ Save protobuf to text
+        """
+        with open(proto_path, 'w') as fp:
+            fp.write(text_format.MessageToString(proto))
+            
+    def save_pbb(proto_path, proto):
+        """ Save protobuf to binary
+        """
+        with open(proto_path, 'wb') as fp:
+            fp.write(proto.SerializeToString())
+    
+    ```
+
+    
+
+14. python3操作csv文件
 
     ```python
     #-*- coding: utf-8-sig -*-
@@ -4397,7 +4484,7 @@ python小轮子：
 
     注意可能会报错编码问题，可以将当前csv文件重新导出，更改格式为gbk或者utf-8：文件-导出为-CSV-选择编码如utf-8-导出
 
-14. <a name=python_tornado设置跨域>python tornado设置跨域</a>
+15. <a name=python_tornado设置跨域>python tornado设置跨域</a>
 
     ```python
     #解决普通跨域
@@ -4415,7 +4502,7 @@ python小轮子：
             self.set_status(204)  # No Content
             self.finish()
     ```
-    
+
     
 
 - 多线程
@@ -4455,7 +4542,7 @@ python小轮子：
   
     
 
-**tornado小知识**
+**tornado小轮子**
 
 1. <a name=防止返回304>防止返回304</a>：
 
@@ -4478,7 +4565,40 @@ python小轮子：
        super().__init__(*args, **kwargs)
    ```
 
+3. 输入参数检查
+
+   ```python
+   import tornado.ioloop
+   import tornado.web
    
+   class MyHandler(tornado.web.RequestHandler):
+       def get(self):
+           # 定义需要检查的参数列表
+           required_params = ["XX", "YY", "ZZ"]
+   
+           # 检查每个参数是否存在
+           missing_params = [param for param in required_params if self.get_argument(param, None) is None]
+   
+           if missing_params:
+               self.set_status(400)  # 设置 HTTP 响应状态码为 400 (Bad Request)
+               missing_params_str = ", ".join(missing_params)
+               self.write(f"缺失参数: {missing_params_str}")  # 返回错误信息
+           else:
+               # 所有参数都存在，继续处理业务逻辑
+               xx_value = self.get_argument("XX")
+               yy_value = self.get_argument("YY")
+               zz_value = self.get_argument("ZZ")
+               
+               self.write(f"参数XX的值为: {xx_value}, 参数YY的值为: {yy_value}, 参数ZZ的值为: {zz_value}")
+   
+   if __name__ == "__main__":
+       app = tornado.web.Application([
+           (r"/", MyHandler),
+       ])
+       app.listen(8888)
+       tornado.ioloop.IOLoop.current().start()
+   
+   ```
 
 ## expect脚本
 
@@ -4800,6 +4920,57 @@ ate 和 binary 模式可用于任何类型的文件流对象，且可以与其�
 
 
 
+## http相关
+
+- If-None-Match与ETag
+
+  **概念**
+
+  这2个可以理解都是键值对中的key，他们的value一般为md5sum。ETag为服务端存储（也是服务端返回header的key），If-None-Match为客户端在请求时放入header的key。常规的请求流程是：
+
+  1. client第一次请求资源，本地没有If-None-Match
+  2. server收到后正常处理，一般返回200，并header中写入ETag，值为该资源的唯一索引
+  3. client收到后将资源存储起来，并将该资源与ETag绑定，同时又将Etag与此次请求的url的参数绑定
+  4. client正常处理业务，在未来某次会再次请求该资源，此时client会匹配请求资源的各种url参数等是否映射到本地的某个ETag，若映射到，则在header中加入If-None-Match，值就写入之前收到的ETag的值
+  5. server收到后，会计算资源值是否就是收到的If-None-Match（或者就是近期是否返回过该值对应ETag），是则返回304或者特殊操作，否则做正常处理（一般就是处理后返回数据，以及200状态）
+
+  **理解**
+
+  - 如何理解「If-None-Match」这个命名的意义？
+
+    可以认为server普通处理并返回200是正常处理（normal process），则在未匹配到「If-None-Match」的值时，就正常处理；匹配到后就特殊处理，也就是：If-None-Match xxx，then normal process， else 304 or special process
+
+  - client每次请求时，怎么知道要用哪个「If-None-Match」值？
+
+    取决于client实现，但肯定有如url，header等考虑：即每次请求后将服务端返回的ETag与当时请求用的url、header做映射，待下次请求时用这些参数去查找本地是否有对应的ETag，有则写入「If-None-Match」，值即该ETag的值
+
+  **其他**
+
+  - [tornado防止返回304](#防止返回304)
+  - [curl禁止缓存参数](#curl禁止缓存参数)
+  - [参考网页](https://www.cnblogs.com/xuzhudong/p/8339853.html)
+  
+- 跨域相关
+
+  - 附带身份凭证的请求与通配符
+
+    在响应附带身份凭证的请求时：
+
+    - 服务器**不能**将 `Access-Control-Allow-Origin` 的值设为通配符“`*`”，而应将其设置为特定的域，如：`Access-Control-Allow-Origin: https://example.com`。
+    - 服务器**不能**将 `Access-Control-Allow-Headers` 的值设为通配符“`*`”，而应将其设置为标头名称的列表，如：`Access-Control-Allow-Headers: X-PINGOTHER, Content-Type`
+    - 服务器**不能**将 `Access-Control-Allow-Methods` 的值设为通配符“`*`”，而应将其设置为特定请求方法名称的列表，如：`Access-Control-Allow-Methods: POST, GET`
+  
+    对于附带身份凭证的请求（通常是 `Cookie`），
+
+    这是因为请求的标头中携带了 `Cookie` 信息，如果 `Access-Control-Allow-Origin` 的值为“`*`”，请求将会失败。而将 `Access-Control-Allow-Origin` 的值设置为 `https://example.com`，则请求将成功执行。
+  
+- Cookie相关
+
+  服务端设置Cookie时，domain仅能设置服务器本身域名或其上级域名。示例：
+
+  服务器域名为：foo.example.com  则其仅能设置foo.example.com、.example.com、域名
+
+
 ## nginx相关
 
 **nginx小知识**
@@ -4943,8 +5114,31 @@ export LDFLAGS="-L/opt/compiler/gcc-8.2/lib64/ -L/usr/lib64/"
   .*表示任意个任意字符
   ^后跟字符表示以这些字符开头
   字符串后跟$表示以某字符串结束
+  ?表示非贪心匹配，默认为贪心匹配
   ```
+  
+- 实战
 
+  - 匹配类似AAA000_20221226160000的字符串，即几个大写字母，几个数字（类似车牌），以及其年月日
+  
+    ```python
+    def parse_taskKey(taskKey):
+          
+            task_id = ""
+            case_start_time = ""
+            case_end_time = ""
+            match = re.search(r'([A-Z]+[0-9]+)_(\d{14})_(\d+)_(\d+)$', taskKey)
+            # match = re.search(r'([A-Z].*??)_(\d{14})_(\d+)_(\d+)$', taskKey)
+            if match:
+                car_id = match.group(1)
+                task_id = '{}_{}'.format(car_id, match.group(2))
+                case_start_time = match.group(3)
+                case_end_time = match.group(4)
+     
+            return task_id, case_start_time, case_end_time
+    ```
+  
+    
   
 
 ## Makefile相关
@@ -5300,7 +5494,7 @@ Redis支持五种数据类型：string（字符串），hash（哈希），list�
 
 ## curl相关
 
-禁止缓存参数：-H 'Cache-Control: no-cache'
+<a name=curl禁止缓存参数>curl禁止缓存参数</a>：-H 'Cache-Control: no-cache'
 
 额外材料：[tornado防止返回304](#防止返回304)
 
@@ -5308,7 +5502,37 @@ Redis支持五种数据类型：string（字符串），hash（哈希），list�
 
 ## sql相关/mysql相关
 
-**sql小知识**
+- mysql下载安装：https://downloads.mysql.com/archives/community/?version=5.6.23
+
+- mysql启动
+
+  - centos mysql启动
+
+    ```shell
+    #启动服务端
+    sudo systemctl start mysqld
+    
+    #启动客户端
+    
+    ```
+
+  - <a name=mac_mysql启动锚点>mac mysql启动</a>
+
+    ```shell
+    #通过brew安装&启动
+    brew install mysql
+    brew services start mysql: 启动 MySQL 服务器，并设置为自启动。
+    brew services stop mysql: 停止 MySQL 服务器，并设置为不自启动。
+    brew services run mysql: 只启动 MySQL 服务器。
+    mysql.server start: 启动 MySQL 服务器。
+    mysql.server stop: 停止 MySQL 服务器。
+    ```
+  
+    
+  
+  
+
+**sql使用小知识**
 
 1. cast函数
 

@@ -1,4 +1,7 @@
 {
+    "workbench.colorCustomizations": {
+        "tab.activeBackground": "#2E5F6B"
+    },
     "python.languageServer": "Pylance",
     "files.associations": {
         "iostream": "cpp",
