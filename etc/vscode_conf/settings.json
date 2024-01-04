@@ -3,6 +3,7 @@
         "tab.activeBackground": "#2E5F6B"
     },
     "python.languageServer": "Pylance",
+    "terminal.integrated.wordSeparators": " ()[]{}',\"`─‘’|:",
     "files.associations": {
         "iostream": "cpp",
         "memory": "cpp",

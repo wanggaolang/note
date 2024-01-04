@@ -12,16 +12,20 @@
 ## 常用规范
 
 - 在linux体系机器，临时文件放/test_for_all，里边分3个文件夹：1-3once，3代表最不重要；提示文件放~/README
+- 模糊命名
+
+  - 对于官方文档，一般命名会有：手册、文档、官方等
+
 - 代码注释
 
   - 新增需求备注为  //demand {id}
-  
+
   - debug打印用  //debug start和//debug end  如果只有1行，可以就用//debug  在commit时记得酌情是否注释或删除里边内容
-  
+
   - 临时打印记得删除用  //tmp debug start和//tmp debug end  如果只有1行，可以就用//tmp debug
-  
+
   - python函数注释
-  
+
     ```python
     def func(input):
         """
@@ -32,7 +36,7 @@
     ```
     
   - cpp注释
-  
+
     ```cpp
     /**
      * @function threadpool_add
@@ -45,10 +49,22 @@
      * threadpool_error_t for codes).
      */
     ```
-  
+
 - 日志打印
   - 遇到错误  get error或者get fail
   - 阶段性处理的日志打印用  step {XXX}
+  
+- 代码习惯
+  
+  - 文件变量命名末尾为_file结尾
+  - 文件夹变量命名末尾为_dir结尾
+  - 配置化config有2类，常量config和环境变化config，环境变化config一般有3个，online、test、dev
+  
+- <a name=protobuf命名规范约定>protobuf命名规范约定</a>
+  
+  - message类型用大驼峰命名法，成员名用下划线命名法
+  - 对repeated后的命名，末尾加上_repeated，如果1个message里仅1个repeated成员，则命名为该成员类型末尾加s
+  
 
 
 
@@ -233,7 +249,7 @@ ssh -T git@github.com    //测试与github联通性
 
   撤销某次commit：git revert {参数，详见下方}  思想是新增一个commit，改动是源commit的反向改动
 
-  ```git
+  ```shell
   *   commit 9f90458ccb347581df6f83bd3ee7dfdcb33e97d6
   |\  Merge: 460f055 2f1241f
   | | Author: Your Name <you@example.com>
@@ -268,8 +284,11 @@ ssh -T git@github.com    //测试与github联通性
   merge commit的撤销：git revert {commitId} -m {1或2}
     撤销相对下方的commitID的改变，但是merge commit有两个"下方commitID"，所以需要用-m指定第几个（见9f90458ccb347581df6f83bd3ee7dfdcb33e97d6下的Merge有两个commitId，左1右2）
     如 git revert 9f90458ccb347581df6f83bd3ee7dfdcb33e97d6 -m 1 ，就撤销了460f0551004ebcc10e08d4cab84887d2946cb7da到9f90458ccb347581df6f83bd3ee7dfdcb33e97d6之间的内容
+    
+  #对于连续多个commit的 revert
+  git revert -n OLDER_COMMIT^..NEWER_COMMIT  # -n会把改变仅放到工作和暂存区，这样就能只生成一个commit
   ```
-
+  
   
 
 ---
@@ -294,9 +313,55 @@ git fetch todo
   
 - git rebase相关
 
-  合并多个commit：1）git rebase -i {commitid}；2）将其中要融合的commit从pick改为s；3）保存退出，更改commit信息；
+  - 合并多个commit：1）git rebase -i {commitid}；2）将其中要融合的commit从pick改为s；3）保存退出，更改commit信息；
   
-  注意第2步只会包含第1步commitid之后的所有commit，不包含这个commitid本身的commit
+    注意第2步只会包含第1步commitid之后的所有commit，不包含这个commitid本身的commit
+  
+  - 我现在本地有a b c 3个commit，其中a最早。但现在我发现有个a相关改动想继续合入到a，类似git commit --amend，有什么方法吗?
+  
+    1. 打开终端，切换到你的项目目录。
+  
+    2. 运行以下命令，使用交互式 rebase 来编辑提交历史：
+  
+       ```
+       git rebase -i a^
+       ```
+  
+       这里的 `a^` 是 commit `a` 的父提交。你将看到一个文本编辑器打开，显示了提交历史。
+  
+    3. 在编辑器中找到你想要添加到 commit `a` 的新改动的那一行，将其前面的 `pick` 改为 `edit`。保存并关闭编辑器。
+  
+    4. Git 会在达到该提交时停止。在这个时候，你可以进行你的修改。
+  
+       ```shell
+       # 进行你的修改，然后添加到暂存区
+       git add <your files>
+       
+       # 提交修改
+       git commit --amend
+       ```
+  
+    5. 如果有冲突，解决冲突后，使用以下命令继续 rebase：
+  
+       ```shell
+       git rebase --continue
+       ```
+  
+    6. 重复步骤 4 直到你完成所有的修改。
+  
+    7. 当所有修改都完成时，运行以下命令完成 rebase：
+  
+       ```shell
+       git rebase --continue
+       ```
+  
+       或者，如果你想取消 rebase，可以运行：
+  
+       ```shell
+       git rebase --abort
+       ```
+  
+    请注意，这个过程会改写提交历史，因此如果你的这些提交已经被推送到远程仓库，你可能需要使用 `git push --force` 强制推送。但请谨慎使用 `--force` 选项，因为它会覆盖远程仓库的提交历史。如果你不确定，最好先备份你的仓库。
 
 **分支相关**
 
@@ -553,6 +618,12 @@ git commit --amend --reset-author
 
 
 
+## 同步异步相关
+
+如何理解
+
+
+
 ## 音频剪辑相关
 
 mac：logic pro
@@ -582,10 +653,14 @@ Setting	--	Keymap
     - 全局查找的next和last：「F4」  「shift + F4」
     - 当前文件查找的next和last：「F3」  「shift + F3」
 
+  - 多行同时编辑
+    
+    option+shift+光标选中
+
   - 更改快捷键
-
+  
     注意，在etc/vscode_conf文件夹中有*keybindings.json文件，将其替换到对应的keybindings.json位置即可
-
+  
     - 切换最近打开文件：cmd + e（原本键为ctrl + tab）改建位时下方两个都要改
       
 
@@ -610,9 +685,9 @@ Setting	--	Keymap
     - 更改文本的语言模式  cmd + m
 
     <img src="etc/pic/image-20211109160304083.png" alt="image-20211109160304083" style="zoom:33%;" />
-
+  
     - 快速切换当前文件与其git changes对比  需更改keybindings.json  快捷键使用 cmd + g
-
+  
       ```json
       {
               "key": "cmd+g",
@@ -625,9 +700,9 @@ Setting	--	Keymap
               "when": "editorFocus && !isInDiffEditor"
           }
       ```
-
+  
       
-
+  
 - 常用（未改变）快捷键
 
   ```
@@ -641,9 +716,13 @@ Setting	--	Keymap
   - 批量保存文件：（改了键位的）windows：`ctrl + alt + s`    mac：`command + option + s`
   ```
   
-  
-
 - 3个配置文件：见etc/vscode_conf
+
+- 设置单词选中分隔符：
+
+  wordSeparators
+
+  ![image-20231026203928336](etc/pic/image-20231026203928336.png)
 
 - 编译：mac快捷键 command + shift + b
 
@@ -690,12 +769,14 @@ Setting	--	Keymap
   #文件图标
   vscode-icons
   
-  ##python相关
+  ##python相关的插件
   #python自动跳转
   Pylance #这个应该是自动安装，如不生效，更改设置中「python.languageServer」指定为Pylance
   #python自动注释
   Python Docstring Generator
   
+  #protobuf
+  jumpprotobuf #protobuf自动跳转
   ---
   vscode插件小知识
   1. 手动安装插件
@@ -1148,6 +1229,8 @@ vscode小知识
   5. toby for chrome  一次打开多个书签
 
   6. Easy URL Editor 优化展示/编辑url 
+
+  7. 允许页面复制和右键：Absolute Enable Right Click & Copy
 
   
 
@@ -2916,9 +2999,15 @@ windows 一般在 /c/Users/{用户名}/.ssh
 
    2）如果想跳到任意文本处：1）要先在该文本处加上”锚点“，\<a name=锚点名>指定文本（也可以空白）\</a>    2）[任意内容]\(#锚点名，注意带左边的#号\)
 
-## 锁
+## 锁相关
 
-boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
+对锁的理解：宏观层面，锁不是锁具体一个文件，锁是规范化锁一段代码，也就是所有的线程、进程都必须排队走这个规范流程，而由于锁的是一段代码，代码理论上能干任何事，所以锁在宏观层面是锁任何事物。
+
+1. cpp锁
+
+   boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
+
+2. 
 
 
 
@@ -3169,6 +3258,8 @@ boost::recursive_mutex::scoped_lock guard_lock(_service_map_mutex);
      4. 编译  g++ ./main.cpp people.pb.cc -std=c++11 $(pkg-config --cflags --libs protobuf)
 
      5. 执行./a.out  结果应该为：gender: FEMALE
+
+- [protobuf命名规范约定](#protobuf命名规范约定)
 
 - 限定修饰符包含 required\optional\repeated 
 
@@ -4150,7 +4241,18 @@ python小知识：
 
 1. 打印类型：type(a)    判断类型：isinstance(a, int)
 
-2. python安装模块相关
+2. PYTHONPATH相关
+
+   - 使子目录py文件调用父目录文件
+
+     ```python
+     import os
+     import sys
+     ROOT_PATH = os.path.dirname(os.path.dirname((os.path.abspath(__file__))))
+     sys.path.append(ROOT_PATH)
+     ```
+
+3. python安装模块相关
 
    ```python
    #可以指定一个文件如requirements.txt批量安装模块：python -m pip install -r requirements.txt -t /home/work
@@ -4197,7 +4299,7 @@ python小知识：
    apt-get install python-pip
    ```
 
-3. 对于打印中文但是编码形如：\xe8\xbd\xa6\xe5\x9e\x8b的转译
+4. 对于打印中文但是编码形如：\xe8\xbd\xa6\xe5\x9e\x8b的转译
 
    ```python
    >>> stuff = '\xe8\xbd\xa6\xe5\x9e\x8b'
@@ -4205,7 +4307,7 @@ python小知识：
    u'\u8f66\u578b'   #再将其在线Unicode => 中文
    ```
 
-4. 显示模块路径/模块位置
+5. 显示模块路径/模块位置
 
    ```python
    import a_module
@@ -4216,27 +4318,28 @@ python小知识：
    path =os.path.dirname(amodule.__file__)
    ```
 
-5. python pip安装报错[SSL: CERTIFICATE_VERIFY_FAILED]
+6. python pip安装报错[SSL: CERTIFICATE_VERIFY_FAILED]
 
    类似方法：python -m pip --trusted-host pypi.tuna.tsinghua.edu.cn install tornado
 
-6. python中所有都可看做对象，如变量，函数，类，类的对象
-7. 一句话起http服务    ``python2 -m SimpleHTTPServer [端口，默认8000]``    or`python3 -m http.server [端口，默认8000]`
+7. python中所有都可看做对象，如变量，函数，类，类的对象
+
+8. 一句话起http服务    ``python2 -m SimpleHTTPServer [端口，默认8000]``    or`python3 -m http.server [端口，默认8000]`
 
 ​	如果需要带有上传服务的http服务，运行`python ./SimpleHTTPServerWithUpload.py 1234`，SimpleHTTPServerWithUpload.py见./etc里
 
-8. 在同时安装了python2和python3时使用pip安装第三方库会产生歧义，要指定具体哪个python的pip安装可以用一下方法`{python版本:python2或python3} -m pip install {第三方库名}`
+9. 在同时安装了python2和python3时使用pip安装第三方库会产生歧义，要指定具体哪个python的pip安装可以用一下方法`{python版本:python2或python3} -m pip install {第三方库名}`
 
-9. 在Python的string前面加上‘r’， 是为了告诉编译器这个string是个raw string，不要转意backslash '\' 。 例如，\n 在raw string中，是两个字符，\和n， 而不会转意为换行符。由于正则表达式和 \ 会有冲突，因此，当一个字符串使用了正则表达式后，最好在前面加上'r'
+8. 在Python的string前面加上‘r’， 是为了告诉编译器这个string是个raw string，不要转意backslash '\' 。 例如，\n 在raw string中，是两个字符，\和n， 而不会转意为换行符。由于正则表达式和 \ 会有冲突，因此，当一个字符串使用了正则表达式后，最好在前面加上'r'
 
-10. 能够注释中文，需在文件头写这两行：
+9. 能够注释中文，需在文件头写这两行：
 
-    ```
-    #!/usr/bin/env python
-    # -*- coding: utf-8 -*-
-    ```
+   ```
+   #!/usr/bin/env python
+   # -*- coding: utf-8 -*-
+   ```
 
-11. python换行相关
+10. python换行相关
 
     ```python
     #python打印时，一行太长做格式上的换行
@@ -4249,6 +4352,24 @@ python小知识：
         + b
     print(c) #打印2
     ```
+
+11. <a name=python子类构造函数调用父类构造函数>python子类构造函数调用父类构造函数</a> 
+
+    ```python
+    #构造一个父类
+    class A(object):
+        def __init__(self):
+            print("A's init")
+    
+    class B(A):
+      def __init__(self):
+        super(B, self).__init__() # 方法1 注意super里第1个函数是B自身，同时适用于python2 和 python3
+        A.__init__(self) # 方法2 同时适用于python2 和 python3
+        super().__init__() # 方法3 仅适用于python3
+        super(__class__, self).__init__() # 方法4，其实和方法1类似 注意仅适用于python3
+    ```
+
+    
 
 
 
@@ -4303,7 +4424,38 @@ python小轮子：
    cost = end_ts - start_ts #单位ms
    ```
 
-6. 打印中文dict
+6. 统计耗时装饰器
+
+   ```python
+   func2time_map = {} # 函数名_extra_msg - 耗时毫秒统计，注意「耗时毫秒」是list，以防多次调用，最后可以打印func2time_map
+   def calculate_time(extra_msg=""):
+       def decorator(func):
+           def wrapper(*args, **kwargs):
+               start_time = time.time()
+               result = func(*args, **kwargs)
+               cost_time = (time.time() - start_time) * 1000
+               print("exec [{}] [{}] cost: {}ms".format(extra_msg, func.__name__, cost_time))
+               save_key = "[func__{}]_[extra_msg__{}]".format(func.__name__, extra_msg if extra_msg else "None")
+               if save_key not in func2time_map:
+                   func2time_map[save_key] = [cost_time]
+               else:
+                   func2time_map[save_key].append(cost_time)
+               return result
+           return wrapper
+       return decorator
+     
+   #示例
+   @calculate_time()
+   def test():
+       time.sleep(2)
+       print("finish test")
+   
+   test()
+   ```
+
+   
+
+7. 打印中文dict
 
    ```
    #!/usr/bin/python
@@ -4314,7 +4466,7 @@ python小轮子：
    print(json.dumps(b, encoding='UTF-8', ensure_ascii=False))
    ```
 
-7. 转换map4为图片
+8. 转换map4为图片
 
    ```python
    #/usr/bin/python3
@@ -4353,7 +4505,7 @@ python小轮子：
        print('Frame %d difference:'%i, abs(ts - cts), base_time + ts/1000.0, '-', base_time + cts/1000.0)
    ```
 
-8. 代码打印python版本
+9. 代码打印python版本
 
    ```python
    # -*- coding: utf-8 -*-
@@ -4362,7 +4514,7 @@ python小轮子：
    print(python_version)
    ```
 
-9. 随机获取指定文件夹下的文件
+10. 随机获取指定文件夹下的文件
 
    ```python
    #!/usr/bin/python2
@@ -4392,7 +4544,7 @@ python小轮子：
    print("{}".format(format_str))
    ```
 
-10. python参数处理模块argparse示例
+11. python参数处理模块argparse示例
 
    ```python
    import argparse
@@ -4408,7 +4560,7 @@ python小轮子：
    print("input_file: {}, output_file: {}".format(input_file, output_file))
    ```
 
-11. 打印python异常栈
+12. 打印python异常栈
 
     ```python
     import traceback
@@ -4422,7 +4574,7 @@ python小轮子：
         print("get except detail: {}".format(traceback.format_exc()))
     ```
 
-12. <a name=pb对象与json相互转换>pb对象与json相互转换/pb对象与dict相互转换</a>  来自[此处](https://stackoverflow.com/questions/19734617/protobuf-to-json-in-python)
+13. <a name=pb对象与json相互转换>pb对象与json相互转换/pb对象与dict相互转换</a>  来自[此处](https://stackoverflow.com/questions/19734617/protobuf-to-json-in-python)
 
     ```python
     #I'd recommend using protobuf↔json converters from google's protobuf library:
@@ -4434,7 +4586,7 @@ python小轮子：
     dict_obj = MessageToDict(org)
     ```
 
-13. <a name=pb对象与文件相互转换>pb对象与文件相互转换</a>
+14. <a name=pb对象与文件相互转换>pb对象与文件相互转换</a>
 
     ```python
     from google.protobuf import text_format
@@ -4468,7 +4620,7 @@ python小轮子：
 
     
 
-14. python3操作csv文件
+15. python3操作csv文件
 
     ```python
     #-*- coding: utf-8-sig -*-
@@ -4484,7 +4636,7 @@ python小轮子：
 
     注意可能会报错编码问题，可以将当前csv文件重新导出，更改格式为gbk或者utf-8：文件-导出为-CSV-选择编码如utf-8-导出
 
-15. <a name=python_tornado设置跨域>python tornado设置跨域</a>
+16. <a name=python_tornado设置跨域>python tornado设置跨域</a>
 
     ```python
     #解决普通跨域
@@ -4501,6 +4653,50 @@ python小轮子：
             self.set_headers()
             self.set_status(204)  # No Content
             self.finish()
+    ```
+
+17. python tornado参数检查
+
+    ```python
+    # -*- coding: utf-8 -*-
+    import tornado.ioloop
+    import tornado.web
+    import json
+    
+    class YourHandler(tornado.web.RequestHandler):
+        def get(self):
+            # 定义需要传递的参数
+            params = {
+                "param_1": self.get_argument("param_1", None),
+                "param_2": self.get_argument("param_2", None),
+                "param_3": self.get_argument("param_3", None),
+            }
+    
+            # 检查必填参数
+            missing_params = [param for param, value in params.items() if value is None]
+            if missing_params:
+                error_response = {
+                    "errno": 1,
+                    "msg": "Missing parameters: {}".format(", ".join(missing_params)),
+                }
+                self.write(json.dumps(error_response))
+            else:
+                # 执行你的逻辑，这里只是一个示例
+                response_data = {
+                    "status": "Success",
+                    "data": "Your response data here",
+                }
+                self.write(json.dumps(response_data))
+    
+    def make_app():
+        return tornado.web.Application([
+            (r"/your_endpoint", YourHandler),
+        ])
+    
+    if __name__ == "__main__":
+        app = make_app()
+        app.listen(8888)  # 你可以更改端口号
+        tornado.ioloop.IOLoop.current().start()
     ```
 
     
@@ -4564,6 +4760,8 @@ python小轮子：
    def __init__(self, *args, **kwargs):
        super().__init__(*args, **kwargs)
    ```
+
+   亦参见[python子类构造函数调用父类构造函数](#python子类构造函数调用父类构造函数)
 
 3. 输入参数检查
 
@@ -4680,7 +4878,12 @@ curl -i https://google.com
   - 游戏中设置注意战斗音效不要调太高
   
 
-## 厨房/厨艺相关
+## 厨房相关/厨艺相关
+
+common
+
+- 注意火候，不要太久
+- 注意盐度，不要太咸
 
 **油焖大虾**
 
@@ -4887,7 +5090,17 @@ struct tm {
 };
 ```
 
+- python转换unix时间戳到人能看的时间
 
+  ```python
+  from datetime import datetime
+  
+  def convert_linux_timestamp_to_human_readable(timestamp):
+      return datetime.utcfromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
+  
+  ```
+
+  
 
 ## 文件操作相关
 
@@ -4966,9 +5179,13 @@ ate 和 binary 模式可用于任何类型的文件流对象，且可以与其�
   
 - Cookie相关
 
-  服务端设置Cookie时，domain仅能设置服务器本身域名或其上级域名。示例：
+  - 服务端设置Cookie时，domain仅能设置服务器本身域名或其上级域名。示例：
 
-  服务器域名为：foo.example.com  则其仅能设置foo.example.com、.example.com、域名
+  ​	服务器域名为：foo.example.com  则其仅能设置foo.example.com、.example.com
+  
+  - 如果前端是a.com，后端是b.com，前端是url访问，后端是用https调用，这样Cookie就被认为跨域无法传递，且只能通过浏览器「设置 - 隐私和安全 - 第三方Cookie - 允许第三方 Cookie」解决（不推荐）
+  
+  
 
 
 ## nginx相关

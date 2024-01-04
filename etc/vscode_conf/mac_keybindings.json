@@ -55,12 +55,12 @@
     {
         "key": "cmd+g",
         "command": "git.openFile",
-        "when": "editorFocus && isInDiffEditor"
+        "when": "isInDiffEditor"
     },
     {
         "key": "cmd+g",
         "command": "git.openChange",
-        "when": "editorFocus && !isInDiffEditor"
+        "when": "!isInDiffEditor"
     },
     {
         "key": "cmd+1",
