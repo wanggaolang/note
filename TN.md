@@ -12,6 +12,7 @@
 ## 常用规范
 
 - 在linux体系机器，临时文件放/test_for_all，里边分3个文件夹：1-3once，3代表最不重要；提示文件放~/README
+
 - 模糊命名
 
   - 对于官方文档，一般命名会有：手册、文档、官方等
@@ -63,7 +64,31 @@
 - <a name=protobuf命名规范约定>protobuf命名规范约定</a>
   
   - message类型用大驼峰命名法，成员名用下划线命名法
-  - 对repeated后的命名，末尾加上_repeated，如果1个message里仅1个repeated成员，则命名为该成员类型末尾加s
+  - 对repeated后的命名，末尾加上_repeated，如果1个message里仅1个repeated成员，则该message命名为该成员类型末尾加s
+  
+- 代码模块划分规范
+  
+  - python模块划分示例
+  
+    ```python
+    ./
+    ├── config
+    │   ├── const.py
+    │   └── env
+    │       ├── config_dev.py
+    │       ├── config_online.py
+    │       └── config_test.py
+    ├── http_server
+    ├── log
+    ├── __main__.py
+    ├── module
+    ├── proto_py_release
+    ├── script
+    ├── tests
+    └── utils
+    ```
+  
+    
   
 
 
@@ -97,6 +122,27 @@
 - 项目小知识
 
   1. 在上线新策略前，一定要做好新老策略的指标指定和指标统计，才能确定新策略所带来的收益
+
+## 更新部署相关/变更相关
+
+**什么是变更？**
+
+变更（Release）指软件发布到最终上线的过程。
+
+变更很重要：据统计
+
+- Google 70%的生产事故由 变更/部署 触发
+- 百度云 2017年112个S1+故障，其中直接由 变更/操作 触发的占比40%
+
+变更的目标：
+
+- 可用性：尽早拦截变更触发的故障
+- 效率：在保障SLO指标的前提下，最大化迭代速度
+- 自动化：变更应该是全自动、全封闭的，避免人工参与
+
+**持续集成**：持续集成强调开发人员提交了新代码之后，立刻进行构建、（单元）测试。根据测试结果，我们可以确定新代码和原有代码能否正确地集成在一起。
+
+**持续交付**：持续交付在持续集成的基础上，将集成后的代码部署到运行环境。我理解每次合入代码后的变更，连续起来就是持续交付
 
 ## 工作汇报相关
 
@@ -1760,6 +1806,8 @@ read会立即返回，而readn如果当前读取数据非0且小于目标数量�
     zstyle :bracketed-paste-magic paste-init pasteinit
     zstyle :bracketed-paste-magic paste-finish pastefinish
     
+    #关闭粘贴url时的转移斜杠，注意需要退出item2再打开生效
+    DISABLE_MAGIC_FUNCTIONS=true
     ```
     
     
@@ -1859,7 +1907,7 @@ iterm2小知识
   
   - Option+点击苹果图表，显示更复杂内容
   
-- 设置文件默认打开方式
+- mac设置文件默认打开方式
 
   ```shell
   只改变指定文件的默认打开方式:
@@ -2351,17 +2399,18 @@ echo "C语言中文网" >&10 10>log.txt 10>&-  #还是输出到了屏幕
 
    ```shell
    # path of this file
-   if [[ -L "$0" ]];then
-       FILE=$(readlink -f "$0")
+   # 下方BASH_SOURCE也可以是$0，但是注意如果使用source命令执行，$0会是当前shell路径，而非当前文件路径。因为source是在当前shell执行的，类似把所有脚本内容一个个输入当前shell进行执行
+   if [[ -L "$BASH_SOURCE" ]];then
+       FILE=$(readlink -f "$BASH_SOURCE")
    else
-       FILE=$0
+       FILE=$BASH_SOURCE
    fi
     
    #获取当前shell所在文件夹
    BASE_DIR=$(cd $(dirname ${FILE}); pwd)
    
    #获取软连接绝对路径
-   basepath=$(cd dirname $(readlink $0); pwd)
+   basepath=$(cd dirname $(readlink $BASH_SOURCE); pwd)
    ```
 
 - shell获取当前时间：
@@ -4231,8 +4280,16 @@ False
     ```
 
     首先要明白，我们的目标是封装函数，绝不是执行函数。也就是说，我们不是想在每次知道参数时，才执行一遍log并传入相应变化的参数args和kw，而是说我们希望类似：func_obj = decorator(func_obj)，然后以后每次调用原来的func_obj，其实就是调用封装好的函数。因此，才有最开始说的，装饰器函数的输入是函数，输出也是函数
-
     
+
+
+14. 如何理解numpy.ndarray/理解多维数组
+
+    首先，数组本身很好理解，即多个对象的集合。注意这并一定是数，他可以是任意类型，具象到python，写法即：[obj1, obj2, obj3]。而二维数组，就是数组的数组，同理，3维数组就是「数组的数组」的数组。可以通过ndarray.shape知道数组的维度
+
+
+
+
 
 
 
@@ -4640,7 +4697,7 @@ python小轮子：
 
     ```python
     #解决普通跨域
-    def set_headers()
+    def set_headers(self):
         self.set_header("Access-Control-Allow-Origin", self.request.headers.get("Origin", "http://localhost:8999"))
             self.set_header("Access-Control-Allow-Headers", "*")
             self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
@@ -4663,21 +4720,48 @@ python小轮子：
     import tornado.web
     import json
     
-    class YourHandler(tornado.web.RequestHandler):
-        def get(self):
-            # 定义需要传递的参数
-            params = {
-                "param_1": self.get_argument("param_1", None),
-                "param_2": self.get_argument("param_2", None),
-                "param_3": self.get_argument("param_3", None),
-            }
+    class BaseRequestHandler(tornado.web.RequestHandler):
+        def base_get_arguments(self, required_param_names=None, optional_param_names=None):
+            """获取输入的必填参数和可选参数的值，返回为2个数组，第1个是必填参数里未填入值的key，第2个是输入的所有参数与值的map，
+                若未获取到某参数值，则该值为None
     
-            # 检查必填参数
-            missing_params = [param for param, value in params.items() if value is None]
-            if missing_params:
+            Args:
+                required_param_names (list): 必填参数的名称列表
+                optional_param_names (list): 可选参数的名称列表
+    
+            Returns:
+                tuple composed of 2 lists: ([missed required argument names], [all input key-value map])
+            """
+            if required_param_names is None:
+                required_param_names = []
+            if optional_param_names is None:
+                optional_param_names = []
+    
+            # 使用 set() 来确保唯一性，而不需要在后面再进行转换
+            required_param_names = set(required_param_names)
+            optional_param_names = set(optional_param_names)
+            # 获取当前函数所有输入参数
+            all_keys = required_param_names | optional_param_names
+    
+            # 查找缺失的必填参数
+            missed_required_params = list(required_param_names - all_keys)
+    
+            # 获取所有参数及其对应的值
+            all_input_key_value_map = {param_name: self.get_argument(param_name, None) for param_name in all_keys}
+            print(all_input_key_value_map) # tmp debug
+    
+            return missed_required_params, all_input_key_value_map
+    
+    
+    class YourHandler(BaseRequestHandler):
+        def get(self):
+            required_params = ["required_param_1", "required_param_2"]  # 必填参数
+            optional_params = ["optional_param_1", "optional_param_2"]  # 可选参数
+            missed_required_params, all_input_key_value_map = self.base_get_arguments(required_params, optional_params)
+            if missed_required_params:
                 error_response = {
                     "errno": 1,
-                    "msg": "Missing parameters: {}".format(", ".join(missing_params)),
+                    "msg": "Missing parameters: {}".format(", ".join(missed_required_params)),
                 }
                 self.write(json.dumps(error_response))
             else:
@@ -4685,6 +4769,7 @@ python小轮子：
                 response_data = {
                     "status": "Success",
                     "data": "Your response data here",
+                    "all_input_key_value_map": all_input_key_value_map,
                 }
                 self.write(json.dumps(response_data))
     
@@ -4697,6 +4782,42 @@ python小轮子：
         app = make_app()
         app.listen(8888)  # 你可以更改端口号
         tornado.ioloop.IOLoop.current().start()
+    ```
+    
+18. str或者unicode转bool
+
+    ```python
+    def str_or_unicode_to_bool(input_data):
+        """_summary_
+    
+        Args:
+            str (_type_): _description_
+        """
+        if (isinstance(input_data, str) or isinstance(input, unicode)) and input_data.upper() == 'TRUE':
+            return True
+        else:
+            return False
+    ```
+
+19. python加载不同环境conf
+
+    ```python
+    """
+    根据不同环境加载不同配置项
+    """
+    import os
+    import importlib
+    
+    ENV = ["dev", "test", "online"]
+    
+    
+    def load_settings(env=None):
+        """根据环境加载配置
+        """
+        if env not in ENV:
+            env = "dev"
+        conf = importlib.import_module('config.env.config_{}'.format(env))
+        return conf
     ```
 
     
@@ -4763,40 +4884,114 @@ python小轮子：
 
    亦参见[python子类构造函数调用父类构造函数](#python子类构造函数调用父类构造函数)
 
-3. 输入参数检查
+3. 输入参数检查(并用单进程启动tornado)
 
    ```python
-   import tornado.ioloop
    import tornado.web
+   import json
+   class YourHandler(tornado.web.RequestHandler):
+           def base_get_arguments(self, required_param_names=None, optional_param_names=None):
+               """获取输入的必填参数和可选参数的值，返回为2个数组，第1个是必填参数里未填入值的key，第2个是输入的所有参数与值的map，
+                   若未获取到某参数值，则该值为None
    
-   class MyHandler(tornado.web.RequestHandler):
-       def get(self):
-           # 定义需要检查的参数列表
-           required_params = ["XX", "YY", "ZZ"]
+               Args:
+                   required_param_names (list): 必填参数的名称列表
+                   optional_param_names (list): 可选参数的名称列表
    
-           # 检查每个参数是否存在
-           missing_params = [param for param in required_params if self.get_argument(param, None) is None]
+               Returns:
+                   tuple composed of 2 lists: ([missed required argument names], [all input key-value map])
+               """
+               if required_param_names is None:
+                   required_param_names = []
+               if optional_param_names is None:
+                   optional_param_names = []
    
-           if missing_params:
-               self.set_status(400)  # 设置 HTTP 响应状态码为 400 (Bad Request)
-               missing_params_str = ", ".join(missing_params)
-               self.write(f"缺失参数: {missing_params_str}")  # 返回错误信息
-           else:
-               # 所有参数都存在，继续处理业务逻辑
-               xx_value = self.get_argument("XX")
-               yy_value = self.get_argument("YY")
-               zz_value = self.get_argument("ZZ")
-               
-               self.write(f"参数XX的值为: {xx_value}, 参数YY的值为: {yy_value}, 参数ZZ的值为: {zz_value}")
+               # 使用 set() 来确保唯一性，而不需要在后面再进行转换
+               required_param_names = set(required_param_names)
+               optional_param_names = set(optional_param_names)
+   
+               # 获取所有参数的键
+               all_keys = set(self.request.arguments.keys())
+               # 查找缺失的必填参数
+               missed_required_params = list(required_param_names - all_keys)
+   
+               all_func_input_key = required_param_names | optional_param_names
+               # 获取所有参数及其对应的值
+               all_func_input_key_value_map = {param_name: self.get_argument(param_name, None) for \
+                                               param_name in all_func_input_key}
+   
+               return missed_required_params, all_func_input_key_value_map
+   
+           def get(self):
+               # 定义需要传递的参数
+               required_params = ['required_param_1', 'required_param_2']
+               optional_params = ['optional_param_1', 'optional_param_2']
+               # 获取参数
+               missed_required_params, params = self.base_get_arguments(required_params, optional_params)
+               if missed_required_params:
+                   error_response = {
+                       "errno": 1,
+                       "msg": "Missing parameters: {}".format(missed_required_params)
+                   }
+                   self.write(json.dumps(error_response))
+               else:
+                   # 执行你的逻辑，这里只是一个示例
+                   response_data = {
+                       "errno": 1,
+                       "msg": "Success",
+                       "data": "{}".format(params)
+                   }
+                   self.write(json.dumps(response_data))
+       
+   def make_app():
+       return tornado.web.Application([
+           (r"/your_endpoint", YourHandler),
+       ])
    
    if __name__ == "__main__":
-       app = tornado.web.Application([
-           (r"/", MyHandler),
-       ])
-       app.listen(8888)
+       app = make_app()
+       app.listen(8888)  # 你可以更改端口号
        tornado.ioloop.IOLoop.current().start()
-   
    ```
+
+4. tornado启动多进程/tornado 多进程相关
+
+   ```python
+   """启动一个http服务，监听2个端口，并用3个进程来处理"""
+   import tornado.web
+   
+   class HelloHandler(tornado.web.RequestHandler):
+       def get(self):
+           self.write('hello')
+           self.finish()
+   
+   
+   class MainHandler(tornado.web.RequestHandler):
+       def get(self):
+           self.write('main')
+           self.finish()
+   
+   
+   helloApp = tornado.web.Application([
+       (r'/hello', HelloHandler),
+   ])
+   
+   mainApp = tornado.web.Application([
+       (r'/main', MainHandler),
+   ])
+   
+   if __name__ == "__main__":
+       hello_sockets = tornado.netutil.bind_sockets(8881) # 生成套接字，注意需要在fork_processes之前，用于共享该套接字
+       main_sockets = tornado.netutil.bind_sockets(8882) # 生成套接字
+       tornado.process.fork_processes(3) # fork 多进程
+       hello_server = tornado.httpserver.HTTPServer(helloApp) # 生成HTTPServer
+       hello_server.add_sockets(hello_sockets) # 将HTTPServer绑定套接字
+       main_server = tornado.httpserver.HTTPServer(mainApp)
+       main_server.add_sockets(main_sockets)
+       tornado.ioloop.IOLoop.current().start()
+   ```
+
+   
 
 ## expect脚本
 
@@ -5093,13 +5288,18 @@ struct tm {
 - python转换unix时间戳到人能看的时间
 
   ```python
-  from datetime import datetime
+  import datetime
   
   def convert_linux_timestamp_to_human_readable(timestamp):
-      return datetime.utcfromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
+      # 将时间戳转换为 datetime 对象
+      dt_object = datetime.datetime.utcfromtimestamp(timestamp)
   
+      # 将毫秒部分添加到格式字符串中
+      formatted_time = dt_object.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]  # 去掉最后的三位微秒
+  
+      return formatted_time
   ```
-
+  
   
 
 ## 文件操作相关
@@ -5935,3 +6135,29 @@ python -c "from google.protobuf.internal import api_implementation; print(\"defa
 ​	protobuf存储地址：/usr/local/lib/python2.7/dist-packages/google/protobuf/
 
 ​	指定python用cpp实现protobuf：export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=cpp
+
+
+
+## 读书笔记
+
+### 理解「[Why does one NGINX worker take all the load](https://blog.cloudflare.com/the-sad-state-of-linux-socket-balancing/#fnref1)」/理解套接字相关/socket相关
+
+- 对于单个机器上，接收处理网络请求，总共有以下3种模型：
+
+  - a、流量 - 单个accept queue - 单个worker
+
+    ![img](etc/pic/worker1.png)
+
+  - b、流量 - 单个accept queue - 多个worker
+
+    ![img](etc/pic/worker2.png)
+
+  - c、流量 - 多个accept queue - 多个worker
+
+    ![img](etc/pic/worker3.png)
+
+    其中Linux的epollo默认是用的b模型，但是在将Accept queue分配到worker时用的是LIFO策略，而非FIFO策略。这会导致worker间的工作分配不均。
+
+  可以通过SO_REUSEPORT进行解决，这样就会切换到c模型，但是这会存在新的隐患：在大流量而某个worker有异常的情况下，epollo在b模型会表现更好，对流量的处理更平均。因为在c模型下异常worker存储在Accept queue的流量是一样多的（跟其他worker一样），这样异常worker就会在处理上拖后腿，导致长尾问题。
+
+  最好的方式是：将b模型中的分配由LIFO改为FIFO，目前已有人提案。

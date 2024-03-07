@@ -19,6 +19,7 @@
         {
             "name": "Python: Current File",
             "type": "python",
+            "python": "/usr/bin/python3", // 指定python路径
             "request": "launch",
             "program": "${file}",
             "env": {
@@ -29,8 +30,22 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "Python: My test file",
+            "type": "python",
+            "python": "/usr/bin/python3", // 指定python路径
+            "request": "launch",
+            "program": "/path/to/my/test/file.py",
+            "env": {
+                "PYTHONPATH": "",
+                "PATH": "",
+                "LD_LIBRARY_PATH": ""
+            },
+            "console": "integratedTerminal"
+        },
+        {
             "name": "Python: Module",
             "type": "python",
+            "python": "/usr/bin/python3", // 指定python路径
             "request": "launch",
             "module": "test_module",
             "env": {
