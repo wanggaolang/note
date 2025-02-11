@@ -800,6 +800,7 @@ Setting	--	Keymap
   Pylance #这个应该是自动安装，如不生效，更改设置中「python.languageServer」指定为Pylance
   #python自动注释
   Python Docstring Generator
+  Black formatter # 代码格式化
   
   #protobuf
   jumpprotobuf #protobuf自动跳转
@@ -3673,7 +3674,7 @@ tar经典示例
 
 ## python相关
 
-- **语法**
+- **python语法**
 
   1. 单引号和双引号效果一样，三引号里可以放前两者，让他们显示出来
 
@@ -4440,7 +4441,7 @@ python小知识：
      sys.path.append(ROOT_PATH)
      ```
 
-3. python安装模块相关
+3. python安装模块相关/python package相关/python常用包
 
    ```python
    #可以指定一个文件如requirements.txt批量安装模块：python -m pip install -r requirements.txt -t /home/work
@@ -4485,6 +4486,9 @@ python小知识：
    #ubuntu18.04安装python2和pip2
    apt-get install python-minimal
    apt-get install python-pip
+   
+   #sql处理相关
+   sqlalchemy
    ```
 
 4. 对于打印中文但是编码形如：\xe8\xbd\xa6\xe5\x9e\x8b的转译
@@ -6165,6 +6169,8 @@ Redis支持五种数据类型：string（字符串），hash（哈希），list�
 
 ## sql相关/mysql相关
 
+- 数据库规范： [数据库设计规范.md](数据库设计规范.md) 
+
 - mysql下载安装：https://downloads.mysql.com/archives/community/?version=5.6.23
 
 - mysql启动
@@ -6261,6 +6267,16 @@ Redis支持五种数据类型：string（字符串），hash（哈希），list�
    
    --查询相关
    1）模糊查询：name LIKE "%福贵%"
+   
+   -- 条件判断
+   SELECT COUNT(IF(status=500,1,NULL)) as status_500_requests from {table_name}
+   
+   SELECT COUNT(DISTINCT CASE WHEN customer_id = '1' THEN order_id END) as target_customer_order_num, COUNT(DISTINCT(order_id)) as total_order_num from orders;
+   +---------------------------+-----------------+
+   | target_customer_order_num | total_order_num |
+   +---------------------------+-----------------+
+   |                         1 |               3 |
+   +---------------------------+-----------------+
    ```
 
 1. 实战：查询status=500的case数量
@@ -6486,3 +6502,22 @@ python -c "from google.protobuf.internal import api_implementation; print(\"defa
 - 非阻塞IO：内核未数据ready时，调用立即返回；数据ready时，会阻塞直到内核数据拷贝到用户程序中
 - 同步IO：有任一阻塞的即是同步IO。按照这种定义，非阻塞IO也是同步IO
 - 异步IO：不存在阻塞则是异步IO
+
+
+
+## dbeaver相关
+
+**快捷键**
+
+1. 新增sql script查询：ctrl + ]
+2. 打开现有sql script：ctrl + option + shift + o
+3. 执行查询：cmd + enter
+
+
+
+
+
+## Draw.io相关/drawio相关
+
+- 快捷键
+  - option + 鼠标左键拖动  可以选择划定范围内的内容，而不会拖动到鼠标所在的图/框
