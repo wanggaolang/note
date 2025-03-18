@@ -738,9 +738,32 @@ Setting	--	Keymap
   - 删除光标行：`ctrl+shift+k`
   - 到大括号的尾端/首部:    `Ctrl + Shift+\`
   - 批量保存文件：（改了键位的）windows：`ctrl + alt + s`    mac：`command + option + s`
-  - 展开折叠的代码块：macOS: Cmd + K, Cmd + J
-  - 折叠展开的代码块：macOS: Cmd + K, Cmd + 0
   ```
+  
+  - 折叠与展开代码库
+  
+    Here’s a consolidated list of shortcuts for collapsing/expanding code in VS Code:
+  
+    | **Action**                         | **Shortcut (Windows/Linux)**            | **Shortcut (macOS)**                    |
+    | :--------------------------------- | :-------------------------------------- | :-------------------------------------- |
+    | **Collapse current region**        | `Ctrl + K, Ctrl + [`                    | `Cmd + K, Cmd + [`                      |
+    | **Expand current region**          | `Ctrl + K, Ctrl + ]`                    | `Cmd + K, Cmd + ]`                      |
+    | **Collapse all regions**           | `Ctrl + K, Ctrl + 0` (zero)             | `Cmd + K, Cmd + 0` (zero)               |
+    | **Expand all regions**             | `Ctrl + K, Ctrl + J`                    | `Cmd + K, Cmd + J`                      |
+    | **Collapse all top-level regions** | `Ctrl + K, Ctrl + 1`                    | `Cmd + K, Cmd + 1`                      |
+    | **Collapse all nested regions**    | `Ctrl + K, Ctrl + 2` (or higher)        | `Cmd + K, Cmd + 2` (or higher)          |
+    | **Toggle collapse/expand**         | `Ctrl + Shift + [` / `Ctrl + Shift + ]` | `Cmd + Option + [` / `Cmd + Option + ]` |
+    
+    额外可设置选中代码块的快捷键：
+    
+    ```json
+    {
+            "key": "alt+cmd+\\",
+            "command": "editor.action.selectToBracket"
+        }
+    ```
+    
+    
   
 - 3个配置文件：见etc/vscode_conf
 
@@ -830,7 +853,7 @@ Setting	--	Keymap
     2. touch .vscode/launch.json
     3. 详见 etc/vscode_conf/launch.json 的"name": "Python:XXX"部分
 
-vscode小知识
+**vscode小知识**
 
 1. 解决ubuntu中vscode字体间距过大问题：安装适配`firacode`字体
    1. 更新可用软件包列表: `sudo apt update`;
@@ -851,6 +874,28 @@ vscode小知识
            "-o",
            "${fileDirname}/${fileBasenameNoExtension}"
        ]
+   ```
+
+
+
+
+**vscode server相关**
+
+1. 配置ssh config
+
+   ```
+   Host 1.2.3.4
+     HostName 1.2.3.4
+     Port 22
+     User root
+   
+   Host *
+   ControlMaster auto
+   ControlPath ~/.ssh/master-%r@%h:%p
+   ControlPersist yes
+   ServerAliveInterval 60
+   HostkeyAlgorithms +ssh-rsa
+   PubkeyAcceptedAlgorithms +ssh-rsa
    ```
 
    
@@ -5839,7 +5884,7 @@ export LDFLAGS="-L/opt/compiler/gcc-8.2/lib64/ -L/usr/lib64/"
 
 
 
-## 文档工具/markdown工具
+## 文档工具/markdown工具/文档相关
 
 现在的文档工具分为离线和在线的
 
@@ -5851,6 +5896,7 @@ export LDFLAGS="-L/opt/compiler/gcc-8.2/lib64/ -L/usr/lib64/"
   - 语雀 -- 阿里
   - 飞书文档 -- 字节
   - 金山云
+  - [flowus](https://flowus.cn/product)
 
 
 
@@ -6306,6 +6352,8 @@ Redis支持五种数据类型：string（字符串），hash（哈希），list�
 
 7. 查看表结构：https://blog.csdn.net/yageeart/article/details/7973381
 
+8. 外键：可以理解为外人的关键角色，如a表有个字段，是索引到b的主键上，对于a表来说这个key就是外人（b表的），同时是外人的关键字段。外部某张表的主键
+
 ### clickhouse相关
 
 **clickhouse小知识**
@@ -6363,7 +6411,108 @@ Redis支持五种数据类型：string（字符串），hash（哈希），list�
 
 ## 疑难杂症/问题排查相关/杂记
 
-详见： [疑难杂症.md](疑难杂症.md) 
+首先确定是偶现还是稳定复现问题。注意有时候，仅仅是在你的某个环境偶现，在其他环境复现不出来，因此需要多试几次、多试几个环境来确定
+
+- 如果是浏览器页面问题，可以先开个无痕窗口确认下是否有这个问题，如果没有，则很有可能跟cookie等本地存储有关
+
+
+
+
+
+### 记一次linux官方更新python-pip导致安装的protobuf反序列化变慢问题
+
+**问题描述**
+
+  用同样的dockerfile和几乎相同的业务代码，打出的2个镜像，一个打镜像时间为2.28号，一个为3.1号，他们的业务接口处理速度不一样，前者仅需2s，后者需要14s。这其中核心处理为读取文件、python反序列化protobuf
+
+**排查流程**
+
+1. 怀疑是镜像的文件系统或者存储介质定义不同
+
+通过docker inspect {container_id} 来做2个镜像属性的对比，发现几乎无不同
+
+通过python读取一个测试文件，发现读取速度几乎一致：
+
+```python
+# -*- coding: UTF-8 -*-
+import time
+start_ts = time.time()
+with open('/path/to/test/read/file') as f:
+    content = f.read()
+print("read file cost: {}s".format(time.time() - start_ts))
+```
+
+因此排除该猜测
+
+2. 文件打开之后就是pb反序列化，经过代码打印耗时，发现区别为反序列化pb耗时，即ParseFromString函数
+
+3. 请教大佬发现耗时区别为，protobuf在python的protobuf反序列化分别有python实现和cpp实现，cpp实现即封装了cpp的一个so文件，速度上确实可以快很多。通过执行下方命令，确实印证是因为2个镜像，前者使用了cpp实现，后者使用了python实现：
+
+```bash
+python -c "from google.protobuf.internal import api_implementation; print(\"default implement: {}, acl implement: {}\".format(api_implementation._default_implementation_type, api_implementation.Type()))"
+
+#2-28镜像输出为：default implement: python, acl implement: python
+#3-1镜像输出为：default implement: cpp, acl implement: cpp
+```
+
+4. 怀疑跟pip源有关，在3-1镜像（即慢镜像）中反复卸载重装protobuf 3.17.3，使用了不同的源如清华、中科大等，但是得到的都是protobuf python实现，而在2-28镜像（即快镜像）中仍然安装带有cpp实现的protobuf，怀疑不对
+
+```bash
+#尝试用清华源安装protobuf 3.17.3
+pip uninstall -y protobuf && pip install protobuf==3.17.3 -i \
+  http://pypi.tuna.tsinghua.edu.cn/simple/ --trusted-host \
+  pypi.tuna.tsinghua.edu.cn -v -v -v --force-reinstall --no-cache-dir
+```
+
+5. 通过上方带-v的安装命令，打印的pip安装日志发现2者安装的tgz文件不同，阅读pip源码发现他们的/usr/lib/python2.7/dist-packages/pip/wheel.py 中正则表达式不同。也就是说，他们的python-pip是不同版本的（但其实最早我就用pip --version 打印确认他们版本都为：「pip 9.0.1 from /usr/lib/python2.7/dist-packages (python 2.7)」）
+
+![img](etc/pic/imageDownloadAddress.png)
+
+![img](etc/pic/imageDownloadAddress-20230308214926633.png)
+
+6. 通过apt读取pip更新日志，发现了这行更新：
+
+```bash
+$ apt-get changelog python-pip
+python-pip (9.0.1-2.3~ubuntu1.18.04.7) bionic-security; urgency=medium
+
+  * SECURITY UPDATE: ReDOS in wheel.py
+    - debian/patches/CVE-2022-40898.patch: Fix potential DoS attack
+      via wheel_file_re by restricting matching dash and dot characters
+      in pip/wheel.py.
+    - CVE-2022-40898
+
+ -- David Fernandez Gonzalez <david.fernandezgonzalez@canonical.com>  Tue, 28 Feb 2023 10:48:00 +0100
+```
+
+也就是说，刚好在2.28号，Linux对python-pip做了一次更新，用于修复CVE-2022-40898，这导致默认安装的protobuf 3.17.3不带有cpp实现版本。通过将2-28镜像（即速度快镜像）更新apt并重装pip，再重装protobuf，发现也变为了默认为python实现protobuf，印证这个问题
+
+```shell
+#更新apt并重装pip
+$ apt-get update && apt-get -y remove python-pip && apt-get install -y python-pip
+
+#用清华源安装protobuf 3.17.3
+$ pip uninstall -y protobuf && pip install protobuf==3.17.3 -i \
+  http://pypi.tuna.tsinghua.edu.cn/simple/ --trusted-host \
+  pypi.tuna.tsinghua.edu.cn -v -v -v --force-reinstall --no-cache-dir
+  
+#打印protobuf实现，此次输出变为了：default implement: python, acl implement: python
+python -c "from google.protobuf.internal import api_implementation; print(\"default implement: {}, acl implement: {}\".format(api_implementation._default_implementation_type, api_implementation.Type()))"
+```
+
+7. 写邮件给更新者说明这个问题
+
+![img](etc/pic/imageDownloadAddress-20230308215133524.png)
+
+8. 获得其回信确认和后续更新，修复bug
+
+![img](etc/pic/imageDownloadAddress-20230308215127861.png)
+
+**其他经验总结**
+
+​	protobuf存储地址：/usr/local/lib/python2.7/dist-packages/google/protobuf/
+
+​	指定python用cpp实现protobuf：export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=cpp
 
 
 
@@ -6390,6 +6539,37 @@ Redis支持五种数据类型：string（字符串），hash（哈希），list�
   可以通过SO_REUSEPORT进行解决，这样就会切换到c模型，但是这会存在新的隐患：在大流量而某个worker有异常的情况下，epollo在b模型会表现更好，对流量的处理更平均。因为在c模型下异常worker存储在Accept queue的流量是一样多的（跟其他worker一样），这样异常worker就会在处理上拖后腿，导致长尾问题。
 
   最好的方式是：将b模型中的分配由LIFO改为FIFO，目前已有人提案。
+
+
+
+## dbeaver相关
+
+**快捷键**
+
+1. 新增sql script查询：ctrl + ]
+2. 打开现有sql script：ctrl + option + shift + o
+3. 执行查询：cmd + enter
+
+
+
+
+
+## Draw.io相关/drawio相关
+
+- 快捷键
+  - option + 鼠标左键拖动  可以选择划定范围内的内容，而不会拖动到鼠标所在的图/框
+
+
+
+
+
+## 开车/停车相关
+
+停车诀窍
+
+- 旋转法： [driving.drawio](etc/driving.drawio) 
+
+  ![image-20250224150732156](etc/pic/image-20250224150732156.png)
 
 
 
