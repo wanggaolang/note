@@ -325,7 +325,7 @@ ssh -T git@github.com    //测试与github联通性
 
 『Changes not staged for commit』更改没有步入（staged）提交（准备）的，也就是改变记录存在工作区的stage形容了从工作区步入暂存区
 
-- git clone git@server-name:path/repo-name.git克隆到本地，会将所有文件保存在仓库名文件夹中，也就是不用自己创建一个文件夹在clone，在主目录clone就行了。这种clone会把git数据库克隆过来，所以会让本地有所有远程分支
+- git clone git@server-name:path/repo-name.git克隆到本地，会将所有文件保存在仓库名文件夹中，也就是不用自己创建一个文件夹再clon，在主目录clone就行了。这种clone会把git数据库克隆过来，所以会让本地有所有远程分支
 
 git fetch todo
 
@@ -335,13 +335,43 @@ git fetch todo
   
   如果需要用编辑器进行多行编辑commit message：git commit -a
   
-- git rebase相关
+- **git rebase相关**
 
-  - 合并多个commit：1）git rebase -i {commitid}；2）将其中要融合的commit从pick改为s；3）保存退出，更改commit信息；
+  写在前面：git rebase的本质是操作commit，如更改commit的顺序、合并多个commit等
   
-    注意第2步只会包含第1步commitid之后的所有commit，不包含这个commitid本身的commit
+  - 合并多个commit：
   
-  - 我现在本地有a b c 3个commit，其中a最早。但现在我发现有个a相关改动想继续合入到a，类似git commit --amend，有什么方法吗?
+    1. git rebase -i {commitid}
+    2. 将其中要融合的commit从pick改为s
+    3. 保存退出，更改commit信息；
+  
+    注意第2步只会包含第1步commitid之后(即更未来)的所有commit，不包含这个commitid本身的commit。即如果提交线如下：
+  
+    ```bash
+    a -> b -> c -> d -> e
+    ```
+  
+    则 get rebase -i a 得到的内容是：
+  
+    ```bash
+    # 与git log相反的是，最上方是最旧的提交，可以理解这里类似shell脚本，从上到下依次执行
+    # 如果想包含git仓库最开始的commitid，则需要用git rebase -i --root
+    pick b
+    pick c
+    pick d
+    pick e
+    ```
+  
+    此时对需要合并的commit，在起前面将pick改为s，再保存退出。其工作原理是类似shell脚本依次执行，遇到pick的就是正常cherry-pick，遇到s的，会将其合并到更早（更上方）的最近pick commit上，示例如下
+  
+    ```bash
+    pick b    
+    s c # c会和b合并为1个commit
+    pick d
+    s e # e会和d合并为1个commit
+    ```
+  
+  - 我现在本地有a -> b -> c 3个commit。但现在我发现有个a相关改动想继续合入到a，类似git commit --amend，有什么方法吗?
   
     1. 打开终端，切换到你的项目目录。
   
@@ -386,6 +416,22 @@ git fetch todo
        ```
   
     请注意，这个过程会改写提交历史，因此如果你的这些提交已经被推送到远程仓库，你可能需要使用 `git push --force` 强制推送。但请谨慎使用 `--force` 选项，因为它会覆盖远程仓库的提交历史。如果你不确定，最好先备份你的仓库。
+    
+  - 我现在有本地分支main和feature 2个，其中feature是基于main新增了n个commit，现在remote的main分支新增了一个重要feature我想合入到feature分支用于本地调试，我该如何做
+  
+    1. 拉取远程内容到本地：
+  
+       ```bash
+       git fetch origin/main
+       ```
+  
+    2. 切换到feature分支，并用rebase将远端改动放到自己commit前面（更过去）
+  
+       ```bash
+       git checkout feature && git rebase origin/main
+       ```
+  
+    3. 如果有冲突则解决冲突，再git add 和git rebase --continue
 
 **分支相关**
 
