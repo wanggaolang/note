@@ -269,45 +269,71 @@ ssh -T git@github.com    //测试与github联通性
 
   可以配合git checkout .清除所有改动
 
-- 回滚云端仓库  
+- 回滚云端仓库/git revert相关
 
   撤销某次commit：git revert {参数，详见下方}  思想是新增一个commit，改动是源commit的反向改动
 
   ```shell
-  *   commit 9f90458ccb347581df6f83bd3ee7dfdcb33e97d6
-  |\  Merge: 460f055 2f1241f
-  | | Author: Your Name <you@example.com>
-  | | Date:   Mon Sep 13 20:53:31 2021 +0800
+  *   commit bc678175e7171ad2e6620d044dcbd0697ed433ff
+  |\  Merge: 277c902 27fc683
+  | | Author: wanggaolang <hongshansong@qq.com>
+  | | Date:   Thu May 22 01:06:22 2025 +0800
   | |
-  | |     Merge branch 'b_revert_branch'
+  | |     Merge branch 'main_new'
   | |
-  | * commit 2f1241fa75e6aef10c59a03ac008eea432386df8 (b_revert_branch)
-  | | Author: Your Name <you@example.com>
-  | | Date:   Mon Sep 13 20:52:57 2021 +0800
+  | * commit 27fc683e438e52d77d998d47ad97f39aa11e2967
+  | | Author: wanggaolang <hongshansong@qq.com>
+  | | Date:   Thu May 22 01:05:08 2025 +0800
   | |
-  | |     add b_revert
+  | |     333
   | |
-  * | commit 460f0551004ebcc10e08d4cab84887d2946cb7da
-  |/  Author: Your Name <you@example.com>
-  |   Date:   Mon Sep 13 20:53:19 2021 +0800
+  | * commit fa72e719e603e0ff322c79455c6ffe4498b84c4d
+  | | Author: wanggaolang <hongshansong@qq.com>
+  | | Date:   Thu May 22 01:04:55 2025 +0800
+  | |
+  | |     222
+  | |
+  * | commit 277c902e8bed9e49957ced479c2ddf594fae2617
+  |/  Author: wanggaolang <hongshansong@qq.com>
+  |   Date:   Thu May 22 01:05:48 2025 +0800
   |
-  |       add a_revert
+  |       111
   |
-  * commit 886081a9659163de8b94ac539fb24e001416ea23
-  | Author: Your Name <you@example.com>
-  | Date:   Fri Mar 26 17:34:33 2021 +0800
-  |
-  |     常规提交
-  |     add test in ab
+  * commit 372fcb70a441bf540ad609865a95c0cd726fb951
+    Author: wanggaolang <hongshansong@qq.com>
+    Date:   Thu May 22 01:04:29 2025 +0800
   
+        000
+  $ cat a
+  111
+  333
+  222
+  000
+  
+  
+  ###############
   revert针对两类commit分开讨论：普通commit和merge commit
   
-  普通commit的撤销：git revert {commitId}
-    如git revert 460f0551004ebcc10e08d4cab84887d2946cb7da    其实就是相对向下的commitId（886081a9659163de8b94ac539fb24e001416ea23），撤销了a_revert文件
+  普通commit的撤销：git revert {commitId} [-m 1]
+    如git revert 277c902e8bed9e49957ced479c2ddf594fae2617    其实就是相对向下的commitId（372fcb70a441bf540ad609865a95c0cd726fb951），撤销了其改动。对这里来说就是删掉了111这行字符
     
   merge commit的撤销：git revert {commitId} -m {1或2}
-    撤销相对下方的commitID的改变，但是merge commit有两个"下方commitID"，所以需要用-m指定第几个（见9f90458ccb347581df6f83bd3ee7dfdcb33e97d6下的Merge有两个commitId，左1右2）
-    如 git revert 9f90458ccb347581df6f83bd3ee7dfdcb33e97d6 -m 1 ，就撤销了460f0551004ebcc10e08d4cab84887d2946cb7da到9f90458ccb347581df6f83bd3ee7dfdcb33e97d6之间的内容
+    撤销相对下方的commitID的改变，但是merge commit有两个"下方commitID"，注意revert是相对来说的，如+1这个commit是由+0这个commit所进行的改变，那么revert +1就会翻转+0到+1的所有变更。那么问题来了：当我的+1 commit是由 +0_left 和 +0_right共同产生（如分支合并），我要回滚+1是要翻转谁到谁之间的变更呢？这就是-m参数的意义：-m 1表示要从+1回到+0_left 的状态，【换句话说就是回滚右侧的所有改动】，-m 2表示要从+1回到 +0_right的状态，【换句话说就是回滚左侧的所有改动】。示例：
+  git revert bc678175e7171ad2e6620d044dcbd0697ed433ff -m 1 就把新增的“222” “333”字符都回滚掉了。cat a的结果是：
+  111
+  000
+  
+  所以，其实对于普通commit（线性commit），我们的git revert {commitId}是等效于git revert {commitId} -m 1的，因为他就是要从+1回到+0状态，而由于是线性commit，只有一条选择线，那就是-m 1
+  另外，要注意终端的git log --graph（见下方），右分支的公共commit是aaa而不是bbb
+  
+  *   commit ddd
+  |\
+  | * commit ccc
+  | |
+  * | commit bbb
+  |/
+  |
+  * commit aaa
     
   #对于连续多个commit的 revert
   git revert -n OLDER_COMMIT^..NEWER_COMMIT  # -n会把改变仅放到工作和暂存区，这样就能只生成一个commit
@@ -3248,6 +3274,8 @@ windows 一般在 /c/Users/{用户名}/.ssh
 
 ## docker相关
 
+相关文档：[K8S相关](#K8S相关)
+
  **docker概念**
 
 镜像就是模板类；容器是对应模板的具象化（对象）
@@ -3404,8 +3432,6 @@ windows 一般在 /c/Users/{用户名}/.ssh
   		 chown -R work:work $dest_dir
   ```
 
-  
-
 - 在有Dockerfile的文件夹运行docker build [-t {tag_name}] .
 
 - 对于COPY命令：
@@ -3436,6 +3462,10 @@ windows 一般在 /c/Users/{用户名}/.ssh
 2. docker密码存储位置：~/.docker/config.json
 
 
+
+## K8S相关
+
+详见：[K8S学习](K8S学习.md#K8S相关)
 
 ## photoshop相关/PS相关
 
