@@ -2038,7 +2038,9 @@ iterm2小知识
 **mac软件相关**
 
 - 访达相关/finder相关
+
   在finder（访达）根目录中`command + shift + .`(即cmd + shift + .)显示隐藏文件
+  隐藏文件/文件夹: chflags hidden {file_name/dir_name}  如果没有权限, 可能需要给当前shell(如iterm2)在设置 - 隐私 - 完全磁盘访问权限加上权限
 
   显示路径：显示-显示路径栏
 
