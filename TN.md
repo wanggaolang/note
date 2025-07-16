@@ -2037,7 +2037,8 @@ iterm2小知识
 
 **mac软件相关**
 
-- 在finder（访达）根目录中`command + shift + .`显示隐藏文件
+- 访达相关/finder相关
+  在finder（访达）根目录中`command + shift + .`(即cmd + shift + .)显示隐藏文件
 
   显示路径：显示-显示路径栏
 
