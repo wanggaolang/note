@@ -2075,7 +2075,10 @@ iterm2小知识
   ctrl - b: open /opt/homebrew/Cellar/skhd/0.3.9/bin/
   ```
 
-  
+
+- 视频播放: 详见[视频相关/播放器相关/视频播放器相关](#视频相关/播放器相关/视频播放器相关)
+
+
 
 **mac小知识**
 
@@ -4810,7 +4813,8 @@ python小轮子：
            timestamps.append(cap.get(cv2.CAP_PROP_POS_MSEC))
            calc_timestamps.append(calc_timestamps[-1] + 1000/fps)
            temp_num = calc_timestamps[-2]
-           cv2.imwrite(output_path + "image"+str(base_time + temp_num/1000.0)+".jpg", curr_frame)
+           image_name = output_path + "image"+"{:.6f}".format(base_time + temp_num/1000.0)+".jpg"
+           cv2.imwrite(image_name, curr_frame)
        else:
            break
    
@@ -5563,12 +5567,20 @@ common/总则
   - 【工具】绞肉器
   - 【佐料】
     - 包抄手：前腿肉（1.5斤）、抄手皮（10元/2.5斤）、马蹄、香葱、姜、盐（别放多）、蚝油、鸡精、生抽、鸡蛋、食用油适量
+    - 皮和肉的对比大概是： 1斤皮兑7两肉
     - 煮抄手：鸡油辣椒、蹦蹦菜、花椒面、醋、麻油
 - 实操
   - 包抄手
     - 按照上方「包抄手」内容准备馅料包好即可
   - 煮抄手
     - 浮起来时即非常接近煮熟，需要密切观察
+
+**炒儿菜**
+
+- 准备
+  - 儿菜 大蒜 酱油
+- 实操
+  - 锅中放油，油热放大蒜、儿菜，翻炒后放盐，【重点】视情况不放水或少放一点水，然后放锅盖焖一会， 好了就放酱油、鸡精，翻炒出过
 
 
 ## rpc相关
@@ -6701,3 +6713,14 @@ python -c "from google.protobuf.internal import api_implementation; print(\"defa
 
 - 快捷键
   - option + 鼠标左键拖动  可以选择划定范围内的内容，而不会拖动到鼠标所在的图/框
+
+
+
+
+
+## 视频相关/播放器相关/视频播放器相关
+<a name=视频相关/播放器相关/视频播放器相关>不同系统不一样</a>
+
+- windows: Potplayer
+- macos: IINA
+- 2个系统都兼容: vlc
