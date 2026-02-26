@@ -6446,6 +6446,7 @@ Redis支持五种数据类型：string（字符串），hash（哈希），list�
    ```sql
    --删除数据
    DELETE FROM {table_name} [WHERE Clause]
+   对于clickhouse：ALTER TABLE [db.]table DELETE WHERE filter_expr
    
    --更新数据
    UPDATE {table_name} SET `status` = '9' [WHERE Clause]
