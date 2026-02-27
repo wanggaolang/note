@@ -6789,3 +6789,6 @@ python -c "from google.protobuf.internal import api_implementation; print(\"defa
 - windows: Potplayer
 - macos: IINA
 - 2个系统都兼容: vlc
+
+## ffmpeg相关
+- 查看视频详细信息: ffprobe -v quiet -print_format json -show_format -show_streams {video_file_path}
