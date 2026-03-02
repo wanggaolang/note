@@ -2085,7 +2085,7 @@ iterm2小知识
 
 - Markdown编辑工具：typora
 
-- 性能监控工具：status
+- 性能监控工具：stats
 
 - 粘贴板：PasteNow 收费
 
