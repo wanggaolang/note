@@ -6793,3 +6793,6 @@ python -c "from google.protobuf.internal import api_implementation; print(\"defa
 
 ## ffmpeg相关
 - 查看视频详细信息: ffprobe -v quiet -print_format json -show_format -show_streams {video_file_path}
+
+## windows软件相关
+- 文件清理软件： WizTree
