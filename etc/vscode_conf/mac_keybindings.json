@@ -172,5 +172,53 @@
     {
         "key": "alt+cmd+\\",
         "command": "editor.action.selectToBracket"
+    },
+    {
+        "key": "alt+cmd+r",
+        "command": "projectFinder.open"
+    },
+    {
+        "key": "alt+cmd+p",
+        "command": "-projectFinder.open"
+    },
+    {
+        "key": "cmd+d",
+        "command": "workbench.action.terminal.split",
+        "when": "terminalFocusInAny"
+    },
+    {
+        "key": "cmd+shift+d",
+        "command": "workbench.action.terminal.new",
+        "when": "terminalFocusInAny"
+    },
+    {
+        "key": "cmd+up",
+        "command": "-workbench.action.terminal.scrollToTop",
+        "when": "terminalFocusInAny"
+    },
+    {
+        "key": "cmd+up",
+        "command": "workbench.action.terminal.focusPrevious",
+        "when": "terminalFocusInAny"
+    },
+    {
+        "key": "cmd+down",
+        "command": "-workbench.action.terminal.scrollToBottom",
+        "when": "terminalFocusInAny"
+    },
+    {
+        "key": "cmd+down",
+        "command": "workbench.action.terminal.focusNext",
+        "when": "terminalFocusInAny"
+    },
+    {
+        "key": "cmd+left",
+        "command": "workbench.action.terminal.focusPreviousPane",
+        "when": "terminalFocusInAny"
+    },
+    {
+        "key": "cmd+right",
+        "command": "workbench.action.terminal.focusNextPane",
+        "when": "terminalFocusInAny"
     }
 ]
