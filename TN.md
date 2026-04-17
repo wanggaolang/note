@@ -6810,5 +6810,5 @@ python -c "from google.protobuf.internal import api_implementation; print(\"defa
   
   ## 正确变量, 需要这么设置
   - "DISABLE_AUTOUPDATER": "1"                                                       
-  这个环境变量就是用来禁用 Claude Code CLI 自动更新的，已经生效了，无需额外修改。      
+  这个环境变量就是用来禁用 Claude Code CLI 自动更新的
   ```
