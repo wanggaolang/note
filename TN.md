@@ -6801,10 +6801,14 @@ python -c "from google.protobuf.internal import api_implementation; print(\"defa
 - claude code env配置
 
   ```
-  ## 异常变量
+  ## 异常变量, 禁止下方这种设置
   - ANTHROPIC_DISABLE_PROMPT_CACHING = "true"                                                             
   - DISABLE_PROMPT_CACHING = "1"
   Prompt caching 的原理是：把重复使用的 system prompt/上下文缓存起来，后续请求命中缓存后 token 费用大幅降低（Anthropic 官方缓存命中价格约为原价的 10%）。一旦禁用，每次请求都要全量计费。
   
   正确做法：不应该设置这两个变量，而应该升级 CLI 版本。
+  
+  ## 正确变量, 需要这么设置
+  - "DISABLE_AUTOUPDATER": "1"                                                       
+  这个环境变量就是用来禁用 Claude Code CLI 自动更新的，已经生效了，无需额外修改。      
   ```
