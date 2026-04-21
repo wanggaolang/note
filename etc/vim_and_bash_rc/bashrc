@@ -89,6 +89,39 @@ alias cdtmp='cd ~/test_for_all/20once'
 alias cleantmp='rm -rf ~/test_for_all/20once/*'
 alias gst='git status'
 
+ccmodel() {
+  local cfg="$HOME/.claude/settings.json"
+  local sonnet="Claude Sonnet 4.6"
+  local opus="Claude Opus 4.6"
+  if [ $# -eq 0 ]; then
+    local cur
+    cur=$(python3 -c "import json,sys; d=json.load(open('$cfg')); print(d['env']['ANTHROPIC_MODEL'])")
+    echo "current model: $cur"
+  elif [ "$1" = "0" ]; then
+    python3 -c "
+import json
+cfg='$cfg'
+with open(cfg) as f: d=json.load(f)
+for k in ['ANTHROPIC_MODEL','ANTHROPIC_DEFAULT_SONNET_MODEL','ANTHROPIC_DEFAULT_OPUS_MODEL','ANTHROPIC_DEFAULT_HAIKU_MODEL']:
+    d['env'][k]='$sonnet'
+with open(cfg,'w') as f: json.dump(d,f,indent=2,ensure_ascii=False)
+print('switched to: $sonnet')
+"
+  elif [ "$1" = "1" ]; then
+    python3 -c "
+import json
+cfg='$cfg'
+with open(cfg) as f: d=json.load(f)
+for k in ['ANTHROPIC_MODEL','ANTHROPIC_DEFAULT_SONNET_MODEL','ANTHROPIC_DEFAULT_OPUS_MODEL','ANTHROPIC_DEFAULT_HAIKU_MODEL']:
+    d['env'][k]='$opus'
+with open(cfg,'w') as f: json.dump(d,f,indent=2,ensure_ascii=False)
+print('switched to: $opus')
+"
+  else
+    echo "usage: ccmodel [0=Sonnet|1=Opus]"
+  fi
+}
+
 # Alias definitions.
 # You may want to put all your additions into a separate file like
 # ~/.bash_aliases, instead of adding them here directly.
