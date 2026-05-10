@@ -6812,3 +6812,12 @@ python -c "from google.protobuf.internal import api_implementation; print(\"defa
   - "DISABLE_AUTOUPDATER": "1"                                                       
   这个环境变量就是用来禁用 Claude Code CLI 自动更新的
   ```
+
+## codex相关
+- 设置proxy
+  ```
+  # ~/.codex/.env
+  https_proxy="http://127.0.0.1:7890" 
+  http_proxy="http://127.0.0.1:7890"
+  all_proxy="socks5://127.0.0.1:7891"
+  ```
