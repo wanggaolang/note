@@ -2313,19 +2313,28 @@ PS1="\[\e[32;32m\][\[\e[33;33m\]cp_3_05\[\e[32;32m\]:\w]\$ \[\e[0m\]"
 
 2. `~/.bashrc` 文件相关
 
-   ```bash
-   # 仅在交互式 shell 中启用快捷键绑定，避免脚本执行时受到影响
-   if [[ "$-" = *i* ]]
-   then
-       # 上箭头：根据当前已输入内容，向后搜索历史命令
-       bind '"\e[A": history-search-backward'
+	```bash
+	# 仅在交互式 shell 中启用快捷键绑定，避免脚本执行时受到影响
+	if [[ "$-" = *i* ]]
+	then
+	   # 上箭头：根据当前已输入内容，向后搜索历史命令
+	   bind '"\e[A": history-search-backward'
+	
+	   # 下箭头：根据当前已输入内容，向前搜索历史命令
+	   bind '"\e[B": history-search-forward'
+	fi
+	
+	# 自定义 bash 命令提示符：显示为 [cp_3_05:当前路径]$
+	PS1="\[\e[32;32m\][\[\e[33;33m\]cp_3_05\[\e[32;32m\]:\w]\$ \[\e[0m\]"
+	```
 
-       # 下箭头：根据当前已输入内容，向前搜索历史命令
-       bind '"\e[B": history-search-forward'
-   fi
-
-   # 自定义 bash 命令提示符：显示为 [cp_3_05:当前路径]$
-   PS1="\[\e[32;32m\][\[\e[33;33m\]cp_3_05\[\e[32;32m\]:\w]\$ \[\e[0m\]"
+3. Vim 中文乱码修复（~/.vimrc）
+   ```
+	" 让 vim 内部统一使用 UTF-8 编码处理文本
+	set encoding=utf-8
+	
+	" 打开文件时按顺序尝试这些编码，直到解码成功
+	set fileencodings=utf-8,gbk,latin1
    ```
 
 例如我想求当前目录下以-开头的普通文件，而且该文件后缀为.a   可以用这种写法：`ls -l | grep '^-.*a$'`
