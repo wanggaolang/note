@@ -515,12 +515,12 @@ git fetch todo
   ​	解决`git diff`中文文件名乱码问题：
 
 ```shell
-$ git config --global core.quotepath false          # 显示 status 编码
-$ git config --global gui.encoding utf-8            # 图形界面编码
-$ git config --global i18n.commit.encoding utf-8    # 提交信息编码
-$ git config --global i18n.logoutputencoding utf-8  # 输出 log 编码
+git config --global core.quotepath false          # 显示 status 编码
+git config --global gui.encoding utf-8            # 图形界面编码
+git config --global i18n.commit.encoding utf-8    # 提交信息编码
+git config --global i18n.logoutputencoding utf-8  # 输出 log 编码
 
------其他-----
+#-----其他-----#
 git config --add core.filemode false    #忽略文件权限的改变
 git config --global core.editor vim    #git默认编辑器更改为vim
 
