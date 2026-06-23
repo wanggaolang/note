@@ -2286,21 +2286,45 @@ PS1="\[\e[32;32m\][\[\e[33;33m\]cp_3_05\[\e[32;32m\]:\w]\$ \[\e[0m\]"
 
 [初始化必备/初始化准备]自动补全相关：
 
-1. 忽略大小写：在~/.inputrc文件键入 set completion-ignore-case on    重新打开终端生效
+1. `~/.inputrc` 文件相关
 
-2. 键入命令首部分字符之后，用方向键Up，Down来搜索以该串字符开头的历史命令，需在~/.bashrc中输入以下两行：
+   ```inputrc
+   # 普通补全：唯一匹配才补全；多个候选时不自动选第一个，只显示/等待候选选择
+   TAB: complete
 
-   ```shell
+   # 菜单补全：多个候选时直接补成第一个候选；继续按 Tab 会在候选之间循环
+   # 如果想启用这种模式，就把上面的 TAB: complete 注释掉，再取消下面这一行注释
+   # TAB: menu-complete
+
+   # 多个候选时，第一次按 Tab 就显示所有候选
+   set show-all-if-ambiguous on
+
+   # 补全时忽略大小写，比如输入 ab 也可以匹配 Abc、ABC
+   set completion-ignore-case on
+   ```
+
+   改完后可执行：
+
+   ```bash
+   bind -f ~/.inputrc
+   ```
+
+   或重新打开一个 shell 生效。
+
+2. `~/.bashrc` 文件相关
+
+   ```bash
+   # 仅在交互式 shell 中启用快捷键绑定，避免脚本执行时受到影响
    if [[ "$-" = *i* ]]
    then
+       # 上箭头：根据当前已输入内容，向后搜索历史命令
        bind '"\e[A": history-search-backward'
+
+       # 下箭头：根据当前已输入内容，向前搜索历史命令
        bind '"\e[B": history-search-forward'
    fi
-   ```
 
-3. 在bashrc：
-
-   ```
+   # 自定义 bash 命令提示符：显示为 [cp_3_05:当前路径]$
    PS1="\[\e[32;32m\][\[\e[33;33m\]cp_3_05\[\e[32;32m\]:\w]\$ \[\e[0m\]"
    ```
 
