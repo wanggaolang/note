@@ -3325,7 +3325,7 @@ windows 一般在 /c/Users/{用户名}/.ssh
 
 - docker run相关/将镜像转为容器
 
-  通过镜像起新容器：docker run --name {容器名} -itd --privileged=true --net=host -v /var/run/docker.sock:/var/run/docker.sock --entrypoint /bin/bash {镜像名或id}
+  通过镜像起新容器：docker run --name {容器名} -itd --privileged=true --net=host --user=work -w /home/work -v /var/run/docker.sock:/var/run/docker.sock --entrypoint /bin/bash {镜像名或id}
 
   - 挂起运行：-d
 
