@@ -526,6 +526,7 @@ git config --global core.editor vim    #git默认编辑器更改为vim
 
 git config --global  --unset https.https://github.com.proxy #设置git代理
 git config --global  --unset http.https://github.com.proxy 
+export LESSCHARSET=utf-8 # 让less（也就是 git log命令）能够中文显示
 ```
 
 - 暂存git stash
