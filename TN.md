@@ -523,10 +523,11 @@ git config --global i18n.logoutputencoding utf-8  # 输出 log 编码
 #-----其他-----#
 git config --add core.filemode false    #忽略文件权限的改变
 git config --global core.editor vim    #git默认编辑器更改为vim
+export LESSCHARSET=utf-8 # 让less（也就是 git log命令）能够中文显示
+export LANG="C.UTF-8" # 让docker容器支持中文展示，可以持久化到~/.bashrc
 
 git config --global  --unset https.https://github.com.proxy #设置git代理
 git config --global  --unset http.https://github.com.proxy 
-export LESSCHARSET=utf-8 # 让less（也就是 git log命令）能够中文显示
 ```
 
 - 暂存git stash
