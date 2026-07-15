@@ -6860,5 +6860,7 @@ python -c "from google.protobuf.internal import api_implementation; print(\"defa
 
 ## cursor相关
 - cursor - python相关
-  Cursor remote 上的 Python 开发组合：ms-python.python（提供解释器选择/调试/运行底盘，但禁用其内置 Jedi：python.languageServer: "None"）+ detachhead.basedpyright（开源 Pylance 替代，负责跳转/补全/类型/语义高亮）。
+  Cursor remote 上的 Python 开发组合：
+  	- ms-python.python：提供解释器选择/调试/运行底盘，但禁用其内置 Jedi：python.languageServer: "None"
+	- detachhead.basedpyright：开源 Pylance 替代，负责跳转/补全/类型/语义高亮
 注意：ms-python 自带的 Jedi bundle 要求 Python ≥ 3.9
