@@ -1429,8 +1429,9 @@ Setting	--	Keymap
 
   3. 下载管理器插件：Chrono下载管理器
 
-  4. 快速切换2tab之间：Toggle Tabs 注意貌似为俄罗斯的，被谷歌禁用了，需要git clone[其github地址](https://github.com/dakiesse/toggle-tabs-chrome-extension)进行安装
-
+  4. 快速切换2tab之间（优先第一个）：
+	- [CLUT: Cycle Last Used Tabs](https://chromewebstore.google.com/detail/clut-cycle-last-used-tabs/cobieddmkhhnbeldhncnfcgcaccmehgn)
+  	- Toggle Tabs 注意貌似为俄罗斯的，被谷歌禁用了，需要git clone[其github地址](https://github.com/dakiesse/toggle-tabs-chrome-extension)进行安装
      需设置快捷键为cmd + e
 
   5. toby for chrome  一次打开多个书签
