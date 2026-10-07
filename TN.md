@@ -6833,6 +6833,10 @@ python -c "from google.protobuf.internal import api_implementation; print(\"defa
 
 ## windows软件相关/windows相关
 - 文件清理软件： WizTree
+- 截图：PixPin
+- 剪切板：EcoPaste
+- 窗口切换：window-switcher
+- 视频播放：Potplayer | vlc
 
 ## claude code相关
 - claude code env配置
