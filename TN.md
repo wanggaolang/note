@@ -1397,6 +1397,12 @@ Setting	--	Keymap
 
   - ssh -o StrictHostKeyChecking=no work@{机器名} "{命令}"
   - 指定端口：ssh -p ${port} root@${ip} 'echo hello'
+ 
+- U20的配置和启动命令
+  ```shell
+  配置文件：/etc/ssh/sshd_config
+  后台启动：/usr/sbin/sshd
+  ```
 
 **ssh小知识**
 
