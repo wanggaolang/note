@@ -17,6 +17,11 @@
         "command": "workbench.action.navigateForward"
     },
     {
+        "key": "shift+cmd+k",
+        "command": "editor.action.deleteLines",
+        "when": "textInputFocus && !editorReadonly"
+    },
+    {
         "key": "shift+cmd+s",
         "command": "workbench.action.files.saveAll"
     },
@@ -51,16 +56,6 @@
     {
         "key": "cmd+e",
         "command": "-actions.findWithSelection"
-    },
-    {
-        "key": "cmd+g",
-        "command": "git.openFile",
-        "when": "isInDiffEditor"
-    },
-    {
-        "key": "cmd+g",
-        "command": "git.openChange",
-        "when": "!isInDiffEditor"
     },
     {
         "key": "cmd+1",
@@ -165,6 +160,16 @@
         "when": "reference-list.hasResult"
     },
     {
+        "key": "cmd+g",
+        "command": "git.openFile",
+        "when": "isInDiffEditor"
+    },
+    {
+        "key": "cmd+g",
+        "command": "git.openChange",
+        "when": "!isInDiffEditor"
+    },
+    {
         "key": "ctrl+b",
         "command": "-cursorLeft",
         "when": "textInputFocus"
@@ -172,6 +177,118 @@
     {
         "key": "alt+cmd+\\",
         "command": "editor.action.selectToBracket"
+    },
+    {
+        "key": "alt+g",
+        "command": "workbench.view.scm",
+        "when": "workbench.scm.active"
+    },
+    {
+        "key": "ctrl+shift+g",
+        "command": "-workbench.view.scm",
+        "when": "workbench.scm.active"
+    },
+    {
+        "key": "alt+g",
+        "command": "workbench.view.scm",
+        "when": "workbench.scm.active && !gitlens:disabled && config.gitlens.keymap == 'chorded'"
+    },
+    {
+        "key": "ctrl+shift+g",
+        "command": "-workbench.view.scm",
+        "when": "workbench.scm.active && !gitlens:disabled && config.gitlens.keymap == 'chorded'"
+    },
+    {
+        "key": "cmd+i",
+        "command": "composerMode.agent"
+    },
+    {
+        "key": "cmd+i",
+        "command": "composerMode.agent"
+    },
+    {
+        "key": "shift+alt+cmd+e",
+        "command": "composerMode.background"
+    },
+    {
+        "key": "cmd+n",
+        "command": "-editor.action.inlineDiffs.rejectPartialEdit",
+        "when": "editorTextFocus && inlineDiffs.activeEditorWithDiffs"
+    },
+    {
+        "key": "alt+i",
+        "command": "runCommands",
+        "args": {
+            "commands": [
+                "claude-vscode.focus",
+                "claude-vscode.insertAtMention"
+            ]
+        },
+        "when": "editorTextFocus && editorHasSelection"
+    },
+    {
+        "key": "alt+i",
+        "command": "claude-vscode.focus",
+        "when": "editorTextFocus && !editorHasSelection"
+    },
+    {
+        "key": "alt+i",
+        "command": "workbench.action.closeSidebar",
+        "when": "!editorTextFocus && !editorFocus && claude-vscode.sideBarActive"
+    },
+    {
+        "key": "alt+k",
+        "command": "-claude-vscode.insertAtMention",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "cmd+escape",
+        "command": "-claude-vscode.focus",
+        "when": "editorTextFocus && !config.claudeCode.useTerminal"
+    },
+    {
+        "key": "cmd+i",
+        "command": "workbench.action.terminal.chat.start",
+        "when": "chatIsEnabled && terminalChatAgentRegistered && terminalFocusInAny && terminalHasBeenCreated || chatIsEnabled && terminalChatAgentRegistered && terminalFocusInAny && terminalProcessSupported"
+    },
+    {
+        "key": "cmd+i",
+        "command": "-workbench.action.terminal.chat.start",
+        "when": "chatIsEnabled && terminalChatAgentRegistered && terminalFocusInAny && terminalHasBeenCreated || chatIsEnabled && terminalChatAgentRegistered && terminalFocusInAny && terminalProcessSupported"
+    },
+    {
+        "key": "cmd+i",
+        "command": "inlineChat2.reveal",
+        "when": "inlineChatHasEditsAgent && !chatEdits.isGlobalEditingSession && chatEdits.requestCount >= 1"
+    },
+    {
+        "key": "cmd+i",
+        "command": "-inlineChat2.reveal",
+        "when": "inlineChatHasEditsAgent && !chatEdits.isGlobalEditingSession && chatEdits.requestCount >= 1"
+    },
+    {
+        "key": "cmd+i",
+        "command": "composer.startComposerPrompt"
+    },
+    {
+        "key": "cmd+i",
+        "command": "-composer.startComposerPrompt"
+    },
+    {
+        "key": "shift+cmd+i",
+        "command": "-composer.newAgentChat"
+    },
+    {
+        "key": "shift+cmd+0",
+        "command": "fuzzySearch.activeTextEditor"
+    },
+    {
+        "key": "shift+cmd+r",
+        "command": "projectManager.listProjects"
+    },
+    {
+        "key": "alt+cmd+p",
+        "command": "-projectManager.listProjects"
     },
     {
         "key": "alt+cmd+r",
@@ -220,5 +337,102 @@
         "key": "cmd+right",
         "command": "workbench.action.terminal.focusNextPane",
         "when": "terminalFocusInAny"
+    },
+    {
+        "key": "shift+enter",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\u001b\r" },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "cmd+4",
+        "command": "claude-notify.pasteImage"
+    },
+    {
+        "key": "alt+cmd+v",
+        "command": "-claude-notify.pasteImage"
+    },
+    {
+        "key": "cmd+4",
+        "command": "-glass.goToChat4",
+        "when": "isGlassAgentWorkspace"
+    },
+    {
+        "key": "cmd+4",
+        "command": "-glass.goToChat4",
+        "when": "isGlassAgentWorkspace && terminalFocusInAny"
+    },
+    {
+        "key": "cmd+4",
+        "command": "-workbench.action.focusFourthEditorGroup"
+    },
+    {
+        "key": "shift+cmd+b",
+        "command": "markdown.extension.editing.toggleBold",
+        "when": "editorTextFocus && !editorReadonly && editorLangId =~ /^markdown$|^rmd$|^quarto$/"
+    },
+    {
+        "key": "cmd+b",
+        "command": "-markdown.extension.editing.toggleBold",
+        "when": "editorTextFocus && !editorReadonly && editorLangId =~ /^markdown$|^rmd$|^quarto$/"
+    },
+    {
+        "key": "cmd+1",
+        "command": "-glass.goToChat1",
+        "when": "isGlassAgentWorkspace"
+    },
+    {
+        "key": "cmd+1",
+        "command": "-glass.goToChat1",
+        "when": "isGlassAgentWorkspace && terminalFocusInAny"
+    },
+    {
+        "key": "shift+cmd+enter",
+        "command": "workbench.action.toggleMaximizedPanel",
+        "when": "terminalFocus"
+    },
+    {
+        "key": "shift+cmd+l",
+        "command": "-composer.newAgentChat"
+    },
+    {
+        "key": "shift+cmd+c",
+        "command": "-glass.copyAgentDeeplink",
+        "when": "glassActiveAgentIsCloud && glassNoModalOpen && isGlassEmptyWorkspace && !terminalFocusInAny"
+    },
+    {
+        "key": "cmd+t",
+        "command": "-glass.newAgentFromCmdT",
+        "when": "glassNoModalOpen && isGlassEmptyWorkspace && !glassEditorPanelVisible"
+    },
+    {
+        "key": "cmd+n",
+        "command": "-glass.newAgentFromKeyboard",
+        "when": "glassNoModalOpen && isGlassEmptyWorkspace"
+    },
+    {
+        "key": "alt+cmd+n",
+        "command": "-glass.newAgentKeepPaneFromKeyboard",
+        "when": "glassNoModalOpen && isGlassEmptyWorkspace"
+    },
+    {
+        "key": "shift+cmd+i",
+        "command": "-glass.newAgentWithContext",
+        "when": "isGlassAgentWorkspace && glassActiveTabKind == 'file' || isGlassAgentWorkspace && glassActiveTabKind == 'terminal' || glassDiffLineSelectionActive && isGlassAgentWorkspace && glassActiveTabKind == 'diff' || glassDiffLineSelectionActive && isGlassAgentWorkspace && glassActiveTabKind == 'pr'"
+    },
+    {
+        "key": "shift+cmd+l",
+        "command": "-glass.newAgentWithContext",
+        "when": "isGlassAgentWorkspace && glassActiveTabKind == 'file' || isGlassAgentWorkspace && glassActiveTabKind == 'terminal' || glassDiffLineSelectionActive && isGlassAgentWorkspace && glassActiveTabKind == 'diff' || glassDiffLineSelectionActive && isGlassAgentWorkspace && glassActiveTabKind == 'pr'"
+    },
+    {
+        "key": "shift+cmd+o",
+        "command": "-glass.openActiveAgentInNewWindow",
+        "when": "cursor.glassEnableOpenAgentInWindow && glassNoModalOpen && isGlassAgentSelected && isGlassEmptyWorkspace"
+    },
+    {
+        "key": "cmd+backspace",
+        "command": "workbench.action.terminal.kill",
+        "when": "terminalFocus"
     }
 ]
