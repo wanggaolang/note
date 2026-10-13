@@ -882,6 +882,9 @@ Setting	--	Keymap
   #git的插件
   1)git history
   2)GitLens
+
+  #mardkown插件
+  Markdown Preview Enhanced
   
   #SQL插件
   SQLTools
