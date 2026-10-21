@@ -2085,6 +2085,7 @@ iterm2小知识
 	  **取消隐藏**：`chflags nohidden tmp_dir`。
 
 - 录屏：QuickTime player
+- 更换app图标：image2icon
 
 - 截图工具：
 
